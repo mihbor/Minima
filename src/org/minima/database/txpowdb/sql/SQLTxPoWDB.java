@@ -157,7 +157,7 @@ public class SQLTxPoWDB implements TxPowDB{
 
 	public static void main(String[] zArgs) {
 		//DO it..
-		SQLTxPoWDB db = new SQLTxPoWDB("tester.sql");
+		SQLTxPoWDB db = new SQLTxPoWDB("tester2.sql");
 	
 		//Create a random txpow..
 		TxPoW tx = new TxPoW();
