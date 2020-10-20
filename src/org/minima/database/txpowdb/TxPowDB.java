@@ -57,4 +57,8 @@ public interface TxPowDB {
 	 * Clear the DB
 	 */
 	public void ClearDB();
+	
+	/**
+	 * SQL versions..
+	 */
 }
