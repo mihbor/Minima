@@ -1017,6 +1017,8 @@ public class MMRSet implements Streamable {
 	 * Recursively copy the parents..
 	 */
 	public void copyAllParentKeepers(MiniNumber zCascade) {
+		MinimaLogger.log("Start Copy All Parent keepers ");
+		
 		//Start at this point..
 		MMRSet curr = this;
 		
@@ -1025,15 +1027,26 @@ public class MMRSet implements Streamable {
 		while(curr.getBlockTime().isMore(zCascade)) {
 			//Add to the stack..
 			stack.push(curr);
+		
+			MinimaLogger.log("Push Parent "+curr.getBlockTime());
 			
 			//Get the parent..
 			curr = curr.getParent();
+			
+			if(curr == null) {
+				MinimaLogger.log("NULL Parent ");
+			}
 		}
+		
+		MinimaLogger.log("Finished Stacking Parent keepers ");
+		
 		
 		//Now run through the stack..
 		while(!stack.isEmpty()) {
 			//Get the parent MMR..
 			MMRSet mmr = (MMRSet) stack.pop();
+			
+			MinimaLogger.log("Copy Parent keepers "+mmr.getBlockTime());
 			
 			//Copy the parents MMR keepers..
 			mmr.copyParentKeepers();

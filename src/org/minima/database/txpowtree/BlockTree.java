@@ -143,6 +143,9 @@ public class BlockTree {
 		//Link the MMRSet
 		if(zTouchMMR) {
 			if(zNode.getMMRSet() != null) {
+				MiniData tipid  = mTip.getTxPowID();
+				MiniData nodeid = zNode.getTxPow().getParentID();
+				
 				if(mTip.getTxPowID().isEqual(zNode.getTxPow().getParentID())) {
 					//Correct Parent.. can link the MMR!
 					zNode.getMMRSet().setParent(mTip.getMMRSet());	

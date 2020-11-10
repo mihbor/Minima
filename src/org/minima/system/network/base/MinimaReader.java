@@ -186,7 +186,7 @@ public class MinimaReader implements Runnable {
 						if(newnotify != lastnotify) {
 							lastnotify = newnotify;
 							notifyListeners("IBD download : "+lastnotify+"% of "+ibdsize);
-//							MinimaLogger.log("IBD download : "+lastnotify+"% of "+ibdsize+" tot*100:"+(tot*100)+" datalen:"+datalen);
+							MinimaLogger.log("IBD download : "+lastnotify+"% of "+ibdsize);
 						}
 					}
 					baos.flush();
@@ -211,9 +211,6 @@ public class MinimaReader implements Runnable {
 				
 				//What kind of message is it..
 				if(msgtype.isEqual(NETMESSAGE_INTRO)) {
-					//tell us how big the sync was..
-//					MinimaLogger.log("Initial Sync Message : "+MiniFormat.formatSize(len));
-					
 					//Read in the SyncPackage
 					SyncPackage sp = new SyncPackage();
 					sp.readDataStream(inputstream);

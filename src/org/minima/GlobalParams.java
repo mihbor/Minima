@@ -61,14 +61,14 @@ public class GlobalParams {
 	/**
 	 * Are we debugging the chain in short chain mode..
 	 */
-	public static final boolean SHORT_CHAIN_DEBUG_MODE = false;
+	public static final boolean SHORT_CHAIN_DEBUG_MODE = true;
 	
 	/**
 	 * Just create a block every transaction. Useful when not mining 
 	 * and just want a block every single transaction to debug.
 	 * Automatically disables the auto mining
 	 */
-	public static final boolean MINIMA_ZERO_DIFF_BLK  = false;
+	public static final boolean MINIMA_ZERO_DIFF_BLK  = true;
 
 //	/** 
 //	 * ( Not sure if I'll use this..)

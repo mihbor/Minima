@@ -141,7 +141,7 @@ public class ConsensusNet extends ConsensusProcessor {
 			client.PostMessage(req);
 			
 		}else if(zMessage.isMessageType(CONSENSUS_NET_INTRO)) {
-			//MinimaLogger.log("INTRO SYNC message received..");
+			MinimaLogger.log("INTRO SYNC message received..");
 			
 			//Get the Sync Package..
 			SyncPackage sp = (SyncPackage) zMessage.getObject("sync");
@@ -214,7 +214,11 @@ public class ConsensusNet extends ConsensusProcessor {
 				ArrayList<SyncPacket> packets = sp.getAllNodes();
 				float totpacks = packets.size();
 				float counter  = 0;
+				
+				int count=1;
 				for(SyncPacket spack : packets) {
+					count++;
+					
 					TxPoW txpow = spack.getTxPOW();
 					
 					//Store it..
@@ -224,6 +228,11 @@ public class ConsensusNet extends ConsensusProcessor {
 					boolean cascade = spack.isCascade();
 					
 					//Add it to the DB..
+					
+					if(!cascade) {
+						MinimaLogger.log("Loading Sync Packets.. block:"+txpow.getBlockNumber());
+					}
+					
 					BlockTreeNode node = getMainDB().hardAddTxPOWBlock(txpow, mmr, cascade);
 					
 					//Scan for coins..
