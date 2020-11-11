@@ -1022,6 +1022,9 @@ public class ConsensusPrint extends ConsensusProcessor {
 			status.put("mempooltxn", unused.size());
 			status.put("mempoolcoins", getMainDB().getMempoolCoins().size());
 			
+			System.gc();
+			status.put("memory", MiniFormat.formatSize(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
+			
 			//The block used for speed calculation..
 			status.put("chainspeed", getMainDB().getMainTree().getChainSpeed());
 			status.put("chainlength", getMainDB().getMainTree().getAsList().size());

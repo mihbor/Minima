@@ -4,6 +4,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import org.minima.objects.base.MMRSumNumber;
 import org.minima.objects.base.MiniData;
 import org.minima.objects.base.MiniInteger;
 import org.minima.objects.base.MiniNumber;
@@ -11,30 +12,30 @@ import org.minima.utils.MinimaLogger;
 import org.minima.utils.Streamable;
 import org.minima.utils.json.JSONObject;
 
-public class MMREntry implements Comparable<MMREntry>, Streamable{
+public class MMREntry implements Comparable<MMREntry>, Streamable {
 
 	/**
 	 * Global MMR position
 	 */
-	
+
 	MiniInteger mEntryNumber;
 	int mRow;
-	
+
 	/**
 	 * The blocktime..
 	 */
 	MiniNumber mBlockTime = new MiniNumber(0);
-	
+
 	/**
 	 * The data stored here
 	 */
-	MMRData    mData;
-	
+	MMRData mData;
+
 	/**
 	 * Valid entry
 	 */
 	boolean mIsEmpty;
-	
+
 	/**
 	 * Default constructor
 	 * 
@@ -46,64 +47,75 @@ public class MMREntry implements Comparable<MMREntry>, Streamable{
 		mEntryNumber = zEntry;
 		mIsEmpty = true;
 	}
-	
+
 	public boolean isEmpty() {
 		return mIsEmpty;
 	}
-	
+
 	public boolean checkPosition(int zRow, MiniInteger zEntry) {
 		return (zRow == mRow) && zEntry.isEqual(mEntryNumber);
 	}
-	
+
 	public boolean checkPosition(MMREntry zEntry) {
 		return (zEntry.getRow() == mRow) && zEntry.getEntryNumber().isEqual(mEntryNumber);
 	}
-	
+
 	public void setData(MMRData zData) {
-		mData    = zData;
+		mData = zData;
 		mIsEmpty = false;
 	}
-	
+
 	public void clearData() {
 		mIsEmpty = true;
-		mData    = null;
+		mData = null;
 	}
-	
+
+	public void setHashOnly() {
+		if(!isEmpty()) {
+			MiniData hash    = mData.getFinalHash();
+			MMRSumNumber sum = mData.getValueSum();
+		
+			//Create a new MMRData - hash only..
+			MMRData hashonly = new MMRData(hash, sum);
+			setData(hashonly);
+		}
+	}
+
 	public MMRData getData() {
 		return mData;
 	}
-	
+
 	public void setBlockTime(MiniNumber zBlockTime) {
 		mBlockTime = zBlockTime;
 	}
-	
+
 	public MiniNumber getBlockTime() {
 		return mBlockTime;
 	}
-	
+
 	public MiniData getHashValue() {
-		if(isEmpty()) {
-			MinimaLogger.log("ERROR NULL Entry : "+this);
+		if (isEmpty()) {
+			MinimaLogger.log("ERROR NULL Entry : " + this);
 		}
 		return mData.getFinalHash();
 	}
-	
+
 	public JSONObject toJSON() {
 		JSONObject ret = new JSONObject();
-		
+
 		ret.put("block", mBlockTime.toString());
 		ret.put("row", mRow);
 		ret.put("entry", mEntryNumber.toString());
 		ret.put("data", mData.toJSON());
-		
+
 		return ret;
 	}
-	
+
 	@Override
 	public String toString() {
-		return "BLKTIME:"+mBlockTime+" R:"+mRow+" E:"+mEntryNumber+" D:"+mData;
+		return "BLKTIME:" + mBlockTime + " R:" + mRow + " E:" + mEntryNumber + " D:" + mData;
 	}
-	
+
 	/**
 	 * 
 	 * UTILITY FUNCTIONS FOR NAVIGATING THE MMR
@@ -112,51 +124,51 @@ public class MMREntry implements Comparable<MMREntry>, Streamable{
 	public MiniInteger getEntryNumber() {
 		return mEntryNumber;
 	}
-	
+
 	public int getRow() {
 		return mRow;
 	}
-	
+
 	public int getParentRow() {
-		return mRow+1;
+		return mRow + 1;
 	}
-	
+
 	public int getChildRow() {
-		return mRow-1;
+		return mRow - 1;
 	}
-	
+
 	public boolean isLeft() {
 		return mEntryNumber.modulo(MiniInteger.TWO).isEqual(MiniInteger.ZERO);
 	}
-	
+
 	public boolean isRight() {
 		return !isLeft();
 	}
-	
+
 	public MiniInteger getLeftSibling() {
 		return mEntryNumber.decrement();
 	}
-	
+
 	public MiniInteger getRightSibling() {
 		return mEntryNumber.increment();
 	}
-	
+
 	public MiniInteger getSibling() {
-		if(isLeft()) {
+		if (isLeft()) {
 			return getRightSibling();
-		}else {
+		} else {
 			return getLeftSibling();
 		}
 	}
-	
+
 	public MiniInteger getParentEntry() {
 		return mEntryNumber.divRoundDown(MiniInteger.TWO);
 	}
-	
+
 	public MiniInteger getLeftChildEntry() {
 		return mEntryNumber.mult(MiniInteger.TWO);
 	}
-	
+
 	public MiniInteger getRightChildEntry() {
 		return getLeftChildEntry().add(MiniInteger.ONE);
 	}
@@ -168,21 +180,21 @@ public class MMREntry implements Comparable<MMREntry>, Streamable{
 
 	@Override
 	public void writeDataStream(DataOutputStream zOut) throws IOException {
-		//Entry number
+		// Entry number
 		mEntryNumber.writeDataStream(zOut);
-		
-		//The Row..
+
+		// The Row..
 		zOut.writeInt(mRow);
-		
-		//And finally the data
+
+		// And finally the data
 		mData.writeDataStream(zOut);
 	}
 
 	@Override
 	public void readDataStream(DataInputStream zIn) throws IOException {
 		mEntryNumber = MiniInteger.ReadFromStream(zIn);
-		mRow         = zIn.readInt();
-		mData        = MMRData.ReadFromStream(zIn);
-		mIsEmpty     = false;
+		mRow = zIn.readInt();
+		mData = MMRData.ReadFromStream(zIn);
+		mIsEmpty = false;
 	}
 }

@@ -111,6 +111,9 @@ public class ConsensusNet extends ConsensusProcessor {
 	public void processMessage(Message zMessage) throws Exception {
 		
 		if(zMessage.isMessageType(CONSENSUS_NET_INITIALISE)) {
+			
+			MinimaLogger.memlog("GREET");
+			
 			//An initial Greeting message..
 			Greeting greet = new Greeting();
 			
@@ -215,8 +218,14 @@ public class ConsensusNet extends ConsensusProcessor {
 				float totpacks = packets.size();
 				float counter  = 0;
 				
-				int count=1;
+				MiniData lasttxpow = null;
+				
+				int count=0;
 				for(SyncPacket spack : packets) {
+					if(count % 250 == 0) {
+						MinimaLogger.memlog("Memory Sync packet : ");					
+					}
+					
 					count++;
 					
 					TxPoW txpow = spack.getTxPOW();
@@ -228,11 +237,12 @@ public class ConsensusNet extends ConsensusProcessor {
 					boolean cascade = spack.isCascade();
 					
 					//Add it to the DB..
-					
-					if(!cascade) {
-						MinimaLogger.log("Loading Sync Packets.. block:"+txpow.getBlockNumber());
-					}
-					
+//					if(!cascade) {
+//						MinimaLogger.log("Loading Sync Packets.. block:"+txpow.getBlockNumber());
+//					}
+//					MiniData ptxpowid = txpow.getParentID();
+//					lasttxpow = txpow.getTxPowID();
+
 					BlockTreeNode node = getMainDB().hardAddTxPOWBlock(txpow, mmr, cascade);
 					
 					//Scan for coins..
@@ -263,6 +273,9 @@ public class ConsensusNet extends ConsensusProcessor {
 					int totperc = (int)((counter / totpacks) * 100.0f);
 					getConsensusHandler().updateListeners(new Message(ConsensusHandler.CONSENSUS_NOTIFY_INITIALPERC).addString("info", "Loading "+totperc+"%"));
 				}
+				
+				System.gc();
+				MinimaLogger.memlog("GC Sync packet");
 				
 				//Reset weights
 				getMainDB().hardResetChain();
@@ -590,6 +603,9 @@ public class ConsensusNet extends ConsensusProcessor {
 				getConsensusHandler().PostTimerMessage(new TimerMessage(20000,ConsensusBackup.CONSENSUSBACKUP_BACKUP));
 			}
 			
+			System.gc();
+			MinimaLogger.memlog("GC TxPow List");
+			
 		}else if ( zMessage.isMessageType(CONSENSUS_NET_TXPOWID)) {
 			//Get the ID
 			MiniData txpowid = (MiniData) zMessage.getObject("txpowid");
@@ -736,6 +752,7 @@ public class ConsensusNet extends ConsensusProcessor {
 			 * Add it to the database.. Do this HERE as there may be other messages in the queue. 
 			 * Can't wait for ConsensusHandler to catch up.
 			 */
+						
 			getMainDB().addNewTxPow(txpow);
 			
 			//Now - Process the TxPOW
@@ -835,6 +852,19 @@ public class ConsensusNet extends ConsensusProcessor {
 			newtxpow.put("relevant",relevant);
 			getConsensusHandler().PostDAPPJSONMessage(newtxpow);
 		}
+		
+		//Wipe super parentrs from non blocks..
+//		if(!zTxPoW.isBlock()) {
+//			zTxPoW.getTxHeader().mSuperParents = new MiniData[GlobalParams.MINIMA_CASCADE_LEVELS];
+//			for(int i=0;i<GlobalParams.MINIMA_CASCADE_LEVELS;i++) {
+//				zTxPoW.getTxHeader().mSuperParents[i] = new MiniData();
+//			}
+//			
+//			System.gc();
+//			long mem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+//		    MinimaLogger.log("NEW TXN Memory : "+(mem/1024)+"KB");
+//		}
+
 		
 		//OK - it passes a general test.. add it to the database..
 		TxPOWDBRow row = getMainDB().addNewTxPow(zTxPoW);

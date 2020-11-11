@@ -42,6 +42,11 @@ public class MinimaLogger {
 		mLogHandler = zLogHandler;
 	}
 	
+	public static void memlog(String zLog){
+		long mem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+	    log("MEM:"+MiniFormat.formatSize(mem)+" "+zLog);
+	}
+	
 	public static void log(String zLog){
 		if(LOGGING_ON){
 			//Ensure max size.. for now just wipe once and start again..

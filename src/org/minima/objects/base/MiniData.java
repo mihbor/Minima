@@ -46,6 +46,13 @@ public class MiniData implements Streamable {
 	}
 	
 	private void setDataValue() {
+		//Not for Enormous Numbers!
+//		if(mData.length > 1024) {
+//			mDataVal = BigInteger.ZERO;
+//		}else {
+//			mDataVal = new BigInteger(1,mData);
+//		}
+		
 		mDataVal = new BigInteger(1,mData);
 	}
 	
@@ -91,7 +98,6 @@ public class MiniData implements Streamable {
 		}
 	
 		return true;
-//		return mDataVal.compareTo(zCompare.getDataValue()) == 0;
 	}
 	
 	public boolean isLess(MiniData zCompare) {

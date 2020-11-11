@@ -99,7 +99,8 @@ public abstract class MessageProcessor extends MessageStack implements Runnable{
                     processMessage(msg);
                     
                 }catch(Exception exc){
-                    MinimaLogger.log("MESSAGE PROCESSING ERROR @ "+msg,exc);
+                	String mm = msg.toString();
+                    MinimaLogger.log("MESSAGE PROCESSING ERROR @ "+mm,exc);
                 	InputHandler.endResponse(msg, false, "SYSTEM ERROR PROCESSING : "+msg+" exception:"+exc);
                 } 
                 

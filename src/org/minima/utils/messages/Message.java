@@ -173,7 +173,7 @@ public class Message {
 			Object obj = mContents.get(key);
 			
 			if(obj != null) {
-				contents += key+":"+mContents.get(key).toString()+", ";
+				contents += key+":"+obj.toString()+", ";
 			}else {
 				contents += key+":null, ";
 			}

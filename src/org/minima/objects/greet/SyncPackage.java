@@ -36,7 +36,7 @@ public class SyncPackage implements Streamable{
 	public ArrayList<SyncPacket> getAllNodes(){
 		return mNodes;
 	}
-
+	
 	public BigInteger calculateWeight() {
 		//Create a Tree and add all these blocks.. then calculate the weight..
 		BlockTree blktree = new BlockTree();
@@ -109,10 +109,10 @@ public class SyncPackage implements Streamable{
 	
 	@Override
 	public String toString() {
-		String ret = "";
-		for(SyncPacket node : mNodes) {
-			ret += node+",";
-		}
+		String ret = "SyncPackage size : "+mNodes.size();
+//		for(SyncPacket node : mNodes) {
+//			ret += node+",";
+//		}
 		return ret;
 	}
 }

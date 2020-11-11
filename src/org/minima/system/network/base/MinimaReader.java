@@ -116,6 +116,8 @@ public class MinimaReader implements Runnable {
 	@Override
 	public void run() {
 		try {
+			MinimaLogger.memlog("Start Reader");
+		    
 			//Create an input stream
 			DataInputStream mInput = new DataInputStream(new BufferedInputStream(mNetClient.getSocket().getInputStream()));
 			
@@ -132,6 +134,8 @@ public class MinimaReader implements Runnable {
 				//What length..
 				int len = MiniNumber.ReadFromStream(mInput).getAsInt();
 				
+				MinimaLogger.memlog("Reader msg len:"+len+" type:"+msgtype);
+			    
 				//Check within acceptable parameters - this should be set in TxPoW header.. for now fixed
 				if( msgtype.isEqual(NETMESSAGE_TXPOWID) || 
 					msgtype.isEqual(NETMESSAGE_TXPOW_REQUEST)) {
@@ -165,8 +169,12 @@ public class MinimaReader implements Runnable {
 				//The FULL message
 				MiniData fullmsg = null;
 				
+				ByteArrayInputStream bais   =  null;
+						
 				//Is this the LARGE initial Intro message..
 				if(msgtype.isEqual(NETMESSAGE_INTRO)) {
+					MinimaLogger.memlog("INTRO");
+				    
 					//tell us how big the sync was..
 					String ibdsize = MiniFormat.formatSize(len);
 					MinimaLogger.log("Initial Sync Message : "+ibdsize);
@@ -186,22 +194,40 @@ public class MinimaReader implements Runnable {
 						if(newnotify != lastnotify) {
 							lastnotify = newnotify;
 							notifyListeners("IBD download : "+lastnotify+"% of "+ibdsize);
-							MinimaLogger.log("IBD download : "+lastnotify+"% of "+ibdsize);
+							MinimaLogger.memlog("IBD download : "+lastnotify+"% of "+ibdsize);
+						
 						}
 					}
+					MinimaLogger.memlog("preflush");
+					
 					baos.flush();
+					MinimaLogger.memlog("postflush");
+					
 					
 					//Create the MiniData..
-					fullmsg = new MiniData(baos.toByteArray());
+//					fullmsg = new MiniData(baos.toByteArray());
+					bais   = new ByteArrayInputStream(baos.toByteArray());
 					
+					MinimaLogger.memlog("postbytearrayin");
+					
+					baos.close();
+					
+					System.gc();
 				}else {
 					//Now read in the full message
-					fullmsg = MiniData.ReadFromStream(mInput, len);	
+					fullmsg = MiniData.ReadFromStream(mInput, len);
+					bais   = new ByteArrayInputStream(fullmsg.getData());
 				}
 				
+				MinimaLogger.memlog("Pre ByteSTream");
+				
 				//Now convert to an 
-				ByteArrayInputStream bais   = new ByteArrayInputStream(fullmsg.getData());
+//				ByteArrayInputStream bais   = new ByteArrayInputStream(fullmsg.getData());
 				DataInputStream inputstream = new DataInputStream(bais);
+				
+				
+				
+				MinimaLogger.memlog("POST ByteSTream");
 				
 				//New Message received
 				Message rec = new Message(ConsensusNet.CONSENSUS_PREFIX+"NET_MESSAGE_"+msgtype);
@@ -211,9 +237,13 @@ public class MinimaReader implements Runnable {
 				
 				//What kind of message is it..
 				if(msgtype.isEqual(NETMESSAGE_INTRO)) {
+					MinimaLogger.memlog("Convert to SP start ");
+					
 					//Read in the SyncPackage
 					SyncPackage sp = new SyncPackage();
 					sp.readDataStream(inputstream);
+					
+					MinimaLogger.memlog("Convert to SP end ");
 					
 					//Add and send
 					rec.addObject("sync", sp);
