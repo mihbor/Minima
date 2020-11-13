@@ -5,6 +5,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Hashtable;
 
 import org.minima.database.mmr.MMRSet;
 import org.minima.database.txpowtree.BlockTree;
@@ -12,6 +13,7 @@ import org.minima.database.txpowtree.BlockTreeNode;
 import org.minima.database.txpowtree.CascadeTree;
 import org.minima.objects.TxPoW;
 import org.minima.objects.base.MiniNumber;
+import org.minima.utils.MinimaLogger;
 import org.minima.utils.Streamable;
 
 public class SyncPackage implements Streamable{
@@ -35,6 +37,16 @@ public class SyncPackage implements Streamable{
 	
 	public ArrayList<SyncPacket> getAllNodes(){
 		return mNodes;
+	}
+	
+	public void setMMRHashOnly() {
+		for(SyncPacket spack : mNodes) {
+			//TxPoW txpow = spack.getTxPOW();
+			MMRSet mmr  = spack.getMMRSet();
+			if(mmr!=null) {
+				mmr.setHashOnly();
+			}	
+		}
 	}
 	
 	public BigInteger calculateWeight() {
@@ -98,10 +110,19 @@ public class SyncPackage implements Streamable{
 		mNodes = new ArrayList<>();
 		MiniNumber nodelen = MiniNumber.ReadFromStream(zIn);
 		int len = nodelen.getAsInt();
+		
+		int tot = 0;
 		for(int i=0;i<len;i++) {
+			
+			//Reda the Packet
 			SyncPacket node = new SyncPacket();
 			node.readDataStream(zIn);
-			mNodes.add(node);
+			
+			//Add to the list
+//			if(tot<5000) {
+				mNodes.add(node);
+				tot++;
+//			}
 		}
 		
 		mCascadeNode = MiniNumber.ReadFromStream(zIn);

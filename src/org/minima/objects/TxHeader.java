@@ -219,6 +219,7 @@ public class TxHeader implements Streamable {
 			int count = len.getValue();
 			for(int i=0;i<count;i++) {
 				mSuperParents[tot++] = sup;
+//				mSuperParents[tot++] = new MiniData();
 			}
 		}
 		

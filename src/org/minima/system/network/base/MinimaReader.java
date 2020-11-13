@@ -183,51 +183,48 @@ public class MinimaReader implements Runnable {
 					//This is a MiniData Structure..
 					int datalen = mInput.readInt();
 					
+					byte[] datarr = new byte[8096];
+//					byte[] datain = new byte[datalen];
 					ByteArrayOutputStream baos = new ByteArrayOutputStream(datalen);
 					long tot        = 0;
 					long lastnotify = -1;
 					while( tot < datalen ) {
-						baos.write(mInput.read());
-						tot++;
+						//Read in the data..
+						int read = mInput.read(datarr);
+						baos.write(datarr,0,read);
+						tot+=read;	
+						
+//						baos.write(mInput.read());
+//						datain[(int)tot] = (byte)mInput.read();
+//						tot++;
+						
 						//What Percent Done..
 						long newnotify = (tot*100)/datalen;
 						if(newnotify != lastnotify) {
 							lastnotify = newnotify;
 							notifyListeners("IBD download : "+lastnotify+"% of "+ibdsize);
-							MinimaLogger.memlog("IBD download : "+lastnotify+"% of "+ibdsize);
+//							MinimaLogger.memlog("IBD download : "+lastnotify+"% of "+ibdsize);
 						
 						}
 					}
-					MinimaLogger.memlog("preflush");
-					
 					baos.flush();
-					MinimaLogger.memlog("postflush");
-					
 					
 					//Create the MiniData..
-//					fullmsg = new MiniData(baos.toByteArray());
-					bais   = new ByteArrayInputStream(baos.toByteArray());
-					
-					MinimaLogger.memlog("postbytearrayin");
+					fullmsg = new MiniData(baos.toByteArray());
+//					bais   = new ByteArrayInputStream(baos.toByteArray());
+//					bais   = new ByteArrayInputStream(datain);
 					
 					baos.close();
 					
-					System.gc();
 				}else {
 					//Now read in the full message
 					fullmsg = MiniData.ReadFromStream(mInput, len);
-					bais   = new ByteArrayInputStream(fullmsg.getData());
+//					bais   = new ByteArrayInputStream(fullmsg.getData());
 				}
 				
-				MinimaLogger.memlog("Pre ByteSTream");
-				
 				//Now convert to an 
-//				ByteArrayInputStream bais   = new ByteArrayInputStream(fullmsg.getData());
+				bais   = new ByteArrayInputStream(fullmsg.getData());
 				DataInputStream inputstream = new DataInputStream(bais);
-				
-				
-				
-				MinimaLogger.memlog("POST ByteSTream");
 				
 				//New Message received
 				Message rec = new Message(ConsensusNet.CONSENSUS_PREFIX+"NET_MESSAGE_"+msgtype);
@@ -235,15 +232,18 @@ public class MinimaReader implements Runnable {
 				//Always add the client
 				rec.addObject("netclient", mNetClient);
 				
+				boolean cleanup = false;
+				
 				//What kind of message is it..
 				if(msgtype.isEqual(NETMESSAGE_INTRO)) {
+					System.gc();
 					MinimaLogger.memlog("Convert to SP start ");
 					
 					//Read in the SyncPackage
 					SyncPackage sp = new SyncPackage();
 					sp.readDataStream(inputstream);
 					
-					MinimaLogger.memlog("Convert to SP end ");
+					cleanup = true;
 					
 					//Add and send
 					rec.addObject("sync", sp);
@@ -324,6 +324,10 @@ public class MinimaReader implements Runnable {
 				inputstream.close();
 				bais.close();
 				
+				if(cleanup) {
+					System.gc();
+					MinimaLogger.memlog("Net Message After Clean");
+				}
 				//Post it..
 				consensus.PostMessage(rec);
 			}

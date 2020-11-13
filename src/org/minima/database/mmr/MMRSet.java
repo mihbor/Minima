@@ -24,6 +24,9 @@ import org.minima.utils.json.JSONObject;
 
 public class MMRSet implements Streamable {
 	
+	public static int TOTAL_ENTRIES_COINID = 0; 
+	public static int TOTAL_ENTRIES = 0; 
+	
 	/**
 	 * What Block time does this MMR represent. Each represents 1 block.
 	 */
@@ -211,7 +214,15 @@ public class MMRSet implements Streamable {
 	}
 	
 	public void setHashOnly() {
-		
+		Enumeration<MMREntry> entries = mSetEntries.elements();
+		while(entries.hasMoreElements()) {
+			MMREntry entry = entries.nextElement();
+			entry.setHashOnly();
+		}
+	}
+
+	public int getNumberOfEntries() {
+		return mSetEntries.size();
 	}
 	
 	public MMRSet getParent() {
@@ -248,14 +259,19 @@ public class MMRSet implements Streamable {
 		//Add the entry to the total list HashTable
 		String name = getHashTableEntry(zEntry.getRow(), zEntry.getEntryNumber());
 		mSetEntries.put(name, zEntry);
+		TOTAL_ENTRIES++;
 		
 		//Do we add to the CoinID Table..
 		if(zEntry.getRow()==0) {
 			if(!zEntry.getData().isHashOnly()) {
-				String coinid = zEntry.getData().getCoin().getCoinID().to0xString();
+				String coinid = zEntry.getData().getCoin().getCoinID().to0xString(10);
 				mSetEntriesCoinID.put(coinid, zEntry);
+				
+//				TOTAL_ENTRIES_COINID++;
 			}
 		}
+		
+//		MinimaLogger.log("MMR Entries:"+TOTAL_ENTRIES+" CoinID:"+TOTAL_ENTRIES_COINID);
 	}
 	
 	public ArrayList<MMREntry> getRow(int zRow){
@@ -325,7 +341,7 @@ public class MMRSet implements Streamable {
 		MMRSet current = this;
 		
 		//Cycle through them..
-		String coinid = zCoinID.to0xString();
+		String coinid = zCoinID.to0xString(10);
 		while(current != null) {
 			MMREntry entry = mSetEntriesCoinID.get(coinid);
 			if(entry != null) {
@@ -1035,18 +1051,14 @@ public class MMRSet implements Streamable {
 			
 			if(curr == null) {
 				MinimaLogger.log("NULL MMR copy Parent ");
+				return;
 			}
 		}
-		
-		MinimaLogger.log("Finished Stacking Parent keepers ");
-		
 		
 		//Now run through the stack..
 		while(!stack.isEmpty()) {
 			//Get the parent MMR..
 			MMRSet mmr = (MMRSet) stack.pop();
-			
-			MinimaLogger.log("Copy Parent keepers "+mmr.getBlockTime());
 			
 			//Copy the parents MMR keepers..
 			mmr.copyParentKeepers();

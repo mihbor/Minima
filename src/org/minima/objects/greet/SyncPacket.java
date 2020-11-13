@@ -4,10 +4,13 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import org.minima.GlobalParams;
 import org.minima.database.mmr.MMRSet;
 import org.minima.database.txpowtree.BlockTreeNode;
 import org.minima.objects.TxPoW;
 import org.minima.objects.base.MiniByte;
+import org.minima.objects.base.MiniData;
+import org.minima.utils.MinimaLogger;
 import org.minima.utils.Streamable;
 
 /**
@@ -69,6 +72,7 @@ public class SyncPacket implements Streamable {
 	@Override
 	public void writeDataStream(DataOutputStream zOut) throws IOException {
 		//First write out the TXPOW
+		mTxPOW.clearBody();
 		mTxPOW.writeDataStream(zOut);
 		
 		//Is it a cascade node..
@@ -86,6 +90,7 @@ public class SyncPacket implements Streamable {
 		}else {
 			MiniByte.TRUE.writeDataStream(zOut);
 			//Write the MMR
+			mMMR.setHashOnly();
 			mMMR.writeDataStream(zOut);
 		}
 	}
@@ -95,6 +100,12 @@ public class SyncPacket implements Streamable {
 		//First the TXPOW
 		mTxPOW = new TxPoW();
 		mTxPOW.readDataStream(zIn);
+		
+//		mTxPOW = new TxPoW();
+//		mTxPOW.clearBody();
+		for(int i=0;i<GlobalParams.MINIMA_CASCADE_LEVELS;i++) {
+			mTxPOW.getTxHeader().mSuperParents[i] = new MiniData();
+		}
 		
 		//Is it a cascader..
 		MiniByte casc = MiniByte.ReadFromStream(zIn);
@@ -108,7 +119,10 @@ public class SyncPacket implements Streamable {
 			//Read in the MMR
 			mMMR = new MMRSet();
 			mMMR.readDataStream(zIn);
+//			mMMR.setHashOnly();
 		}
+		
+//		mMMR = new MMRSet();
 	}
 	
 }

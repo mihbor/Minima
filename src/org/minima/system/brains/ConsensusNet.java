@@ -61,7 +61,7 @@ public class ConsensusNet extends ConsensusProcessor {
 	 */
 	boolean mHardResetAllowed = true;
 	
-	boolean mFullSyncOnInit = true;
+	boolean mFullSyncOnInit = false;
 	
 	/**
 	 * Check when you sent out a request for a TxPOW
@@ -222,9 +222,10 @@ public class ConsensusNet extends ConsensusProcessor {
 				
 				int count=0;
 				for(SyncPacket spack : packets) {
-					if(count % 250 == 0) {
-						MinimaLogger.memlog("Memory Sync packet : ");					
-					}
+//					if(count % 1000 == 0) {
+//						System.gc();
+//						MinimaLogger.memlog("Memory Sync packet : ");					
+//					}
 					
 					count++;
 					
@@ -284,6 +285,19 @@ public class ConsensusNet extends ConsensusProcessor {
 				TxPoW tip = getMainDB().getMainTree().getChainTip().getTxPow();
 				MinimaLogger.log("Sync Complete.. Reset Current block : "+tip.getBlockNumber());
 			
+//				//Now kets check the MMR stuff..
+//				BlockTreeNode nodetip = getMainDB().getMainTree().getChainTip();
+//				while(nodetip.getMMRSet() != null) {
+//					//Check the entiris for duplicates..
+//					MMRSet mmr  = nodetip.getMMRSet();
+//					MMRSet pmmr = mmr.getParent();
+//					
+//					mmr.mSetEntries
+//					
+//				}
+				
+				
+				
 				//Do the balance.. Update listeners if changed..
 				getConsensusHandler().PostMessage(new Message(ConsensusPrint.CONSENSUS_BALANCE).addBoolean("hard", true));
 				

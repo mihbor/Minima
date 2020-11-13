@@ -1218,7 +1218,8 @@ public class MinimaDB {
 	 * Get the Current IBD - total required to log in for a new user
 	 */
 	public int getIntroSyncSize() {
-		SyncPackage sp = getSyncPackage();
+		SyncPackage sp = getSyncPackage(true);
+		//sp.setMMRHashOnly();
 		
 		//Write it out..
 		try {

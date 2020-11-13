@@ -14,6 +14,8 @@ import org.minima.utils.MinimaLogger;
 
 public class FastJavaDB implements TxPowDB {
 
+	public int MEM_DEPTH = 8;
+	
 	private Hashtable<String,JavaDBRow> mTxPoWRows;
 	
 	//The Children of a Parent..
@@ -26,12 +28,12 @@ public class FastJavaDB implements TxPowDB {
 	
 	@Override
 	public TxPOWDBRow findTxPOWDBRow(MiniData zTxPOWID) {
-		return mTxPoWRows.get(zTxPOWID.to0xString());
+		return mTxPoWRows.get(zTxPOWID.to0xString(MEM_DEPTH));
 	}
 	
 	@Override
 	public TxPOWDBRow addTxPOWDBRow(TxPoW zTxPOW) {
-		String search = zTxPOW.getTxPowID().to0xString();
+		String search = zTxPOW.getTxPowID().to0xString(MEM_DEPTH);
 		
 		//Is it already in there
 		JavaDBRow row = mTxPoWRows.get(search);
@@ -48,7 +50,7 @@ public class FastJavaDB implements TxPowDB {
 		//Add it to the Children List..
 		if(zTxPOW.isBlock()) {
 			//Get the Parent...
-			String parentid = zTxPOW.getParentID().to0xString();
+			String parentid = zTxPOW.getParentID().to0xString(MEM_DEPTH);
 			
 			//Get the ArrayList..
 			ArrayList<TxPOWDBRow> children = mChildrenOfParents.get(parentid);
@@ -103,7 +105,7 @@ public class FastJavaDB implements TxPowDB {
 
 	@Override
 	public void removeTxPOW(MiniData zTxPOWID) {
-		String txpid = zTxPOWID.to0xString();
+		String txpid = zTxPOWID.to0xString(MEM_DEPTH);
 		
 		//Remove from the main List
 		mTxPoWRows.remove(txpid);
@@ -128,7 +130,7 @@ public class FastJavaDB implements TxPowDB {
 			JavaDBRow row  = allrows.nextElement();
 			TxPoW rowtxpow = row.getTxPOW();
 			
-			String txpid = rowtxpow.getTxPowID().to0xString();
+			String txpid = rowtxpow.getTxPowID().to0xString(MEM_DEPTH);
 			
 				//It's a main block
 			if(row.isMainChainBlock()) {
@@ -192,7 +194,7 @@ public class FastJavaDB implements TxPowDB {
 	@Override
 	public ArrayList<TxPOWDBRow> getChildBlocksTxPOW(MiniData zParent) {
 		//FAST
-		String parentid = zParent.to0xString();
+		String parentid = zParent.to0xString(MEM_DEPTH);
 		
 		ArrayList<TxPOWDBRow> ret = mChildrenOfParents.get(parentid);
 		if(ret == null) {
@@ -236,5 +238,6 @@ public class FastJavaDB implements TxPowDB {
 	@Override
 	public void ClearDB() {
 		mTxPoWRows.clear();
+		mChildrenOfParents.clear();
 	}
 }

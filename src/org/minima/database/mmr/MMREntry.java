@@ -71,7 +71,8 @@ public class MMREntry implements Comparable<MMREntry>, Streamable {
 	}
 
 	public void setHashOnly() {
-		if(!isEmpty()) {
+		if(!isEmpty() && !mData.isHashOnly()) {
+			//MinimaLogger.log("Change to Hash Only ["+mEntryNumber+"] "+mData.getCoin());
 			MiniData hash    = mData.getFinalHash();
 			MMRSumNumber sum = mData.getValueSum();
 		

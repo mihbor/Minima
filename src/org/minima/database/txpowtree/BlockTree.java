@@ -208,7 +208,7 @@ public class BlockTree {
 	
 	private void addFastLinkNode(BlockTreeNode zNode) {
 		//Add to the HashTable
-		String id = zNode.getTxPowID().to0xString();
+		String id = zNode.getTxPowID().to0xString(16);
 		
 		//Add to the Table..
 		mFastLink.put(id, zNode);
@@ -299,7 +299,7 @@ public class BlockTree {
 	 */
 	public BlockTreeNode findNode(MiniData zTxPOWID, boolean zRecurseAlso) {
 		//Check fast link table
-		BlockTreeNode fastnodefind = mFastLink.get(zTxPOWID.to0xString());
+		BlockTreeNode fastnodefind = mFastLink.get(zTxPOWID.to0xString(16));
 		if(fastnodefind!=null) {
 			return fastnodefind;
 		}
