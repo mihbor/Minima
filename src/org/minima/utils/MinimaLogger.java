@@ -50,7 +50,9 @@ public class MinimaLogger {
 				mFullOutput = new StringBuffer(mFullOutput.substring(len-CLIP_LEN, len));
 			}
 			
-			String full_log = "Minima @ "+DATEFORMAT.format(new Date())+" : "+zLog;
+			long mem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+		    
+			String full_log = "Minima @ "+DATEFORMAT.format(new Date())+" ["+MiniFormat.formatSize(mem)+"] : "+zLog;
 			System.out.println(full_log);
 	
 			//Store..
