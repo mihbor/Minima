@@ -72,7 +72,7 @@ public class SyncPacket implements Streamable {
 	@Override
 	public void writeDataStream(DataOutputStream zOut) throws IOException {
 		//First write out the TXPOW
-		mTxPOW.clearBody();
+//		mTxPOW.clearBody();
 		mTxPOW.writeDataStream(zOut);
 		
 		//Is it a cascade node..
@@ -90,7 +90,7 @@ public class SyncPacket implements Streamable {
 		}else {
 			MiniByte.TRUE.writeDataStream(zOut);
 			//Write the MMR
-			mMMR.setHashOnly();
+//			mMMR.setHashOnly();
 			mMMR.writeDataStream(zOut);
 		}
 	}
@@ -101,11 +101,12 @@ public class SyncPacket implements Streamable {
 		mTxPOW = new TxPoW();
 		mTxPOW.readDataStream(zIn);
 		
-//		mTxPOW = new TxPoW();
-//		mTxPOW.clearBody();
+		//mTxPOW = new TxPoW();
+		mTxPOW.clearBody();
 		for(int i=0;i<GlobalParams.MINIMA_CASCADE_LEVELS;i++) {
 			mTxPOW.getTxHeader().mSuperParents[i] = new MiniData();
 		}
+		mTxPOW.calculateTXPOWID();
 		
 		//Is it a cascader..
 		MiniByte casc = MiniByte.ReadFromStream(zIn);
@@ -122,7 +123,7 @@ public class SyncPacket implements Streamable {
 //			mMMR.setHashOnly();
 		}
 		
-//		mMMR = new MMRSet();
+		mMMR = new MMRSet();
 	}
 	
 }

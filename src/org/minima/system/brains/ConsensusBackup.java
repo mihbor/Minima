@@ -70,23 +70,23 @@ public class ConsensusBackup extends ConsensusProcessor {
 			//Get this as will need it a few times..
 			BackupManager backup = getBackup();
 			
-			//First backup the UserDB..
-			try {
-				JavaUserDB userdb = (JavaUserDB) getMainDB().getUserDB();
-				File backuser     = backup.getBackUpFile(USERDB_BACKUP);
-				MiniFile.writeObjectToFile(backuser, userdb);
-				details.put("userdb", backuser.getAbsolutePath());
-				
-				//Now the complete SyncPackage..
-				SyncPackage sp = getMainDB().getSyncPackage();
-				File backsync  = backup.getBackUpFile(SYNC_BACKUP);
-				MiniFile.writeObjectToFile(backsync, sp);
-				details.put("chaindb", backsync.getAbsolutePath());
-				
-			}catch(Exception exc) {
-				MinimaLogger.log("BACKUP ERROR : ");
-				exc.printStackTrace();
-			}
+//			//First backup the UserDB..
+//			try {
+//				JavaUserDB userdb = (JavaUserDB) getMainDB().getUserDB();
+//				File backuser     = backup.getBackUpFile(USERDB_BACKUP);
+//				MiniFile.writeObjectToFile(backuser, userdb);
+//				details.put("userdb", backuser.getAbsolutePath());
+//				
+//				//Now the complete SyncPackage..
+//				SyncPackage sp = getMainDB().getSyncPackage();
+//				File backsync  = backup.getBackUpFile(SYNC_BACKUP);
+//				MiniFile.writeObjectToFile(backsync, sp);
+//				details.put("chaindb", backsync.getAbsolutePath());
+//				
+//			}catch(Exception exc) {
+//				MinimaLogger.log("BACKUP ERROR : ");
+//				exc.printStackTrace();
+//			}
 			
 			//Do we shut down..
 			if(shutdown) {

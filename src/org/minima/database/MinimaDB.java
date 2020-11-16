@@ -528,22 +528,23 @@ public class MinimaDB {
 	public BlockTreeNode hardAddTxPOWBlock(TxPoW zTxPoW, MMRSet zMMR, boolean zCascade) {
 		//Add to the list
 		TxPOWDBRow row = mTxPOWDB.addTxPOWDBRow(zTxPoW);
-		row.setMainChainBlock(true);
-		row.setIsInBlock(true);
-		row.setInBlockNumber(zTxPoW.getBlockNumber());
-		row.setBlockState(TxPOWDBRow.TXPOWDBROW_STATE_FULL);
+//		row.setMainChainBlock(true);
+//		row.setIsInBlock(true);
+//		row.setInBlockNumber(zTxPoW.getBlockNumber());
+//		row.setBlockState(TxPOWDBRow.TXPOWDBROW_STATE_FULL);
 		
-		BlockTreeNode node = new BlockTreeNode(zTxPoW);
-		node.setCascade(zCascade);
-		node.setState(BlockTreeNode.BLOCKSTATE_VALID);
+//		BlockTreeNode node = new BlockTreeNode(zTxPoW);
+//		node.setCascade(zCascade);
+//		node.setState(BlockTreeNode.BLOCKSTATE_VALID);
+//		
+//		//Sort the MMR..
+//		node.setMMRset(zMMR);
+//
+//		//Add it..
+//		mMainTree.hardAddNode(node, true);
 		
-		//Sort the MMR..
-		node.setMMRset(zMMR);
-
-		//Add it..
-		mMainTree.hardAddNode(node, true);
-		
-		return node;
+//		return node;
+		return null;
 	}
 	
 	public void hardSetCascadeNode(BlockTreeNode zNode) {

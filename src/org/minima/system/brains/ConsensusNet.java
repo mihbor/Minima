@@ -148,6 +148,11 @@ public class ConsensusNet extends ConsensusProcessor {
 			
 			//Get the Sync Package..
 			SyncPackage sp = (SyncPackage) zMessage.getObject("sync");
+			if(sp.getAllNodes().size() == 0) {
+				MinimaLogger.log("ERROR : SyncPacket with no Blocks!");
+				setInitialSyncComplete();
+				return;
+			}
 			
 			boolean hardreset = false;
 			MiniNumber cross = MiniNumber.MINUSONE;
@@ -232,7 +237,7 @@ public class ConsensusNet extends ConsensusProcessor {
 					TxPoW txpow = spack.getTxPOW();
 					
 					//Store it..
-					backup.backupTxpow(txpow);
+//					backup.backupTxpow(txpow);
 					
 					MMRSet mmr  = spack.getMMRSet();
 					boolean cascade = spack.isCascade();
@@ -248,35 +253,41 @@ public class ConsensusNet extends ConsensusProcessor {
 					
 					//Scan for coins..
 					if(mmr!=null) {
-						getMainDB().scanMMRSetForCoins(mmr);
+//						getMainDB().scanMMRSetForCoins(mmr);
 					}
 					
 					//Is this the cascade block
-					if(txpow.getBlockNumber().isEqual(sp.getCascadeNode())) {
-						getMainDB().hardSetCascadeNode(node);
-					}
+//					if(txpow.getBlockNumber().isEqual(sp.getCascadeNode())) {
+//						getMainDB().hardSetCascadeNode(node);
+//					}
 					
 					//Add all the tokens..
-					if(txpow.isTransaction()) {
-						TokenProof tokp = txpow.getTransaction().getTokenGenerationDetails();
-						if(tokp!=null) {
-							getMainDB().getUserDB().addTokenDetails(tokp);
-						}	
-						
-						ArrayList<TokenProof> tokens =  txpow.getWitness().getAllTokenDetails();
-						for(TokenProof tp : tokens) {
-							getMainDB().getUserDB().addTokenDetails(tp);
-						}
-					}
+//					if(txpow.isTransaction()) {
+//						TokenProof tokp = txpow.getTransaction().getTokenGenerationDetails();
+//						if(tokp!=null) {
+//							getMainDB().getUserDB().addTokenDetails(tokp);
+//						}	
+//						
+//						ArrayList<TokenProof> tokens =  txpow.getWitness().getAllTokenDetails();
+//						for(TokenProof tp : tokens) {
+//							getMainDB().getUserDB().addTokenDetails(tp);
+//						}
+//					}
 					
-					//Notify..
-					counter++;
-					int totperc = (int)((counter / totpacks) * 100.0f);
-					getConsensusHandler().updateListeners(new Message(ConsensusHandler.CONSENSUS_NOTIFY_INITIALPERC).addString("info", "Loading "+totperc+"%"));
+//					//Notify..
+//					counter++;
+//					int totperc = (int)((counter / totpacks) * 100.0f);
+//					getConsensusHandler().updateListeners(new Message(ConsensusHandler.CONSENSUS_NOTIFY_INITIALPERC).addString("info", "Loading "+totperc+"%"));
 				}
 				
 				System.gc();
 				MinimaLogger.memlog("GC Sync packet");
+				
+				if(getMainDB().getMainTree().getChainTip() == null) {
+					setInitialSyncComplete();
+					MinimaLogger.memlog("NULL CHain Tip in Sync..");
+					return;
+				}
 				
 				//Reset weights
 				getMainDB().hardResetChain();

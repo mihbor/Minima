@@ -1,13 +1,47 @@
 package org.minima.database.txpowdb.java;
 
+import java.util.Hashtable;
+
 import org.minima.database.txpowdb.TxPOWDBRow;
 import org.minima.objects.TxPoW;
+import org.minima.objects.base.MiniData;
 import org.minima.objects.base.MiniNumber;
 import org.minima.utils.json.JSONObject;
 
 public class JavaDBRow implements TxPOWDBRow {
 
-	private TxPoW mTxPOW;
+	/**
+	 * TxPoW data is stored in byte format and extracted when needed..
+	 */
+	private static Hashtable<String, MiniData> mTxPoWData = new Hashtable<>();
+	public static void ClearTxPowData() {
+		mTxPoWData.clear();
+	}
+	
+	public String addTxPoWtoData(TxPoW zTxPOW) {
+		//Get the ID	
+		String id = zTxPOW.getTxPowID().to0xString();
+		
+		//Get the Data Array
+		MiniData txdata = zTxPOW.createDataArray();
+		
+		//Store it..
+		mTxPoWData.put(id, txdata);
+		
+		return id;
+	}
+	
+	public TxPoW getTxPoWData(String zID) {
+		MiniData data = mTxPoWData.get(zID);
+		
+		TxPoW txp = TxPoW.createTxPoW(data);
+		
+		return txp;
+	}
+	
+	
+//	private TxPoW mTxPOW;
+	private String mTxPOWID;
 
 	private boolean mIsMainChainBlock;
 	
@@ -24,7 +58,10 @@ public class JavaDBRow implements TxPOWDBRow {
 	private boolean mMonotonic;
 	
 	public JavaDBRow(TxPoW zTxPOW) {
-		mTxPOW 				= zTxPOW;
+		//Add the TxPoW
+		mTxPOWID = addTxPoWtoData(zTxPOW);
+//		mTxPOW 				= zTxPOW;
+		
 		mIsInBlock 			= false;
 		mIsMainChainBlock     = false;
 		mBlockState         = TXPOWDBROW_STATE_BASIC;
@@ -38,7 +75,7 @@ public class JavaDBRow implements TxPOWDBRow {
 	public JSONObject toJSON() {
 		JSONObject ret = new JSONObject();
 		
-		ret.put("txpow",mTxPOW.toJSON());
+		ret.put("txpow",getTxPOW().toJSON());
 		ret.put("isonchainblock",mIsMainChainBlock);
 		ret.put("isinblock",mIsInBlock);
 		ret.put("inblock",mInBlocknumber.toString());
@@ -51,7 +88,8 @@ public class JavaDBRow implements TxPOWDBRow {
 	
 	@Override
 	public TxPoW getTxPOW() {
-		return mTxPOW;
+		return getTxPoWData(mTxPOWID);
+//		return mTxPOW;
 	}
 
 	@Override

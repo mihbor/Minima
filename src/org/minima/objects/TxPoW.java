@@ -3,6 +3,7 @@
  */
 package org.minima.objects;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -16,6 +17,7 @@ import org.minima.objects.base.MiniInteger;
 import org.minima.objects.base.MiniNumber;
 import org.minima.system.txpow.TxPoWMiner;
 import org.minima.utils.Crypto;
+import org.minima.utils.MinimaLogger;
 import org.minima.utils.Streamable;
 import org.minima.utils.SuperBlockLevels;
 import org.minima.utils.json.JSONObject;
@@ -346,7 +348,46 @@ public class TxPoW implements Streamable {
 			baos.close();
 			
 		} catch (IOException e) {
-			e.printStackTrace();
+			MinimaLogger.log(e);
 		}
 	}
+	
+	public MiniData createDataArray() {
+		MiniData ret = null; 
+		try {
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			DataOutputStream dos       = new DataOutputStream(baos);
+			writeDataStream(dos);
+			dos.flush();
+			baos.flush();
+			
+			//Get the Size
+			ret = new MiniData(baos.toByteArray());
+			
+			dos.close();
+			baos.close();
+			
+		} catch (IOException e) {
+			MinimaLogger.log(e);
+		}
+		
+		return ret;
+	}
+	
+	public static TxPoW createTxPoW(MiniData zData) {
+		TxPoW txp = new TxPoW();
+		
+		ByteArrayInputStream bais = new ByteArrayInputStream(zData.getData());
+		DataInputStream dis       = new DataInputStream(bais);
+		try {
+			txp.readDataStream(dis);
+			dis.close();
+			bais.close();
+		} catch (IOException e) {
+			MinimaLogger.log(e);
+		}
+		
+		return txp;
+	}
+	
 }

@@ -948,8 +948,36 @@ public class ConsensusPrint extends ConsensusProcessor {
 			//Do a FULL status ( with IBD and folder sizes..)
 			boolean fullstatus = zMessage.getBoolean("full");
 			
+			//Get the response JSON
+			JSONObject status = InputHandler.getResponseJSON(zMessage);
+			
 			//Main Handler
 			Main main = Main.getMainHandler();
+			
+			//Up time..
+			long timediff     = System.currentTimeMillis() - Main.getMainHandler().getNodeStartTime();
+			String uptime     = Maths.ConvertMilliToTime(timediff);	
+			
+			//Version
+			status.put("version", GlobalParams.MINIMA_VERSION);
+			status.put("time", new Date().toString());
+			status.put("uptime", uptime);
+			status.put("conf", main.getBackupManager().getRootFolder().getAbsolutePath());
+			status.put("host", main.getNetworkHandler().getBaseHost());
+			status.put("minimaport", main.getNetworkHandler().getMinimaServer().getPort());
+			status.put("rpcport", main.getNetworkHandler().getRPCPort());
+			status.put("websocketport", main.getNetworkHandler().getWSPort());
+			status.put("minidappserver", main.getNetworkHandler().getMiniDAPPServerPort());
+			status.put("automine", main.getMiner().isAutoMining());
+			
+			System.gc();
+			status.put("memory", MiniFormat.formatSize(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
+			
+			//COINDB
+			status.put("coindb", getMainDB().getCoinDB().getComplete().size());
+			
+			//TxPOWDB
+			status.put("txpowdb", getMainDB().getTxPowDB().getSize());
 			
 			if(getMainDB().getMainTree().getChainRoot() == null) {
 				//Add it to the output
@@ -961,27 +989,6 @@ public class ConsensusPrint extends ConsensusProcessor {
 			BlockTreeNode tip  		= getMainDB().getMainTree().getChainTip();
 			BlockTreeNode root 		= getMainDB().getMainTree().getChainRoot();
 			
-			//Get the response JSON
-			JSONObject status = InputHandler.getResponseJSON(zMessage);
-			
-			//Version
-			status.put("version", GlobalParams.MINIMA_VERSION);
-			status.put("time", new Date().toString());
-			
-			//Up time..
-			long timediff     = System.currentTimeMillis() - Main.getMainHandler().getNodeStartTime();
-			String uptime     = Maths.ConvertMilliToTime(timediff);	
-
-			status.put("uptime", uptime);
-			status.put("conf", main.getBackupManager().getRootFolder().getAbsolutePath());
-			status.put("host", main.getNetworkHandler().getBaseHost());
-			status.put("minimaport", main.getNetworkHandler().getMinimaServer().getPort());
-			status.put("rpcport", main.getNetworkHandler().getRPCPort());
-			status.put("websocketport", main.getNetworkHandler().getWSPort());
-			status.put("minidappserver", main.getNetworkHandler().getMiniDAPPServerPort());
-			
-			status.put("automine", main.getMiner().isAutoMining());
-			
 			status.put("root", root.getTxPowID().to0xString());
 			status.put("tip", tip.getTxPowID().to0xString());
 			status.put("total", tip.getTxPow().getMMRTotal().toString());
@@ -992,12 +999,11 @@ public class ConsensusPrint extends ConsensusProcessor {
 			
 			status.put("difficulty", tip.getTxPow().getBlockDifficulty().to0xString());
 			
-			//COINDB
-			status.put("coindb", getMainDB().getCoinDB().getComplete().size());
-			
+//			//COINDB
+//			status.put("coindb", getMainDB().getCoinDB().getComplete().size());
+//			
 			//TxPOWDB
-			//getMainDB().getTxPowDB().ClearDB();
-			status.put("txpowdb", getMainDB().getTxPowDB().getSize());
+//			status.put("txpowdb", getMainDB().getTxPowDB().getSize());
 			
 			//Size of the TXPOW DB folder..
 			if(fullstatus) {
@@ -1023,8 +1029,6 @@ public class ConsensusPrint extends ConsensusProcessor {
 			status.put("mempooltxn", unused.size());
 			status.put("mempoolcoins", getMainDB().getMempoolCoins().size());
 			
-			System.gc();
-			status.put("memory", MiniFormat.formatSize(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
 			
 			//The block used for speed calculation..
 			status.put("chainspeed", getMainDB().getMainTree().getChainSpeed());

@@ -14,11 +14,12 @@ import org.minima.utils.MinimaLogger;
 
 public class FastJavaDB implements TxPowDB {
 
-	public int MEM_DEPTH = 8;
+	public int MEM_DEPTH = 32;
 	
+	//Each Row in the DB
 	private Hashtable<String,JavaDBRow> mTxPoWRows;
 	
-	//The Children of a Parent..
+	//Speed Table of The Children of a Parent..
 	private Hashtable<String,ArrayList<TxPOWDBRow>> mChildrenOfParents;
 	
 	public FastJavaDB() {
@@ -40,10 +41,11 @@ public class FastJavaDB implements TxPowDB {
 		if(row != null) {
 			return row;
 		}
+//		MinimaLogger.log("TxPoW row added..");
 		
 		//Create it
 		row = new JavaDBRow(zTxPOW);
-				
+
 		//Add it..
 		mTxPoWRows.put(search, row);
 		
@@ -237,6 +239,7 @@ public class FastJavaDB implements TxPowDB {
 
 	@Override
 	public void ClearDB() {
+		MinimaLogger.log("Clear TXPoWDB");
 		mTxPoWRows.clear();
 		mChildrenOfParents.clear();
 	}

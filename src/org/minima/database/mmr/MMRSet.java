@@ -396,7 +396,7 @@ public class MMRSet implements Streamable {
 		return entry;
 	}
 	
-	private MMREntry getEntry(int zRow, MiniInteger zEntry) {
+	public MMREntry getEntry(int zRow, MiniInteger zEntry) {
 		//Cycle down through the MMR sets..
 		MMRSet current = this;
 		
@@ -418,6 +418,11 @@ public class MMRSet implements Streamable {
 		entry.setBlockTime(getBlockTime());
 		
 		return entry;
+	}
+	
+	public void clearEntry(int zRow, MiniInteger zEntry) {
+		String entryname = getHashTableEntry(zRow, zEntry);
+		mSetEntries.remove(entryname);
 	}
 	
 	/**
