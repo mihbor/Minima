@@ -173,20 +173,29 @@ public class MinimaReader implements Runnable {
 					notifyListeners("Initial Sync Message : "+ibdsize);
 					
 					//This is a MiniData Structure..
-					int datalen = mInput.readInt();
+					int datalen   = mInput.readInt();
+					
+					//Buffer for reading
+					byte[] datarr = new byte[8096];
 					
 					ByteArrayOutputStream baos = new ByteArrayOutputStream(datalen);
 					long tot        = 0;
 					long lastnotify = -1;
 					while( tot < datalen ) {
-						baos.write(mInput.read());
-						tot++;
+						//Read in the data..
+						int read = mInput.read(datarr);
+						baos.write(datarr,0,read);
+						tot+=read;
+						
+//						baos.write(mInput.read());
+//						tot++;
+						
 						//What Percent Done..
 						long newnotify = (tot*100)/datalen;
 						if(newnotify != lastnotify) {
 							lastnotify = newnotify;
 							notifyListeners("IBD download : "+lastnotify+"% of "+ibdsize);
-//							MinimaLogger.log("IBD download : "+lastnotify+"% of "+ibdsize+" tot*100:"+(tot*100)+" datalen:"+datalen);
+							MinimaLogger.log("IBD download : "+lastnotify+"% of "+ibdsize);
 						}
 					}
 					baos.flush();
@@ -211,9 +220,6 @@ public class MinimaReader implements Runnable {
 				
 				//What kind of message is it..
 				if(msgtype.isEqual(NETMESSAGE_INTRO)) {
-					//tell us how big the sync was..
-//					MinimaLogger.log("Initial Sync Message : "+MiniFormat.formatSize(len));
-					
 					//Read in the SyncPackage
 					SyncPackage sp = new SyncPackage();
 					sp.readDataStream(inputstream);
