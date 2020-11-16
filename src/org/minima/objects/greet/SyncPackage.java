@@ -12,6 +12,7 @@ import org.minima.database.txpowtree.BlockTreeNode;
 import org.minima.database.txpowtree.CascadeTree;
 import org.minima.objects.TxPoW;
 import org.minima.objects.base.MiniNumber;
+import org.minima.utils.MinimaLogger;
 import org.minima.utils.Streamable;
 
 public class SyncPackage implements Streamable{
@@ -99,6 +100,12 @@ public class SyncPackage implements Streamable{
 		MiniNumber nodelen = MiniNumber.ReadFromStream(zIn);
 		int len = nodelen.getAsInt();
 		for(int i=0;i<len;i++) {
+			//Bit of Logging..
+			if(i %500 == 0) {
+				System.gc();
+				//MinimaLogger.log("SyncPacket load.. "+i+" / "+len);
+			}
+			
 			SyncPacket node = new SyncPacket();
 			node.readDataStream(zIn);
 			mNodes.add(node);
