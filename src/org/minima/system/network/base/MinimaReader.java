@@ -195,7 +195,7 @@ public class MinimaReader implements Runnable {
 						if(newnotify != lastnotify) {
 							lastnotify = newnotify;
 							notifyListeners("IBD download : "+lastnotify+"% of "+ibdsize);
-							MinimaLogger.log("IBD download : "+lastnotify+"% of "+ibdsize);
+//							MinimaLogger.log("IBD download : "+lastnotify+"% of "+ibdsize);
 						}
 					}
 					baos.flush();
