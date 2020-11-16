@@ -463,9 +463,6 @@ public class ConsensusNet extends ConsensusProcessor {
 				//Do we have it..
 				if(txp != null) {
 					txpowlist.addTxPow(txp);
-					MinimaLogger.log("TxPowList Req :"+txpid);
-				}else {
-					MinimaLogger.log("TxPowList Req MISSING :"+txpid);
 				}
 			}
 			
