@@ -948,6 +948,8 @@ public class ConsensusPrint extends ConsensusProcessor {
 			//Do a FULL status ( with IBD and folder sizes..)
 			boolean fullstatus = zMessage.getBoolean("full");
 			
+			System.gc();
+			
 			//Main Handler
 			Main main = Main.getMainHandler();
 			
@@ -1021,6 +1023,10 @@ public class ConsensusPrint extends ConsensusProcessor {
 			ArrayList<TxPOWDBRow> unused = getMainDB().getTxPowDB().getAllUnusedTxPOW();
 			status.put("mempooltxn", unused.size());
 			status.put("mempoolcoins", getMainDB().getMempoolCoins().size());
+			
+			//Memory usage..
+			long mem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+			status.put("memory", MiniFormat.formatSize(mem));
 			
 			//The block used for speed calculation..
 			status.put("chainspeed", getMainDB().getMainTree().getChainSpeed());
