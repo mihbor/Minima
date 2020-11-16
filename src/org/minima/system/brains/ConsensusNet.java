@@ -253,31 +253,31 @@ public class ConsensusNet extends ConsensusProcessor {
 					
 					//Scan for coins..
 					if(mmr!=null) {
-//						getMainDB().scanMMRSetForCoins(mmr);
+						getMainDB().scanMMRSetForCoins(mmr);
 					}
 					
 					//Is this the cascade block
-//					if(txpow.getBlockNumber().isEqual(sp.getCascadeNode())) {
-//						getMainDB().hardSetCascadeNode(node);
-//					}
+					if(txpow.getBlockNumber().isEqual(sp.getCascadeNode())) {
+						getMainDB().hardSetCascadeNode(node);
+					}
 					
 					//Add all the tokens..
-//					if(txpow.isTransaction()) {
-//						TokenProof tokp = txpow.getTransaction().getTokenGenerationDetails();
-//						if(tokp!=null) {
-//							getMainDB().getUserDB().addTokenDetails(tokp);
-//						}	
-//						
-//						ArrayList<TokenProof> tokens =  txpow.getWitness().getAllTokenDetails();
-//						for(TokenProof tp : tokens) {
-//							getMainDB().getUserDB().addTokenDetails(tp);
-//						}
-//					}
+					if(txpow.isTransaction()) {
+						TokenProof tokp = txpow.getTransaction().getTokenGenerationDetails();
+						if(tokp!=null) {
+							getMainDB().getUserDB().addTokenDetails(tokp);
+						}	
+						
+						ArrayList<TokenProof> tokens =  txpow.getWitness().getAllTokenDetails();
+						for(TokenProof tp : tokens) {
+							getMainDB().getUserDB().addTokenDetails(tp);
+						}
+					}
 					
-//					//Notify..
-//					counter++;
-//					int totperc = (int)((counter / totpacks) * 100.0f);
-//					getConsensusHandler().updateListeners(new Message(ConsensusHandler.CONSENSUS_NOTIFY_INITIALPERC).addString("info", "Loading "+totperc+"%"));
+					//Notify..
+					counter++;
+					int totperc = (int)((counter / totpacks) * 100.0f);
+					getConsensusHandler().updateListeners(new Message(ConsensusHandler.CONSENSUS_NOTIFY_INITIALPERC).addString("info", "Loading "+totperc+"%"));
 				}
 				
 				System.gc();

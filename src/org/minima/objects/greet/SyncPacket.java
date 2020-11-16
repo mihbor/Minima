@@ -102,11 +102,11 @@ public class SyncPacket implements Streamable {
 		mTxPOW.readDataStream(zIn);
 		
 		//mTxPOW = new TxPoW();
-		mTxPOW.clearBody();
-		for(int i=0;i<GlobalParams.MINIMA_CASCADE_LEVELS;i++) {
-			mTxPOW.getTxHeader().mSuperParents[i] = new MiniData();
-		}
-		mTxPOW.calculateTXPOWID();
+//		mTxPOW.clearBody();
+//		for(int i=0;i<GlobalParams.MINIMA_CASCADE_LEVELS;i++) {
+//			mTxPOW.getTxHeader().mSuperParents[i] = new MiniData();
+//		}
+//		mTxPOW.calculateTXPOWID();
 		
 		//Is it a cascader..
 		MiniByte casc = MiniByte.ReadFromStream(zIn);
@@ -122,8 +122,6 @@ public class SyncPacket implements Streamable {
 			mMMR.readDataStream(zIn);
 //			mMMR.setHashOnly();
 		}
-		
-		mMMR = new MMRSet();
 	}
 	
 }
