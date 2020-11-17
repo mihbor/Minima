@@ -99,6 +99,11 @@ public class SyncPackage implements Streamable{
 		MiniNumber nodelen = MiniNumber.ReadFromStream(zIn);
 		int len = nodelen.getAsInt();
 		for(int i=0;i<len;i++) {
+			//Could be a lot of data..
+			if(i % 500 == 0) {
+				System.gc();
+			}
+			
 			SyncPacket node = new SyncPacket();
 			node.readDataStream(zIn);
 			mNodes.add(node);
