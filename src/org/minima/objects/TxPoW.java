@@ -63,11 +63,16 @@ public class TxPoW implements Streamable {
 	
 	public void clearRAMData() {
 		if(!isTransaction()) {
-			mBody.clearAllTransactionData();
+//			if(mBody != null) {
+//				mBody.clearAllTransactionData();
+//			}
+//			mBody = null;
 		}
 		
 		if(!isBlock()) {
-			mBody.clearAllBlockData();
+			if(mBody != null) {
+				mBody.clearAllBlockData();
+			}
 			mHeader.clearAllBlockData();
 		}
 	}

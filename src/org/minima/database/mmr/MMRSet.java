@@ -177,6 +177,55 @@ public class MMRSet implements Streamable {
 		}
 	}
 	
+	public void checkDuplicates() {
+		ArrayList<String> remove = new ArrayList<>();
+		
+//		Enumeration<MMREntry> entries = mSetEntries.elements();
+//		while(entries.hasMoreElements()) {
+//			MMREntry entry =entries.nextElement();
+//			
+//			//Get the Hashtable entry
+//			String hash = getHashTableEntry(entry.getRow(), entry.getEntryNumber());
+//
+//			///Check the Parent..
+//			if(mParent != null) {
+//				MMREntry dupcheck = mParent.getEntry(entry.getRow(), entry.getEntryNumber());
+//					
+//				if(!dupcheck.isEmpty()) {
+//					//Duplicate Found!..
+////					MinimaLogger.log("Duplicate Found : "+entry);
+//					//Clear Here..
+//					remove.add(hash);
+//				}
+//			}
+//		}
+		
+		//All the Entries in this set
+		mSetEntries       = new Hashtable<>();
+		mSetEntriesCoinID = new Hashtable<>();
+		
+		//The Maximum Rows and entries
+		mMaxEntries = new MMREntry[256];
+		mMaxRow     = 0;
+		
+		//A list of entries to keep track of
+		mKeepers = new ArrayList<>();
+		
+		mFinalizedPeaks.clear();
+		mFinalizedZeroRow.clear();
+		
+//		if(remove.size() != mSetEntries.size()) {
+			MinimaLogger.log("Duplicates Found @ "+mBlockTime+") "+remove.size()+" / "+mSetEntries.size());
+//			
+//		}
+//		
+//		for(String rem : remove) {
+//			mSetEntries.remove(rem);
+//		}
+		
+//		finalizeSet();
+	}
+	
 	public void setParent(MMRSet zParent) {
 		mParent = zParent;
 	}
@@ -376,7 +425,7 @@ public class MMRSet implements Streamable {
 		return entry;
 	}
 	
-	private MMREntry getEntry(int zRow, MiniInteger zEntry) {
+	public MMREntry getEntry(int zRow, MiniInteger zEntry) {
 		//Cycle down through the MMR sets..
 		MMRSet current = this;
 		

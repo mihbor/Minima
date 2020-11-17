@@ -96,6 +96,8 @@ public class SyncPacket implements Streamable {
 		mTxPOW = new TxPoW();
 		mTxPOW.readDataStream(zIn);
 		
+		mTxPOW.clearBody();
+		
 		//Is it a cascader..
 		MiniByte casc = MiniByte.ReadFromStream(zIn);
 		mCascadeNode  = casc.isTrue();
@@ -109,6 +111,9 @@ public class SyncPacket implements Streamable {
 			mMMR = new MMRSet();
 			mMMR.readDataStream(zIn);
 		}
+		
+		mMMR = null;
+//		mMMR = new MMRSet();
 	}
 	
 }

@@ -23,11 +23,13 @@ public class JavaDBRow implements TxPOWDBRow {
 	
 	private boolean mMonotonic;
 	
+	public static TxPoW TXPOW = new TxPoW();
+	
 	public JavaDBRow(TxPoW zTxPOW) {
-		mTxPOW 				= zTxPOW;
+		mTxPOW 				= TXPOW;
 		
 		//Clear unneeded data
-		//mTxPOW.clearRAMData();
+//		mTxPOW.clearRAMData();
 		
 		//Reset the rest..
 		mIsInBlock 			= false;

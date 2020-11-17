@@ -83,15 +83,18 @@ public class TxHeader implements Streamable {
 	}
 	
 	public void clearAllBlockData() {
-		mNonce       = null;
-		mTimeSecs    = null;
-		mBlockNumber = null;
-		mBlockDifficulty = null;
-		mSuperParents = null;
-		mChainID = null;
-		mParentChainID = null;
-		mMMRRoot = null;
-		mTxBodyHash = null;
+//		mNonce       = null;
+//		mTimeSecs    = null;
+//		mBlockNumber = null;
+//		mBlockDifficulty = null;
+		for(int i=0;i<GlobalParams.MINIMA_CASCADE_LEVELS;i++) {
+			mSuperParents[i] = new MiniData();
+		}
+		
+		mChainID = new MiniData();
+		mParentChainID = new MiniData();
+		mMMRRoot = new MiniData();
+//		mTxBodyHash = new MiniData();
 	}
 	
 	public MiniData getBodyHash() {

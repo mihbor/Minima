@@ -105,27 +105,31 @@ public class TxPoWChecker {
 		}
 			
 		//Burn Transaction check!.. 
-		if(!zTxPOW.getBurnTransaction().isEmpty()) {
-			//Get MAIN Transaction Hash - make sure is correct in Burn Transaction
-			MiniData transid = zTxPOW.getTransID();
-			
-			//Check is correct on Burn Transaction..
-			if(!zTxPOW.getBurnTransaction().getLinkHash().isEqual(transid)) {
-				return false;
-			}
-			
-			boolean burntrans = checkTransactionMMR(zTxPOW.getBurnTransaction(), 
-													zTxPOW.getBurnWitness(), 
-													zDB, zBlock, zTransNumber, zMMRSet, zTouchMMR, 
-													new JSONArray());
-			if(!burntrans) {
-				return false;
-			}
-		}
+//		if(!zTxPOW.getBurnTransaction().isEmpty()) {
+//			//Get MAIN Transaction Hash - make sure is correct in Burn Transaction
+//			MiniData transid = zTxPOW.getTransID();
+//			
+//			//Check is correct on Burn Transaction..
+//			if(!zTxPOW.getBurnTransaction().getLinkHash().isEqual(transid)) {
+//				return false;
+//			}
+//			
+//			boolean burntrans = checkTransactionMMR(zTxPOW.getBurnTransaction(), 
+//													zTxPOW.getBurnWitness(), 
+//													zDB, zBlock, zTransNumber, zMMRSet, zTouchMMR, 
+//													new JSONArray());
+//			if(!burntrans) {
+//				return false;
+//			}
+//		}
 		
 		//Now Check the Transaction Link Hash..
-		if(!zTxPOW.getTransaction().getLinkHash().isEqual(new MiniData("0x00"))) {
-			return false;
+//		if(!zTxPOW.getTransaction().getLinkHash().isEqual(new MiniData("0x00"))) {
+//			return false;
+//		}
+		
+		if(!zTxPOW.isTransaction()) {
+			return true;
 		}
 		
 		return checkTransactionMMR(zTxPOW.getTransaction(), zTxPOW.getWitness(), zDB, zBlock, zTransNumber, zMMRSet, zTouchMMR, new JSONArray());	

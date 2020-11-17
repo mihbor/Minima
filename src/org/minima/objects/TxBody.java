@@ -55,10 +55,10 @@ public class TxBody implements Streamable {
 	}
 
 	public void clearAllTransactionData() {
-		mTransaction = null;
-		mWitness = null;
-		mBurnTransaction = null;
-		mBurnWitness = null;
+//		mTransaction = null;
+//		mWitness = null;
+//		mBurnTransaction = null;
+//		mBurnWitness = null;
 	}
 	
 	public void clearAllBlockData() {

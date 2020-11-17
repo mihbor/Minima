@@ -210,17 +210,23 @@ public class ConsensusNet extends ConsensusProcessor {
 				//Wipe the txpow folder..
 				BackupManager.safeDelete(backup.getBackUpFolder());
 				
+				MMRSet MMmmr = new MMRSet();
+				
+				
 				//Drill down 
 				ArrayList<SyncPacket> packets = sp.getAllNodes();
 				float totpacks = packets.size();
 				float counter  = 0;
 				for(SyncPacket spack : packets) {
 					TxPoW txpow = spack.getTxPOW();
+					//txpow = new TxPoW();
 					
 					//Store it..
-					backup.backupTxpow(txpow);
+//					backup.backupTxpow(txpow);
 					
 					MMRSet mmr  = spack.getMMRSet();
+//					mmr = MMmmr;
+					
 					boolean cascade = spack.isCascade();
 					
 					//Add it to the DB..
@@ -228,7 +234,10 @@ public class ConsensusNet extends ConsensusProcessor {
 					
 					//Scan for coins..
 					if(mmr!=null) {
-						getMainDB().scanMMRSetForCoins(mmr);
+						//Check which Bits can be discarded
+						//mmr.checkDuplicates();
+						
+						//getMainDB().scanMMRSetForCoins(mmr);
 					}
 					
 					//Is this the cascade block
@@ -830,7 +839,7 @@ public class ConsensusNet extends ConsensusProcessor {
 		//OK - it passes a general test.. add it to the database..
 		TxPOWDBRow row = getMainDB().addNewTxPow(zTxPoW);
 		
-		if(isAllreadyValid) {
+		if(isAllreadyValid && zTxPoW.isTransaction()) {
 			//Add all the tokens..
 			TokenProof tokp = zTxPoW.getTransaction().getTokenGenerationDetails();
 			if(tokp!=null) {
