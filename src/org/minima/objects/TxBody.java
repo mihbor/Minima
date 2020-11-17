@@ -54,6 +54,17 @@ public class TxBody implements Streamable {
 		mTxPowIDList = new ArrayList<>();
 	}
 
+	public void clearAllTransactionData() {
+		mTransaction = null;
+		mWitness = null;
+		mBurnTransaction = null;
+		mBurnWitness = null;
+	}
+	
+	public void clearAllBlockData() {
+		mTxPowIDList.clear();
+	}
+	
 	public JSONObject toJSON() {
 		JSONObject txpow = new JSONObject();
 		

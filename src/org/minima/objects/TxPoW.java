@@ -61,6 +61,17 @@ public class TxPoW implements Streamable {
 		mBody   = new TxBody();
 	}
 	
+	public void clearRAMData() {
+		if(!isTransaction()) {
+			mBody.clearAllTransactionData();
+		}
+		
+		if(!isBlock()) {
+			mBody.clearAllBlockData();
+			mHeader.clearAllBlockData();
+		}
+	}
+	
 	public TxHeader getTxHeader() {
 		return mHeader;
 	}
