@@ -25,6 +25,11 @@ public class JavaDBRow implements TxPOWDBRow {
 	
 	public JavaDBRow(TxPoW zTxPOW) {
 		mTxPOW 				= zTxPOW;
+		
+		//Clear unneeded data
+		//mTxPOW.clearRAMData();
+		
+		//Reset the rest..
 		mIsInBlock 			= false;
 		mIsMainChainBlock     = false;
 		mBlockState         = TXPOWDBROW_STATE_BASIC;
