@@ -297,6 +297,8 @@ public class ConsensusHandler extends MessageProcessor {
 			Message netw    = new Message(NetworkHandler.NETWORK_SENDALL).addObject("message", netmsg);
 			Main.getMainHandler().getNetworkHandler().PostMessage(netw);
 		
+			//Clean up..
+			System.gc();
 			
 		/**
 		 * Called every 10 Minutes to do a few tasks
