@@ -102,6 +102,10 @@ public class SyncPackage implements Streamable{
 			SyncPacket node = new SyncPacket();
 			node.readDataStream(zIn);
 			mNodes.add(node);
+			
+			if(i % 250 == 0) {
+				System.gc();
+			}
 		}
 		
 		mCascadeNode = MiniNumber.ReadFromStream(zIn);
