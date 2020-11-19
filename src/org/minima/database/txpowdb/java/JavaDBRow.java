@@ -25,6 +25,8 @@ public class JavaDBRow implements TxPOWDBRow {
 	
 	public JavaDBRow(TxPoW zTxPOW) {
 		mTxPOW 				= zTxPOW;
+//		clenseTxPow(mTxPOW);
+		
 		mIsInBlock 			= false;
 		mIsMainChainBlock     = false;
 		mBlockState         = TXPOWDBROW_STATE_BASIC;
@@ -34,11 +36,39 @@ public class JavaDBRow implements TxPOWDBRow {
 		mMonotonic          = false;
 	}
 
+	/**
+	 * Remove any unneeded information..
+	 * @param zTxPow
+	 */
+	private void clenseTxPow(TxPoW zTxPow) {
+		if(!zTxPow.isTransaction() && zTxPow.hasBody()) {
+			//Remove all the Transaction stuff..
+			zTxPow.setTransaction(null);
+			zTxPow.setWitness(null);
+			zTxPow.getTxBody().mBurnTransaction = null;
+			zTxPow.getTxBody().mBurnWitness = null;
+		}
+		
+		if(!zTxPow.isBlock()) {
+			zTxPow.getTxHeader().mTxBodyHash		= null;
+			zTxPow.getTxHeader().mNonce				= null;
+			zTxPow.getTxHeader().mMMRTotal			= null;
+			zTxPow.getTxHeader().mMMRRoot			= null;
+			zTxPow.getTxHeader().mSuperParents 		= null;
+			zTxPow.getTxHeader().mParentChainID 	= null;
+			zTxPow.getTxHeader().mChainID 			= null;
+			zTxPow.getTxHeader().mBlockDifficulty 	= null;
+		}
+		
+		
+	}
+	
 	@Override
 	public JSONObject toJSON() {
 		JSONObject ret = new JSONObject();
 		
 		ret.put("txpow",mTxPOW.toJSON());
+		
 		ret.put("isonchainblock",mIsMainChainBlock);
 		ret.put("isinblock",mIsInBlock);
 		ret.put("inblock",mInBlocknumber.toString());

@@ -830,7 +830,7 @@ public class ConsensusNet extends ConsensusProcessor {
 		//OK - it passes a general test.. add it to the database..
 		TxPOWDBRow row = getMainDB().addNewTxPow(zTxPoW);
 		
-		if(isAllreadyValid) {
+		if(isAllreadyValid && zTxPoW.isTransaction()) {
 			//Add all the tokens..
 			TokenProof tokp = zTxPoW.getTransaction().getTokenGenerationDetails();
 			if(tokp!=null) {

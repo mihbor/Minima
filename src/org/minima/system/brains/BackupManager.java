@@ -123,7 +123,7 @@ public class BackupManager extends MessageProcessor {
 			}
 			
 			//Write..
-			MiniFile.writeObjectToFile(ff, stream);	
+			//MiniFile.writeObjectToFile(ff, stream);	
 		
 		}else if(zMessage.isMessageType(BACKUP_DELETE)) {
 			//Get the file
