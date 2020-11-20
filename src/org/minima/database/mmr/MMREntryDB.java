@@ -22,40 +22,9 @@ public class MMREntryDB {
 	}
 	
 	/**
-	 * Wipe the DB
-	 */
-	public static void clearDB() {
-		mAllEntries.clear();
-	}
-	
-	/**
 	 * All the shared entries across al the MMRSets
 	 */
-	private static Hashtable<String, MMREntryDBRow> mAllEntries;
-	
-	/**
-	 * Remove entries that are no  longer used.. past the cascade node
-	 * @param mMinNumber
-	 */
-	public static void cleanUpDB(MiniNumber zMinNumber) {
-		//The NEW Table..
-		Hashtable<String, MMREntryDBRow> allEntries = new Hashtable<>();
-		
-		//Run through and keep the good ones..
-		Enumeration<MMREntryDBRow> entries = mAllEntries.elements();
-		while(entries.hasMoreElements()) {
-			MMREntryDBRow row = entries.nextElement();
-			MiniNumber block  = row.getMaxBloxk();
-			
-			if(block.isMoreEqual(zMinNumber)) {
-				String loc = getTableString(row.getEntry());
-				allEntries.put(loc, row);
-			}
-		}
-		
-		//And switch the 2..
-		mAllEntries = allEntries;
-	}
+	private Hashtable<String, MMREntryDBRow> mAllEntries;
 	
 	private class MMREntryDBRow {
 		MMREntry mEntry;
@@ -81,19 +50,25 @@ public class MMREntryDB {
 		}
 	}
 	
-	private static String getTableString(MMREntry zEntry) {
-		boolean dataonly  = zEntry.getData().isHashOnly();
-		String 		 hash = zEntry.getHashValue().to0xString();
-		
-		//Convert this MMREntry into a unique string..
-		return hash+":"+dataonly;
-	}
-	
 	/**
 	 * Private constructor as can only access via the static getDB()
 	 */
 	private MMREntryDB() {
 		mAllEntries = new Hashtable<>();	
+	}
+	
+	/**
+	 * Get the Location of an ENtry
+	 * 
+	 * @param zEntry
+	 * @return the String Location
+	 */
+	private String getTableEntry(MMREntry zEntry) {
+		boolean dataonly  = zEntry.getData().isHashOnly();
+		String 		 hash = zEntry.getHashValue().to0xString();
+		
+		//Convert this MMREntry into a unique string..
+		return hash+":"+dataonly;
 	}
 	
 	/**
@@ -105,7 +80,7 @@ public class MMREntryDB {
 	 */
 	public MMREntry getEntry(MMREntry zEntry, MiniNumber zBlock) {
 		//Convert this MMREntry into a unique string..
-		String loc = getTableString(zEntry);
+		String loc = getTableEntry(zEntry);
 		
 		//Do we have it..
 		MMREntryDBRow oldentry = mAllEntries.get(loc);
@@ -124,5 +99,40 @@ public class MMREntryDB {
 		
 		//And return it..
 		return zEntry;
+	}
+	
+	/**
+	 * Wipe the DB
+	 */
+	public void clearDB() {
+		mAllEntries.clear();
+	}
+	
+	public int getSize() {
+		return mAllEntries.size();
+	}
+	
+	/**
+	 * Remove entries that are no  longer used.. past the cascade node
+	 * @param mMinNumber
+	 */
+	public void cleanUpDB(MiniNumber zMinNumber) {
+		//The NEW Table..
+		Hashtable<String, MMREntryDBRow> allEntries = new Hashtable<>();
+		
+		//Run through and keep the good ones..
+		Enumeration<MMREntryDBRow> entries = mAllEntries.elements();
+		while(entries.hasMoreElements()) {
+			MMREntryDBRow row = entries.nextElement();
+			MiniNumber block  = row.getMaxBloxk();
+			
+			if(block.isMoreEqual(zMinNumber)) {
+				String loc = getTableEntry(row.getEntry());
+				allEntries.put(loc, row);
+			}
+		}
+		
+		//And switch the 2..
+		mAllEntries = allEntries;
 	}
 }

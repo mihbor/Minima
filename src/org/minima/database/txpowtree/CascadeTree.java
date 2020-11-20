@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.minima.GlobalParams;
 import org.minima.objects.base.MiniNumber;
+import org.minima.utils.MinimaLogger;
 
 public class CascadeTree {
 
@@ -65,6 +66,10 @@ public class CascadeTree {
 		//The rest of the tree.. that we CAN cascade
 		BlockTreeNode newcascade  = newfulltree.getParent();
 		
+//		if(cascadenode.getBlockNumber().isEqual(MiniNumber.ZERO)) {
+//			MinimaLogger.log("Save this block: "+MiniNumber.ZERO);
+//		}
+		
 		//Now copy all the MMR data to the old cascade..
 		newcascade.getMMRSet().copyAllParentKeepers(cascadenode.getBlockNumber());
 		
@@ -113,7 +118,12 @@ public class CascadeTree {
 				totlevel++;
 				
 				//Keep at least this many at each level..
-				if(totlevel>=GlobalParams.MINIMA_CASCADE_LEVEL_NODES) {
+				int maxatlevel = GlobalParams.MINIMA_CASCADE_LEVEL_NODES;
+//				if(casclevel == 0) {
+//					maxatlevel = 20;
+//				}
+				
+				if(totlevel>=maxatlevel) {
 					if(casclevel<GlobalParams.MINIMA_CASCADE_LEVELS-1) {
 						casclevel++;
 						totlevel = 0;
@@ -122,7 +132,6 @@ public class CascadeTree {
 						//..
 					}
 				}
-				
 			}else{
 				//Add to the removals..
 				mRemovals.add(node);
@@ -144,5 +153,8 @@ public class CascadeTree {
 		
 		//And clear it out..
 		mCascadeTree.clearCascadeBody();
+		
+		//And now clean up the MMR DB
+		
 	}
 }

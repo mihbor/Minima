@@ -16,6 +16,7 @@ import org.minima.database.coindb.CoinDBRow;
 import org.minima.database.coindb.java.FastCoinDB;
 import org.minima.database.mmr.MMRData;
 import org.minima.database.mmr.MMREntry;
+import org.minima.database.mmr.MMREntryDB;
 import org.minima.database.mmr.MMRProof;
 import org.minima.database.mmr.MMRSet;
 import org.minima.database.txpowdb.TxPOWDBRow;
@@ -313,6 +314,11 @@ public class MinimaDB {
 				}
 			}
 			
+//			if(!newtip.getBlockNumber().modulo(MiniNumber.THIRTYTWO).isEqual(MiniNumber.ZERO)) {
+//				//MinimaLogger.log("NO cascade : "+newtip.getBlockNumber());
+//				return;
+//			}
+			
 			/**
 			 * Cascade the tree
 			 */
@@ -326,6 +332,17 @@ public class MinimaDB {
 			
 			//Get the Tree
 			mMainTree = casc.getCascadeTree();
+			
+			//And NOw clear the MMR DB
+			MiniNumber minnum = mMainTree.getCascadeNode().getBlockNumber();
+			
+			int oldsize = MMREntryDB.getDB().getSize();
+			MMREntryDB.getDB().cleanUpDB(minnum);
+			int newsize = MMREntryDB.getDB().getSize();
+					
+			if(newsize != oldsize) {
+				MinimaLogger.log("MMRDB Entry size change : "+MMREntryDB.getDB().getSize());
+			}
 			
 			//Remove the deleted blocks..
 			for(BlockTreeNode node : removals) {
@@ -818,8 +835,8 @@ public class MinimaDB {
 		
 		//DEBUG..
 		if(GlobalParams.SHORT_CHAIN_DEBUG_MODE) {
-			if(howdeep.isMore(MiniNumber.EIGHT)) {
-				howdeep = MiniNumber.EIGHT;
+			if(howdeep.isMore(MiniNumber.FOUR)) {
+				howdeep = MiniNumber.FOUR;
 			}
 		}
 	

@@ -393,26 +393,36 @@ public class MMRSet implements Streamable {
 	 * @return
 	 */
 	private MMREntry setEntry(int zRow, MiniInteger zEntry, MMRData zData) {
-		//Check if already added..
-		String entryname = getHashTableEntry(zRow, zEntry);
-		MMREntry entry   = mSetEntries.get(entryname);
+		//Create a new Entry and add it to this MMRSet - will just overwrite the old if exsts
+		MMREntry entry = new MMREntry(zRow, zEntry);
+		entry.setBlockTime(getBlockTime());
+		entry.setData(zData);
 		
-		//Create and add if not found
-		if(entry == null) {
-			entry = new MMREntry(zRow, zEntry);
-			entry.setBlockTime(getBlockTime());
-			entry.setData(zData);
-			
-			//Add it to the hastables
-			addHashTableEntry(entry);
-		}else {
-			MinimaLogger.log("Change MMREntry.. "+entry);
-			//Set the correct data
-			entry.setData(zData);
-		}
+		//Add it to the hash tables
+		addHashTableEntry(entry);
 		
-		//Return
 		return entry;
+		
+//		//Check if already added..
+//		String entryname = getHashTableEntry(zRow, zEntry);
+//		MMREntry entry   = mSetEntries.get(entryname);
+//		
+//		//Create and add if not found
+//		if(entry == null) {
+//			entry = new MMREntry(zRow, zEntry);
+//			entry.setBlockTime(getBlockTime());
+//			entry.setData(zData);
+//			
+//			//Add it to the hastables
+//			addHashTableEntry(entry);
+//		}else {
+//			MinimaLogger.log("Change MMREntry.. from "+entry.getData()+" to:"+zData);
+//			//Set the correct data
+//			entry.setData(zData);
+//		}
+//		
+//		//Return
+//		return entry;
 	}
 	
 	private MMREntry getEntry(int zRow, MiniInteger zEntry) {
@@ -1056,6 +1066,8 @@ public class MMRSet implements Streamable {
 	 * Recursively copy the parents..
 	 */
 	public void copyAllParentKeepers(MiniNumber zCascade) {
+		MinimaLogger.log("Current Cascade : "+zCascade);
+		
 		//Start at this point..
 		MMRSet curr = this;
 		
@@ -1076,6 +1088,8 @@ public class MMRSet implements Streamable {
 			
 			//Copy the parents MMR keepers..
 			mmr.copyParentKeepers();
+		
+			MinimaLogger.log("Save this block: "+mmr.getBlockTime());
 		}
 	}
 	
@@ -1134,7 +1148,7 @@ public class MMRSet implements Streamable {
 		//Now the Entries..
 		mSetEntries       = new Hashtable<>();
 		mSetEntriesCoinID = new Hashtable<>();
-		mMaxEntries       = new MMREntry[256];
+		mMaxEntries       = new MMREntry[MAXROWS];
 		
 		int len = zIn.readInt();
 		for(int i=0;i<len;i++) {
