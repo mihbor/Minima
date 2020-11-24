@@ -43,7 +43,7 @@ public class MMREntryDB {
 			return mMaxBlock;
 		}
 		
-		public void setMaxBlock(MiniNumber zMax) {
+		public void checkMaxBlock(MiniNumber zMax) {
 			if(zMax.isMore(mMaxBlock)) {
 				mMaxBlock = zMax;
 			}
@@ -87,7 +87,7 @@ public class MMREntryDB {
 		
 		//Valid.. ?
 		if(oldentry != null) {
-			oldentry.setMaxBlock(zBlock);
+			oldentry.checkMaxBlock(zBlock);
 			return oldentry.getEntry();
 		}
 		
