@@ -2,8 +2,10 @@ package org.minima.system.brains;
 
 import java.io.File;
 
+import org.minima.database.txpowtree.BlockTreeNode;
 import org.minima.objects.TxPoW;
 import org.minima.objects.base.MiniData;
+import org.minima.objects.base.MiniNumber;
 import org.minima.utils.MiniFile;
 import org.minima.utils.Streamable;
 import org.minima.utils.messages.Message;
@@ -28,6 +30,8 @@ public class BackupManager extends MessageProcessor {
 	File mBackup;
 	
 	File mTxPOWDB;
+	
+	File mBlocksDB;
 	
 	File mMiniDAPPS;
 	
@@ -90,6 +94,33 @@ public class BackupManager extends MessageProcessor {
 		backup.addObject("file", back);
 		PostMessage(backup);
 	}
+	
+	public void backupBlock(BlockTreeNode zNode) {
+		//First get the actual folder used..
+		MiniNumber block = zNode.getBlockNumber();
+		
+		//Cascade the folders so no more than 1000 files per folder
+		MiniNumber folder1 = block.div(MiniNumber.BILLION).floor();
+		MiniNumber folder2 = block.div(MiniNumber.MILLION).floor();
+		MiniNumber folder3 = block.div(MiniNumber.THOUSAND).floor();
+		
+		//So the final folder is..
+		File block_1 = new File(mBlocksDB, folder1.toString());
+		File block_2 = new File(block_1, folder2.toString());
+		File block_3 = new File(block_2, folder3.toString());
+		
+		//Make sure it exists..
+		ensureFolder(block_3);
+		
+		//Create the File
+		File backupblock = new File(block_3,block+".txblock");
+		
+		//Do in separate thread so returns fast
+//		Message backup = new Message(BackupManager.BACKUP_WRITE);
+//		backup.addObject("object", zTxPOW);
+//		backup.addObject("file", back);
+//		PostMessage(backup);
+	}
 
 	public void deleteTxpow(TxPoW zTxPOW) {
 		//Create the File
@@ -123,7 +154,7 @@ public class BackupManager extends MessageProcessor {
 			}
 			
 			//Write..
-			//MiniFile.writeObjectToFile(ff, stream);	
+			MiniFile.writeObjectToFile(ff, stream);	
 		
 		}else if(zMessage.isMessageType(BACKUP_DELETE)) {
 			//Get the file
@@ -140,10 +171,13 @@ public class BackupManager extends MessageProcessor {
 		//Current used TxPOW
 		mTxPOWDB   = ensureFolder(new File(mRoot,"txpow"));
 		
+		//Where blocks are stored as TxHeader + MMR
+		mBlocksDB   = ensureFolder(new File(mRoot,"blocks"));
+				
 		//The Backup folder
 		mBackup    = ensureFolder(new File(mRoot,"backup"));
 		
-		//The Test Web folder
+		//The Web folder
 		mWebRoot = ensureFolder(new File(mRoot,"webroot"));
 				
 		//The MiniDAPPS folder
