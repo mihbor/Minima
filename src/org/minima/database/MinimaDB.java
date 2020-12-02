@@ -69,7 +69,7 @@ public class MinimaDB {
 	/**
 	 * The Short Term CoinDB database
 	 */
-	private CoinDB mCoinDB;
+//	private CoinDB mCoinDB;
 	
 	/**
 	 * The user database with keys, addresses
@@ -98,7 +98,7 @@ public class MinimaDB {
 
 		//New FAST CoinDB
 //		mCoinDB		= new JavaCoinDB();
-		mCoinDB		= new FastCoinDB();
+//		mCoinDB		= new FastCoinDB();
 		
 		mUserDB		= new JavaUserDB();
 	}
@@ -277,7 +277,7 @@ public class MinimaDB {
 			mTxPOWDB.resetBlocksFromOnwards(lastblock);
 			
 			//Reset coins from that block onwards
-			mCoinDB.resetCoinsFomOnwards(lastblock);
+//			mCoinDB.resetCoinsFomOnwards(lastblock);
 			
 			//Now sort
 			for(BlockTreeNode treenode : list) {
@@ -362,7 +362,7 @@ public class MinimaDB {
 			}
 			
 			//Remove all the coins no longer needed.. SPENT
-			mCoinDB.removeOldSpentCoins(cascade);
+//			mCoinDB.removeOldSpentCoins(cascade);
 			
 			//Clean up..
 			System.gc();
@@ -376,9 +376,6 @@ public class MinimaDB {
 			if(!mmrcoin.getData().isHashOnly()) {
 				//Get the Coin..
 				Coin cc = mmrcoin.getData().getCoin();
-				
-				//Is it spent
-				boolean spent = mmrcoin.getData().isSpent();
 				
 				//Is the address one of ours..
 				boolean rel = getUserDB().isAddressRelevant(cc.getAddress());
@@ -394,18 +391,18 @@ public class MinimaDB {
 					zMMRSet.addKeeper(mmrcoin.getEntryNumber());
 				}
 				
-				//Add to our list - or return the already existing  version..
-				CoinDBRow inrow = getCoinDB().addCoinRow(cc);
-				inrow.setRelevant(rel);
-				
-				//Exists already - only want to update if something has changed..
-				//Same coin can be in the MMR for multiple blocks.. only do this ONCHANGE
-				if(!inrow.isInBlock() || inrow.isSpent() != spent) {
-					inrow.setIsSpent(spent);
-					inrow.setIsInBlock(true);
-					inrow.setInBlockNumber(zMMRSet.getBlockTime());
-					inrow.setMMREntry(mmrcoin.getEntryNumber());
-				}
+//				//Add to our list - or return the already existing  version..
+//				CoinDBRow inrow = getCoinDB().addCoinRow(cc);
+//				inrow.setRelevant(rel);
+//				
+//				//Exists already - only want to update if something has changed..
+//				//Same coin can be in the MMR for multiple blocks.. only do this ONCHANGE
+//				if(!inrow.isInBlock() || inrow.isSpent() != spent) {
+//					inrow.setIsSpent(spent);
+//					inrow.setIsInBlock(true);
+//					inrow.setInBlockNumber(zMMRSet.getBlockTime());
+//					inrow.setMMREntry(mmrcoin.getEntryNumber());
+//				}
 			}
 		}
 	}
@@ -804,14 +801,18 @@ public class MinimaDB {
 			MiniNumber inblock = null;
 					
 			//Get the block..
-			CoinDBRow crow = getCoinDB().getCoinRow(cc.getCoinID());
-			if(crow != null) {
-				inblock = crow.getInBlockNumber();
-			}else {
-				//Search for the coin..
-				MMREntry entry =  basemmr.findEntry(cc.getCoinID());
-				inblock = entry.getData().getInBlock();
-			}
+//			CoinDBRow crow = getCoinDB().getCoinRow(cc.getCoinID());
+//			if(crow != null) {
+//				inblock = crow.getInBlockNumber();
+//			}else {
+//				//Search for the coin..
+//				MMREntry entry =  basemmr.findEntry(cc.getCoinID());
+//				inblock = entry.getData().getInBlock();
+//			}
+			
+			//Search for the coin..
+			MMREntry entry =  basemmr.findEntry(cc.getCoinID());
+			inblock = entry.getData().getInBlock();
 			
 			if(recent == null) {
 				recent = inblock;
@@ -845,12 +846,15 @@ public class MinimaDB {
 			MiniInteger entrynum = null;
 			
 			//Get the entry
-			CoinDBRow crow = getCoinDB().getCoinRow(cc.getCoinID());
-			if(crow != null) {
-				entrynum = crow.getMMREntry();
-			}else {
-				entrynum = proofmmr.findEntry(cc.getCoinID()).getEntryNumber();
-			}
+//			CoinDBRow crow = getCoinDB().getCoinRow(cc.getCoinID());
+//			if(crow != null) {
+//				entrynum = crow.getMMREntry();
+//			}else {
+//				entrynum = proofmmr.findEntry(cc.getCoinID()).getEntryNumber();
+//			}
+			
+			//Which Entry
+			entrynum = proofmmr.findEntry(cc.getCoinID()).getEntryNumber();
 			
 			//Get a proof from a while back.. more than confirmed depth, less than cascade
 			MMRProof proof = proofmmr.getProof(entrynum);
@@ -1269,8 +1273,12 @@ public class MinimaDB {
 		return mTxPOWDB;
 	}
 	
-	public CoinDB getCoinDB() {
-		return mCoinDB;
+//	public CoinDB getCoinDB() {
+//		return mCoinDB;
+//	}
+	
+	public MMRSet getMMRCoinDB() {
+		return mMainTree.getChainTip().getMMRSet();
 	}
 	
 	public UserDB getUserDB() {

@@ -607,55 +607,67 @@ public class ConsensusUser extends ConsensusProcessor {
 			//Once a coin has been used - say in a DEX.. you can remove it from your coinDB
 			String cid = zMessage.getString("coinid");
 			
+			//Get the MMRSet
+			MMRSet basemmr = getMainDB().getMMRCoinDB();
+			
+			//Search for the coin..
+			MiniData coinid = new MiniData(cid);
+			MMREntry entry  = basemmr.findEntry(coinid);
+			
+			//Now ask to keep it..
+			MMRSet coinset = basemmr.getParentAtTime(entry.getBlockTime());
+			coinset.removeKeeper(entry.getEntryNumber());
+			
 			//Remove the coin..
-			boolean found = getMainDB().getCoinDB().removeCoin(new MiniData(cid));
+			//boolean found = getMainDB().getCoinDB().removeCoin(new MiniData(cid));
 			
 			//Now you have the proof..
 			JSONObject resp = InputHandler.getResponseJSON(zMessage);
-			resp.put("found", found);
+			//resp.put("found", found);
 			resp.put("coinid", cid);
-			InputHandler.endResponse(zMessage, true, "Coin removed");
+			InputHandler.endResponse(zMessage, true, "Coin not Keeper");
 			
 		}else if(zMessage.isMessageType(CONSENSUS_KEEPCOIN)) {
 			String cid = zMessage.getString("coinid");
 			
 			//Get the MMRSet
-			MMRSet basemmr = getMainDB().getMainTree().getChainTip().getMMRSet();
+			MMRSet basemmr = getMainDB().getMMRCoinDB();
 			
 			//Search for the coin..
 			MiniData coinid = new MiniData(cid);
-			MMREntry entry =  basemmr.findEntry(coinid);
+			MMREntry entry  = basemmr.findEntry(coinid);
 			
 			//Now ask to keep it..
 			MMRSet coinset = basemmr.getParentAtTime(entry.getBlockTime());
 			coinset.addKeeper(entry.getEntryNumber());
-			coinset.finalizeSet();
-			
-			//Get the coin
-			Coin cc = entry.getData().getCoin();
-			
-			//Is it relevant..
-			boolean rel = false;
-			if( getMainDB().getUserDB().isAddressRelevant(cc.getAddress()) ){
-				rel = true;
-			}
-			
-			//add it to the database
-			CoinDBRow crow = getMainDB().getCoinDB().addCoinRow(cc);
-			crow.setRelevant(rel);
-			crow.setKeeper(true);
-			crow.setIsSpent(entry.getData().isSpent());
-			crow.setIsInBlock(true);
-			crow.setInBlockNumber(entry.getData().getInBlock());
-			crow.setMMREntry(entry.getEntryNumber());
+
+////			coinset.finalizeSet();
+//			
+//			//Get the coin
+//			Coin cc = entry.getData().getCoin();
+//			
+//			//Is it relevant..
+//			boolean rel = false;
+//			if( getMainDB().getUserDB().isAddressRelevant(cc.getAddress()) ){
+//				rel = true;
+//			}
+//			
+//			//add it to the database
+//			CoinDBRow crow = getMainDB().getCoinDB().addCoinRow(cc);
+//			crow.setRelevant(rel);
+//			crow.setKeeper(true);
+//			crow.setIsSpent(entry.getData().isSpent());
+//			crow.setIsInBlock(true);
+//			crow.setInBlockNumber(entry.getData().getInBlock());
+//			crow.setMMREntry(entry.getEntryNumber());
 			
 			//Now you have the proof..
 			JSONObject resp = InputHandler.getResponseJSON(zMessage);
 			resp.put("coin", basemmr.getProof(entry.getEntryNumber()));
-			InputHandler.endResponse(zMessage, true, "");
+			InputHandler.endResponse(zMessage, true, "Coin set as Keeper");
 			
 			//Do a backup..
-			getConsensusHandler().PostMessage(ConsensusBackup.CONSENSUSBACKUP_BACKUP);
+//			getConsensusHandler().PostMessage(ConsensusBackup.CONSENSUSBACKUP_BACKUP);
 			
 		}else if(zMessage.isMessageType(CONSENSUS_IMPORTCOIN)) {
 			MiniData data = (MiniData)zMessage.getObject("proof");

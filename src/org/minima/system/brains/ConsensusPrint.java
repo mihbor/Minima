@@ -91,16 +91,16 @@ public class ConsensusPrint extends ConsensusProcessor {
 			
 			JSONObject dets = InputHandler.getResponseJSON(zMessage);
 			
-			if(coins) {
-				JSONArray coinjson = new JSONArray();
-				ArrayList<CoinDBRow> coindb = getMainDB().getCoinDB().getComplete();
-				for(CoinDBRow row : coindb) {
-					coinjson.add(row.toJSON());
-				}
-				
-				dets.put("coindbsize" , coindb.size()); 
-				dets.put("coindb", coinjson);
-			}
+//			if(coins) {
+//				JSONArray coinjson = new JSONArray();
+//				ArrayList<CoinDBRow> coindb = getMainDB().getCoinDB().getComplete();
+//				for(CoinDBRow row : coindb) {
+//					coinjson.add(row.toJSON());
+//				}
+//				
+//				dets.put("coindbsize" , coindb.size()); 
+//				dets.put("coindb", coinjson);
+//			}
 			
 			if(txpow) {
 				JSONArray txpowjson = new JSONArray();
@@ -1000,7 +1000,7 @@ public class ConsensusPrint extends ConsensusProcessor {
 			status.put("mmrentrydb", MMREntryDB.getDB().getSize());
 			
 			//COINDB
-			status.put("coindb", getMainDB().getCoinDB().getComplete().size());
+//			status.put("coindb", getMainDB().getCoinDB().getComplete().size());
 			
 			//TxPOWDB
 			status.put("txpowdb", getMainDB().getTxPowDB().getSize());

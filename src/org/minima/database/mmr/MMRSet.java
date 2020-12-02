@@ -969,6 +969,11 @@ public class MMRSet implements Streamable {
 		return false;
 	}
 	
+	
+	public void removeKeeper(MiniInteger zEntry) {
+		mKeepers.remove(zEntry);
+	}
+	
 	/**
 	 * Get the Keeper
 	 */
