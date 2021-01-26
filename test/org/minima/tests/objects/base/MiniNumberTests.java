@@ -2,6 +2,7 @@ package org.minima.tests.objects.base;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
@@ -126,6 +127,31 @@ public class MiniNumberTests {
         assertTrue("should be equal resolves true", MiniNumber.ONE.getAsBigDecimal().equals(m));
         System.out.println("MiniNumber.ONE.getAsBigDecimal().equals(m) m:" + m + " value is "
                 + MiniNumber.ONE.getAsBigDecimal().equals(m));
+    }
+
+
+    // These tests showcase the arithmetic limits set by Math.Context(18) in MiniNumber (precision = 18 digits)
+    @Test
+    public void testBigDecimalPrecisionRoundings() {
+        MiniNumber i = new MiniNumber("1E-18");
+        MiniNumber j = new MiniNumber("1E-17");
+        MiniNumber k = new MiniNumber("1E-19");
+        //BigInteger k = new BigInteger("2147483649");
+        assertTrue("1+1E-18 is down rounded to one", i.add(MiniNumber.ONE).isEqual(MiniNumber.ONE));
+        assertTrue("1+1E-17 is not down rounded to one", j.add(MiniNumber.ONE).isMore(MiniNumber.ONE));
+        assertTrue("1-1E-18 is down rounded to 0.999999999999999999", MiniNumber.ONE.sub(i).isLess(MiniNumber.ONE));
+        assertTrue("1-1E-19 is down rounded to 0.999999999999999999", MiniNumber.ONE.sub(k).isLess(MiniNumber.ONE));
+        assertTrue("1-1E-19 is down rounded and equal to 1-1E-18 down rounded", MiniNumber.ONE.sub(k).isEqual(MiniNumber.ONE.sub(i)));
+    }
+
+    @Test
+    public void testBigDecimalUnderflowOverflowPow() {
+        // source: "No need to calculate pow(n) if result will over/underflow."
+        // http://hg.openjdk.java.net/jdk8/jdk8/jdk/file/687fd7c7986d/src/share/classes/java/math/BigDecimal.java
+        int exp = 1000000000; // (max value of int32: exp = 4294967295)
+//        assertThrows(expectedThrowable, runnable)
+//        assertThrows(message, expectedThrowable, runnable)
+        assertThrows("1 to the power exp will throw exception", ArithmeticException.class, () -> MiniNumber.ONE.pow(exp));
     }
 
     @Test

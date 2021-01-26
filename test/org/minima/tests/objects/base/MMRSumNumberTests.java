@@ -37,6 +37,18 @@ public class MMRSumNumberTests {
         System.out.println("j.add(l).isEqual(l) resolves as " + j.add(l).isEqual(l));
     }
 
+
+    // These tests showcase the arithmetic limits set by Math.Countext(128) in MiniNumber (precision = 128 digits)
+    @Test
+    public void testBigDecimalPrecisionRoundings() {
+        MMRSumNumber i = new MMRSumNumber(new MiniNumber("1E-128"));
+        MMRSumNumber j = new MMRSumNumber(new MiniNumber("1E-127"));
+        MMRSumNumber k = new MMRSumNumber(new MiniNumber("1E-129"));
+        MMRSumNumber one = new MMRSumNumber(MiniNumber.ONE);
+        assertTrue("1+1E-128 is down rounded to one", i.add(one).isEqual(one));
+        assertTrue("1+1E-127 is not down rounded to one", j.add(one).isMore(one));
+    }
+
     @Test
     public void testReadFromStream() {
         try {
