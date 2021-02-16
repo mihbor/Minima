@@ -27,7 +27,7 @@ public class MiniNumber implements Streamable, Comparable<MiniNumber> {
 	/**
 	 * The MAX Number of Significant digits for any MiniNUmber
 	 */
-	public static final int MAX_DIGITS = 34;
+	public static final int MAX_DIGITS = 12;
 	
 	/**
 	 * The Maximum number of decimal places for a Minima Value
@@ -39,17 +39,19 @@ public class MiniNumber implements Streamable, Comparable<MiniNumber> {
 	/**
 	 * Max Decimal Places for any MiniNumber
 	 */
-	public static final int MAX_DECIMAL_PLACES = 128;
+	public static final int MAX_DECIMAL_PLACES = 20;
 	
 	/** 
 	 * The base Math Context used for all operations
 	 */
 	public static final MathContext MATH_CONTEXT = new MathContext(MAX_DIGITS, RoundingMode.DOWN);
 	
+	private static final MathContext MATH_CONTEXT_CHECKER = new MathContext(MAX_DIGITS+10, RoundingMode.DOWN);
+	
 	/**
 	 * The MAXIMUM value any MiniNumber can be..
 	 */
-	public static final BigDecimal MAX_MININUMBER = new BigDecimal(10,MATH_CONTEXT).pow(512,MATH_CONTEXT);
+	public static final BigDecimal MAX_MININUMBER = new BigDecimal(10,MATH_CONTEXT).pow(MAX_DIGITS,MATH_CONTEXT);
 	
 	/**
 	 * The Minimum value any MiniNumber can be..
@@ -189,7 +191,21 @@ public class MiniNumber implements Streamable, Comparable<MiniNumber> {
 	 * Basic arithmetic functions 
 	 */
 	public MiniNumber add(MiniNumber zNumber) {
-		return new MiniNumber( mNumber.add(zNumber.getAsBigDecimal(),MATH_CONTEXT) );
+		//Create the Checker Number.. at a higher resolution
+		BigDecimal numberChecker = new BigDecimal(mNumber.toPlainString(),MATH_CONTEXT_CHECKER);
+				
+		//Lets do a full resolution
+		BigDecimal trueans = numberChecker.add(zNumber.getAsBigDecimal(),MATH_CONTEXT_CHECKER);
+		
+		//And at normal res..
+		BigDecimal minians = mNumber.add(zNumber.getAsBigDecimal(),MATH_CONTEXT);
+
+		//Check they are the same..
+		if(!trueans.equals(minians)) {
+			throw new NumberFormatException("Overflow error in MiniNumber");
+		}
+		
+		return new MiniNumber( minians );
 	}
 	
 	public MiniNumber sub(MiniNumber zNumber) {
@@ -324,17 +340,13 @@ public class MiniNumber implements Streamable, Comparable<MiniNumber> {
 	}
 	
 	public static void main(String[] zargs) {
-		MiniNumber num1 = new MiniNumber("100000000");
+		MiniNumber num1 = new MiniNumber("1000000000.01");
 		System.out.println(num1 + " valid:"+num1.isValidMinimaValue());
 		
-		MiniNumber num2 = new MiniNumber("0.0000000001");
-		System.out.println(num2+" "+num2.decimalPlaces());
-	
-		MiniNumber num3 = new MiniNumber("0.00000000000001");
-		System.out.println(num3 + " "+num3.getAsMinimaValue()+" valid:"+num3.isValidMinimaValue());
 		
-		MiniNumber num4 = new MiniNumber("1.23E+04");
-		System.out.println(num4);
+		
+		
+		
 		
 		//MiniNumber num5 = new MiniNumber(new MiniData("0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF").getDataValue());
 		MiniNumber num5 = new MiniNumber(Crypto.MAX_HASH.getDataValue());
