@@ -340,17 +340,19 @@ public class MiniNumber implements Streamable, Comparable<MiniNumber> {
 	}
 	
 	public static void main(String[] zargs) {
-		MiniNumber num1 = new MiniNumber("1000000000.01");
-		System.out.println(num1 + " valid:"+num1.isValidMinimaValue());
+		MiniNumber num1 = new MiniNumber("100.01");
+		System.out.println(num1 +" \t"+num1.getAsMinimaValue()+"\t valid:"+num1.isValidMinimaValue());
 		
+		MiniNumber num2 = new MiniNumber("0.011");
+		System.out.println(num2 +" \t"+num2.getAsMinimaValue()+"\t valid:"+num2.isValidMinimaValue());
 		
-		
-		
+		MiniNumber num3 = num1.add(num2);
+		System.out.println(num3 +" \t"+num3.getAsMinimaValue()+"\t valid:"+num3.isValidMinimaValue());
 		
 		
 		//MiniNumber num5 = new MiniNumber(new MiniData("0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF").getDataValue());
-		MiniNumber num5 = new MiniNumber(Crypto.MAX_HASH.getDataValue());
-		System.out.println(num5);
+//		MiniNumber num5 = new MiniNumber(Crypto.MAX_HASH.getDataValue());
+//		System.out.println(num5);
 		
 		
 	}
