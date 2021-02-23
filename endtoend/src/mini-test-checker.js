@@ -10,18 +10,14 @@ require('chai').assert;
 //How many Nodes to create
 const nbNodes = 3;
 
-
 var waitTill;
-
 
 function waitandcheck(checkfunc, nextfunc){
 	console.log("waitcheck");
 
 	//Now do a wait check..
 	setTimeout(function(){
-		var valid =  checkfunc();
-		
-		if(valid){
+		if(checkfunc()){
 			//continue
 			nextfunc();
 		}else{
@@ -30,7 +26,6 @@ function waitandcheck(checkfunc, nextfunc){
 		}
 	},1000);
 }
-
 
 function function1(){
 	console.log("function 1");	
@@ -44,9 +39,27 @@ function function1(){
 			return new Date() > waitTill;
 		}, 
 		function(){
+			function2();		
+		});
+}
+
+function function2(){
+	console.log("function 2");	
+	
+	//Do something 
+	waitTill = new Date(new Date().getTime() + 5 * 1000);
+
+	//Wait for it to finish
+	waitandcheck(
+		function(){
+			return new Date() > waitTill;
+		}, 
+		function(){
 			console.log("success");		
 		});
 }
+
+
 
 start_minima_testnet = function () {
     // number of nodes, list of tests
