@@ -1,0 +1,5 @@
+#!/bin/bash
+
+docker build -t minima-e2e . && docker run -v /var/run/docker.sock:/var/run/docker.sock --network minima-e2e-testnet minima-e2e
+
+

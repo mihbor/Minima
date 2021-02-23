@@ -1,3 +1,3 @@
-var test_star_static = require('./test_star_static.js');
+var test_star_static = require('./mini-test-checker.js');
 
-test_star_static();
+start_minima_testnet();
