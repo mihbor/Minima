@@ -7,11 +7,21 @@ require('chai')
 .use(require('chai-as-promised'));
 require('chai').assert;
 
+/**
+ GLOBALS
+ */
 //How many Nodes to create
 const nbNodes = 3;
 
+//timer
 var waitTill;
 
+//ipaddresses
+var ips;
+
+/**
+ * Wait for a function to finish by checking and only move on when done
+ */
 function waitandcheck(checkfunc, nextfunc){
 	console.log("waitcheck");
 
@@ -24,51 +34,51 @@ function waitandcheck(checkfunc, nextfunc){
 			//Check again..
 			waitandcheck(checkfunc, nextfunc)
 		}
-	},1000);
+	},10000);
 }
 
-function function1(){
-	console.log("function 1");	
-	
-	//Do something 
-	waitTill = new Date(new Date().getTime() + 5 * 1000);
+//Sleep function
+function minisleep(timemilli, nextfunction ){
+	console.log("sleep "+timemilli);	
+
+	//get the timeout 
+	waitTill = new Date(new Date().getTime() + timemilli);
 
 	//Wait for it to finish
-	waitandcheck(
-		function(){
-			return new Date() > waitTill;
-		}, 
-		function(){
-			function2();		
-		});
+	waitandcheck(function(){return new Date() > waitTill;}, nextfunction );
 }
 
-function function2(){
-	console.log("function 2");	
-	
-	//Do something 
-	waitTill = new Date(new Date().getTime() + 5 * 1000);
+//run status on 1 of the servers
+function status(ip, nextfunction){
+	console.log("status "+ip);	
+
+	//Log into server and run gimme50
+	staticTests.run_some_tests_get(ip, '/status', "", function (response) {});
 
 	//Wait for it to finish
-	waitandcheck(
-		function(){
-			return new Date() > waitTill;
-		}, 
-		function(){
-			console.log("success");		
-		});
+	waitandcheck(function(){return true;},nextfunction);
 }
 
-
+function success(){
+	console.log("success");
+}
 
 start_minima_testnet = function () {
     // number of nodes, list of tests
     staticTests.start_static_network_tests("star", nbNodes, function (ip_addrs) {
         
 		console.log("Minima Testnet - End 2 End");
+		
+		ips = ip_addrs;
+		
+		minisleep( 10000 , function(){success()} );
 
-
-		function1();
+		//Run some tests..
+		/*status(ip_addrs["1"], 
+			minisleep(10000, status(ip_addrs["2"], 
+				minisleep(10000, success()))
+			)
+		);*/
 		
         // test 0: healthcheck - are we connected?
         // curl -s 127.0.0.1:9002/status | jq '.response.connections'
