@@ -30,7 +30,7 @@ public class TxPoWMiner extends MessageProcessor {
 	/**
 	 * Mine continuously for 2000 milliseconds before recreating your txpow.. 
 	 */
-	private static final long MINE_CONSECUTIVE_MAX = 2000;
+	private static final long MINE_CONSECUTIVE_MAX = 5000;
 	
 	boolean mAutoMining    = false;
 	boolean mShowTXPOWMine = true;
@@ -167,6 +167,8 @@ public class TxPoWMiner extends MessageProcessor {
 			txpow.calculateTXPOWID();
 			
 			if(txpow.isBlock()) {
+				MinimaLogger.log("BLOCK MINED!");
+				
 				Message msg = new Message(ConsensusNet.CONSENSUS_NET_CHECKSIZE_TXPOW).addObject("txpow", txpow);
 				Main.getMainHandler().getConsensusHandler().PostMessage(msg);
 			}

@@ -1227,6 +1227,9 @@ public class MinimaDB {
 		txpow.setMMRRoot(root.getFinalHash());
 		txpow.setMMRTotal(root.getValueSum());
 		
+		MinimaLogger.log("GETTXPOW ROOT  TOT : "+root.getValueSum());
+		MinimaLogger.log("GETTXPOW TXPOW TOT : "+txpow.getMMRTotal());
+		
 		//And return..
 		return txpow;
 	}
