@@ -500,10 +500,14 @@ public class MinimaDB {
 				if(!inputvalid) {
 					return false;
 				}
+			}else {
+				MinimaLogger.log("ASSUME VALID TXN!");
 			}
 			
 			//Is it a block with no transaction..
 			if(txpow.isBlock() && !txpow.isTransaction()) {
+				MinimaLogger.log("BLOCK NO TXN..!");
+				
 				//Check with limits..
 				MiniNumber diff = txpow.getBlockNumber().sub(nodetxp.getBlockNumber()).abs();
 				if(diff.isMoreEqual(MiniNumber.EIGHT)) {
@@ -1163,6 +1167,10 @@ public class MinimaDB {
 			txpow.setSuperParent(i, tiptxid);
 		}			
 		
+		//Get the TIP MMR
+		MMRSet parset = tip.getMMRSet();
+		MinimaLogger.log("Parent TOT : "+parset.getMMRRoot().getValueSum());
+		
 		//Get the current MMRSet
 		MMRSet newset = new MMRSet(tip.getMMRSet());
 		
@@ -1226,6 +1234,10 @@ public class MinimaDB {
 		MMRData root = newset.getMMRRoot();
 		txpow.setMMRRoot(root.getFinalHash());
 		txpow.setMMRTotal(root.getValueSum());
+		
+		MinimaLogger.log("ROOT  TOT : "+root.getValueSum());
+		MinimaLogger.log("TXPOW TOT : "+txpow.getMMRTotal());
+		
 		
 		//And return..
 		return txpow;

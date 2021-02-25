@@ -13,6 +13,7 @@ import org.minima.database.MinimaDB;
 import org.minima.database.mmr.MMRSet;
 import org.minima.database.txpowdb.TxPOWDBRow;
 import org.minima.objects.TxPoW;
+import org.minima.objects.base.MMRSumNumber;
 import org.minima.objects.base.MiniData;
 import org.minima.objects.base.MiniNumber;
 import org.minima.utils.Crypto;
@@ -479,13 +480,23 @@ public class BlockTree {
 									
 								//Check the root MMR..
 								if(allok) {
+									MiniData root    = row.getTxPOW().getMMRRoot();
+									MiniData mmrroot = mmrset.getMMRRoot().getFinalHash();
+									
 									if(!row.getTxPOW().getMMRRoot().isEqual(mmrset.getMMRRoot().getFinalHash())) {
 										MinimaLogger.log("INVALID BLOCK MMRROOT "+zNode.getBlockNumber());
 										allok = false;	
 									}
 									
+									MMRSumNumber txpowtot = row.getTxPOW().getMMRTotal();
+									MMRSumNumber mmrtot   = mmrset.getMMRRoot().getValueSum();
+									
 									if(!row.getTxPOW().getMMRTotal().isEqual(mmrset.getMMRRoot().getValueSum())) {
 										MinimaLogger.log("INVALID BLOCK MMRSUM "+zNode.getBlockNumber());
+										
+										MinimaLogger.log("TXPOWTOT : "+txpowtot);
+										MinimaLogger.log("MMRTOT   : "+mmrtot);
+										
 										allok = false;
 									}
 								}else {

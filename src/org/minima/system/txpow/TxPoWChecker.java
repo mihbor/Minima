@@ -202,11 +202,18 @@ public class TxPoWChecker {
 		//If ANY of the inputs are floating.. check for remainder outputs.
 		boolean isfloating = false;
 
+		MinimaLogger.log("Check Transaction.. : "+trans.toString());
+		MiniNumber insum  = MiniNumber.ZERO;
+		MiniNumber outsum = MiniNumber.ZERO;
+		
 		//First Inputs..
 		int ins = inputs.size();
 		for(int i=0;i<ins;i++) {
 			//Get the Input
 			Coin input = inputs.get(i);
+			
+//			MinimaLogger.log("Input : "+input.getAmount());
+			insum = insum.add(input.getAmount());
 			
 			//The contract execution log - will be updated later, but added now
 			JSONObject contractlog = new JSONObject();
@@ -259,6 +266,8 @@ public class TxPoWChecker {
 				if(input.isFloating()) {
 					Coin flinput = proof.getMMRData().getCoin();
 					input.resetCoinID(flinput.getCoinID());
+					
+					MinimaLogger.log("FLOATING INPUT! : "+flinput);
 				}
 				
 				//Check the Coin is Correct..
@@ -478,6 +487,9 @@ public class TxPoWChecker {
 			//Get the coin..
 			Coin output = outputs.get(i);
 			
+			//MinimaLogger.log("Output : "+output.getAmount());
+			outsum = outsum.add(output.getAmount());
+			
 			//Now calculate the CoinID / TokenID
 			MiniData coinid = Crypto.getInstance().hashObjects(transhash, new MiniByte(i));
 			
@@ -532,6 +544,11 @@ public class TxPoWChecker {
 					zMMRSet.addKeeper(unspent.getEntryNumber());	
 				}				
 			}
+		}
+		
+		if(!insum.isEqual(outsum)) {
+			MinimaLogger.log("TOTIN  : "+insum);
+			MinimaLogger.log("TOTOUT : "+outsum);
 		}
 		
 		//Now check after all that -  valid amounts..
