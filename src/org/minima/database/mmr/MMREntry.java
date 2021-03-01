@@ -5,7 +5,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import org.minima.objects.base.MiniData;
-import org.minima.objects.base.MiniInteger;
 import org.minima.objects.base.MiniNumber;
 import org.minima.utils.MinimaLogger;
 import org.minima.utils.Streamable;
@@ -16,9 +15,8 @@ public class MMREntry implements Streamable {
 	/**
 	 * Global MMR position
 	 */
-	
-	MiniInteger mEntryNumber;
-	int mRow;
+	MiniNumber mEntryNumber;
+	MiniNumber mRow;
 	
 	/**
 	 * The blocktime..
@@ -41,22 +39,22 @@ public class MMREntry implements Streamable {
 	 * @param zRow
 	 * @param zEntry
 	 */
-	public MMREntry(int zRow, MiniInteger zEntry) {
-		mRow = zRow;
-		mEntryNumber = zEntry;
-		mIsEmpty = true;
+	public MMREntry(int zRow, MiniNumber zEntry) {
+		mRow 			= new MiniNumber(zRow);
+		mEntryNumber 	= zEntry;
+		mIsEmpty 		= true;
 	}
 	
 	public boolean isEmpty() {
 		return mIsEmpty;
 	}
 	
-	public boolean checkPosition(int zRow, MiniInteger zEntry) {
-		return (zRow == mRow) && zEntry.isEqual(mEntryNumber);
+	public boolean checkPosition(int zRow, MiniNumber zEntry) {
+		return (zRow == mRow.getAsInt()) && zEntry.isEqual(mEntryNumber);
 	}
 	
 	public boolean checkPosition(MMREntry zEntry) {
-		return (zEntry.getRow() == mRow) && zEntry.getEntryNumber().isEqual(mEntryNumber);
+		return (zEntry.getRow() == mRow.getAsInt()) && zEntry.getEntryNumber().isEqual(mEntryNumber);
 	}
 	
 	public void setData(MMRData zData) {
@@ -109,56 +107,56 @@ public class MMREntry implements Streamable {
 	 * UTILITY FUNCTIONS FOR NAVIGATING THE MMR
 	 * 
 	 */
-	public MiniInteger getEntryNumber() {
+	public MiniNumber getEntryNumber() {
 		return mEntryNumber;
 	}
 	
 	public int getRow() {
-		return mRow;
+		return mRow.getAsInt();
 	}
 	
 	public int getParentRow() {
-		return mRow+1;
+		return mRow.getAsInt()+1;
 	}
 	
 	public int getChildRow() {
-		return mRow-1;
+		return mRow.getAsInt()-1;
 	}
 	
 	public boolean isLeft() {
-		return mEntryNumber.modulo(MiniInteger.TWO).isEqual(MiniInteger.ZERO);
+		return mEntryNumber.modulo(MiniNumber.TWO).isEqual(MiniNumber.ZERO);
 	}
 	
 	public boolean isRight() {
 		return !isLeft();
 	}
 	
-//	public MiniInteger getLeftSibling() {
-//		return mEntryNumber.decrement();
-//	}
-//	
-//	public MiniInteger getRightSibling() {
-//		return mEntryNumber.increment();
-//	}
+	public MiniNumber getLeftSibling() {
+		return mEntryNumber.decrement();
+	}
 	
-	public MiniInteger getSibling() {
+	public MiniNumber getRightSibling() {
+		return mEntryNumber.increment();
+	}
+	
+	public MiniNumber getSibling() {
 		if(isLeft()) {
-			return mEntryNumber.increment();
+			return getRightSibling();
 		}else {
-			return mEntryNumber.decrement();
+			return getLeftSibling();
 		}
 	}
 	
-	public MiniInteger getParentEntry() {
-		return mEntryNumber.divRoundDown(MiniInteger.TWO);
+	public MiniNumber getParentEntry() {
+		return mEntryNumber.divRoundDown(MiniNumber.TWO);
 	}
 	
-	public MiniInteger getLeftChildEntry() {
-		return mEntryNumber.mult(MiniInteger.TWO);
+	public MiniNumber getLeftChildEntry() {
+		return mEntryNumber.mult(MiniNumber.TWO);
 	}
 	
-	public MiniInteger getRightChildEntry() {
-		return getLeftChildEntry().add(MiniInteger.ONE);
+	public MiniNumber getRightChildEntry() {
+		return getLeftChildEntry().add(MiniNumber.ONE);
 	}
 
 	@Override
@@ -167,7 +165,7 @@ public class MMREntry implements Streamable {
 		mEntryNumber.writeDataStream(zOut);
 		
 		//The Row..
-		zOut.writeInt(mRow);
+		mRow.abs().writeDataStream(zOut);
 		
 		//And finally the data
 		mData.writeDataStream(zOut);
@@ -175,8 +173,8 @@ public class MMREntry implements Streamable {
 
 	@Override
 	public void readDataStream(DataInputStream zIn) throws IOException {
-		mEntryNumber = MiniInteger.ReadFromStream(zIn);
-		mRow         = zIn.readInt();
+		mEntryNumber = MiniNumber.ReadFromStream(zIn);
+		mRow         = MiniNumber.ReadFromStream(zIn);
 		mData        = MMRData.ReadFromStream(zIn);
 		mIsEmpty     = false;
 	}
