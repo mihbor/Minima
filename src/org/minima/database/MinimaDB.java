@@ -34,10 +34,8 @@ import org.minima.objects.StateVariable;
 import org.minima.objects.Transaction;
 import org.minima.objects.TxPoW;
 import org.minima.objects.Witness;
-import org.minima.objects.base.MMRSumNumber;
 import org.minima.objects.base.MiniByte;
 import org.minima.objects.base.MiniData;
-import org.minima.objects.base.MiniInteger;
 import org.minima.objects.base.MiniNumber;
 import org.minima.objects.greet.SyncPackage;
 import org.minima.objects.greet.SyncPacket;
@@ -130,7 +128,7 @@ public class MinimaDB {
 		
 		//Get the root
 		gen.setMMRRoot(base.getMMRRoot().getFinalHash());
-		gen.setMMRTotal(MMRSumNumber.ZERO);
+		gen.setMMRTotal(MiniNumber.ZERO);
 		
 		//Will make this PERMANENT in future release.. so ALL roads lead back to it..
 		//SuperBlockLevels.GENESIS_HASH = Crypto.getInstance().hashObject(gen);
@@ -888,7 +886,7 @@ public class MinimaDB {
 		
 		//Now add the actual MMR Proofs..
 		for(Coin cc : ins) {
-			MiniInteger entrynum = null;
+			MiniNumber entrynum = null;
 			
 			//Get the entry
 			CoinDBRow crow = getCoinDB().getCoinRow(cc.getCoinID());
