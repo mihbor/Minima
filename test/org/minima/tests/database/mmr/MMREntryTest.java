@@ -1,12 +1,5 @@
 package org.minima.tests.database.mmr;
 
-import org.minima.database.mmr.MMREntry;
-
-import org.minima.database.mmr.MMRData;
-
-import org.minima.objects.base.MiniInteger;
-import org.minima.utils.json.JSONObject;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -20,6 +13,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 import org.junit.Test;
+import org.minima.database.mmr.MMRData;
+import org.minima.database.mmr.MMREntry;
 import org.minima.objects.Address;
 import org.minima.objects.Coin;
 import org.minima.objects.PubPrivKey;
@@ -27,23 +22,24 @@ import org.minima.objects.StateVariable;
 import org.minima.objects.base.MiniByte;
 import org.minima.objects.base.MiniData;
 import org.minima.objects.base.MiniNumber;
+import org.minima.utils.json.JSONObject;
 
 public class MMREntryTest {
 
     @Test
     public void testNavigation() {
         {
-            MMREntry mmre1 = new MMREntry(123, new MiniInteger(100));
-            MMREntry mmre2 = new MMREntry(1234, new MiniInteger(201));
-            MMREntry mmre3 = new MMREntry(123, new MiniInteger(101));
-            MMREntry mmre4 = new MMREntry(124, new MiniInteger(100));
+            MMREntry mmre1 = new MMREntry(123, new MiniNumber(100));
+            MMREntry mmre2 = new MMREntry(1234, new MiniNumber(201));
+            MMREntry mmre3 = new MMREntry(123, new MiniNumber(101));
+            MMREntry mmre4 = new MMREntry(124, new MiniNumber(100));
 
-            assertTrue("should be true ", mmre1.checkPosition(123, new MiniInteger(100)));
+            assertTrue("should be true ", mmre1.checkPosition(123, new MiniNumber(100)));
             assertTrue("should be true ", mmre1.checkPosition(mmre1));
 
-            assertFalse("should be false ", mmre1.checkPosition(123, new MiniInteger(101)));
-            assertFalse("should be false ", mmre1.checkPosition(124, new MiniInteger(100)));
-            assertFalse("should be false ", mmre1.checkPosition(1234, new MiniInteger(101)));
+            assertFalse("should be false ", mmre1.checkPosition(123, new MiniNumber(101)));
+            assertFalse("should be false ", mmre1.checkPosition(124, new MiniNumber(100)));
+            assertFalse("should be false ", mmre1.checkPosition(1234, new MiniNumber(101)));
             assertFalse("should be false ", mmre1.checkPosition(mmre2));
             assertFalse("should be false ", mmre1.checkPosition(mmre3));
             assertFalse("should be false ", mmre1.checkPosition(mmre4));
@@ -55,10 +51,10 @@ public class MMREntryTest {
             assertFalse("should not be right ", mmre1.isRight());
             //assertEquals("should be equal ", new MiniInteger(99).getNumber(), mmre1.getLeftSibling().getNumber());
             //assertEquals("should be equal ", new MiniInteger(101).getNumber(), mmre1.getRightSibling().getNumber());
-            assertEquals("should be equal ", new MiniInteger(101).getNumber(), mmre1.getSibling().getNumber()); // Is this correct (if left, return right and vice versa)
-            assertEquals("should be equal ", new MiniInteger(50).getNumber(), mmre1.getParentEntry().getNumber());
-            assertEquals("should be equal ", new MiniInteger(200).getNumber(), mmre1.getLeftChildEntry().getNumber());
-            assertEquals("should be equal ", new MiniInteger(201).getNumber(), mmre1.getRightChildEntry().getNumber());
+            assertEquals("should be equal ", new MiniNumber(101), mmre1.getSibling()); // Is this correct (if left, return right and vice versa)
+            assertEquals("should be equal ", new MiniNumber(50), mmre1.getParentEntry());
+            assertEquals("should be equal ", new MiniNumber(200), mmre1.getLeftChildEntry());
+            assertEquals("should be equal ", new MiniNumber(201), mmre1.getRightChildEntry());
 
             assertEquals("should be equal ", 1234, mmre2.getRow());
             assertEquals("should be equal ", 1235, mmre2.getParentRow());
@@ -67,10 +63,10 @@ public class MMREntryTest {
             assertTrue("should be right ", mmre2.isRight());
             //assertEquals("should be equal ", new MiniInteger(200).getNumber(), mmre2.getLeftSibling().getNumber());
             //assertEquals("should be equal ", new MiniInteger(202).getNumber(), mmre2.getRightSibling().getNumber());
-            assertEquals("should be equal ", new MiniInteger(200).getNumber(), mmre2.getSibling().getNumber()); // Is this correct (if left, return right and vice versa)
-            assertEquals("should be equal ", new MiniInteger(100).getNumber(), mmre2.getParentEntry().getNumber());
-            assertEquals("should be equal ", new MiniInteger(402).getNumber(), mmre2.getLeftChildEntry().getNumber());
-            assertEquals("should be equal ", new MiniInteger(403).getNumber(), mmre2.getRightChildEntry().getNumber());
+            assertEquals("should be equal ", new MiniNumber(200), mmre2.getSibling()); // Is this correct (if left, return right and vice versa)
+            assertEquals("should be equal ", new MiniNumber(100), mmre2.getParentEntry());
+            assertEquals("should be equal ", new MiniNumber(402), mmre2.getLeftChildEntry());
+            assertEquals("should be equal ", new MiniNumber(403), mmre2.getRightChildEntry());
 
         }
 
@@ -107,7 +103,7 @@ public class MMREntryTest {
 
         {
             try {
-                MMREntry mmre1 = new MMREntry(123, new MiniInteger(1234567890));
+                MMREntry mmre1 = new MMREntry(123, new MiniNumber(1234567890));
 
                 PubPrivKey pk = new PubPrivKey(512);
                 String script = "RETURN SIGNEDBY ( " + pk.getPublicKey() + " )";
@@ -130,12 +126,12 @@ public class MMREntryTest {
                 InputStream inputStream = new ByteArrayInputStream(bos.toByteArray());
                 DataInputStream dis = new DataInputStream(inputStream);
 
-                MMREntry mmre2 = new MMREntry(0, new MiniInteger(0));
+                MMREntry mmre2 = new MMREntry(0, new MiniNumber(0));
                 mmre2.readDataStream(dis);
 
                 assertEquals("should be equal ", mmre1.getBlockTime().getAsBigDecimal(), mmre2.getBlockTime().getAsBigDecimal());
                 assertEquals("should be equal ", mmre1.getChildRow(), mmre2.getChildRow());
-                assertEquals("should be equal ", mmre1.getEntryNumber().getNumber(), mmre2.getEntryNumber().getNumber());
+                assertEquals("should be equal ", mmre1.getEntryNumber(), mmre2.getEntryNumber());
                 assertEquals("should be equal ", 0, mmre1.getHashValue().compare(mmre2.getHashValue()));
                 assertEquals("should be equal ", mmre1.getParentRow(), mmre2.getParentRow());
                 assertEquals("should be equal ", mmre1.getRow(), mmre2.getRow());
@@ -158,7 +154,7 @@ public class MMREntryTest {
         //}
 
         {
-            MMREntry mmre = new MMREntry(123, new MiniInteger(1234567890));
+            MMREntry mmre = new MMREntry(123, new MiniNumber(1234567890));
 
             PubPrivKey pk = new PubPrivKey(512);
             String script = "RETURN SIGNEDBY ( " + pk.getPublicKey() + " )";
@@ -183,7 +179,7 @@ public class MMREntryTest {
 
     @Test
     public void testToString() {
-        MMREntry mmre = new MMREntry(123, new MiniInteger(1234567890));
+        MMREntry mmre = new MMREntry(123, new MiniNumber(1234567890));
         String exp_s = "BLKTIME:" + mmre.getBlockTime() + " R:" + mmre.getRow() + " E:" + mmre.getEntryNumber() + " D:" + mmre.getData();
         String obj_s = mmre.toString();
         assertEquals("should be equal ", exp_s, obj_s);
