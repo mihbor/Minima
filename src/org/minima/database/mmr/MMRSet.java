@@ -1178,10 +1178,7 @@ public class MMRSet implements Streamable {
 		//Make the unique MMRData Hash
 		MiniData combined = Crypto.getInstance().hashAllObjects( MMR_HASH_BITS,
 								zLeftChild.getHashValue(),
-								zRightChild.getHashValue(), 
-								zLeftChild.getData().getValueSum(),
-								zRightChild.getData().getValueSum(),
-								sumvalue);
+								zRightChild.getHashValue(),MiniNumber.ZERO);
 		
 		//Create a new data proof
 		return new MMRData(combined,sumvalue);
