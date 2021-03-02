@@ -82,13 +82,13 @@ public class Proof implements Streamable {
 			
 			while(dis.available()>0) {
 				//Is it to the left or the right 
-				MiniByte leftrigt = MiniByte.ReadFromStream(dis);
+				MiniByte leftright = MiniByte.ReadFromStream(dis);
 				
 				//What data to hash
 				MiniData data = MiniData.ReadFromStream(dis);
 				
 				//Add to the Proof..
-				addProofChunk(leftrigt, data);
+				addProofChunk(leftright, data);
 			}
 		
 			dis.close();
@@ -180,10 +180,15 @@ public class Proof implements Streamable {
 		for(int i=0;i<len;i++) {
 			ProofChunk chunk = mProofChain.get(i);
 			
+			
 			if(chunk.getLeft().isTrue()) {
-				current = Crypto.getInstance().hashObjects(chunk.getHash(), current, HASH_BITS);
+//				current = Crypto.getInstance().hashObjects(chunk.getHash(), current, HASH_BITS);
+				current = Crypto.getInstance().hashAllObjects(HASH_BITS, chunk.getHash(), current, MiniNumber.ZERO);
+				
 			}else {
-				current = Crypto.getInstance().hashObjects(current, chunk.getHash(), HASH_BITS);
+//				current = Crypto.getInstance().hashObjects(current, chunk.getHash(), HASH_BITS);
+				current = Crypto.getInstance().hashAllObjects(HASH_BITS, current, chunk.getHash(), MiniNumber.ZERO);
+				
 			}
 		}
 		

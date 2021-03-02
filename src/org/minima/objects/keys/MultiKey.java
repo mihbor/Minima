@@ -252,12 +252,14 @@ public class MultiKey extends BaseKey {
 	public static void main(String[] zargs) {		
 		
 		//get some data
-		MiniData privseed = MiniData.getRandomData(20);
+//		MiniData privseed = MiniData.getRandomData(20);
+		MiniData privseed = new MiniData("0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
+		
 		long timenow      = System.currentTimeMillis();
 		long timediff     = 0;
 		
 		System.out.println("MAKE KEY Start");
-		MultiKey mkey = new MultiKey(privseed, new MiniNumber("16"), new MiniNumber("2"));
+		MultiKey mkey = new MultiKey(privseed, new MiniNumber("2"), new MiniNumber("1"));
 		System.out.println(mkey.toJSON().toString());
 		
 		//Timer..
@@ -265,7 +267,9 @@ public class MultiKey extends BaseKey {
 		System.out.println("Creation : "+Maths.ConvertMilliToTime(timediff));
 		
 		//get some data
-		MiniData data = MiniData.getRandomData(20);
+//		MiniData data = MiniData.getRandomData(20);
+		MiniData data = new MiniData("0xFFEEEEDD");
+		
 		System.out.println("Data    : "+data);
 		System.out.println();
 			
@@ -292,7 +296,7 @@ public class MultiKey extends BaseKey {
 //		if(true) {System.exit(0);}
 		
 		//MULTI SIGN EXAMPLE
-		for(int i=0;i<8;i++) {
+		for(int i=0;i<1;i++) {
 			MiniData sig = mkey.sign(data);
 			System.out.println(i+")\tSigLength:"
 					+sig.getLength()+"\thash:"
@@ -302,45 +306,45 @@ public class MultiKey extends BaseKey {
 			System.out.println();
 		}
 		
-		System.out.println();
-		System.out.println("Now read it in..");
-		
-		//Now write the key our..
-		MultiKey lodkey = new MultiKey(); 
-		try {
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			DataOutputStream dos = new DataOutputStream(baos);
-			
-			mkey.writeDataStream(dos);
-			
-			byte[] mdata = baos.toByteArray();
-			
-			dos.close();
-			
-			//Now read it back in..
-			ByteArrayInputStream bais = new ByteArrayInputStream(mdata);
-			DataInputStream dis = new DataInputStream(bais);
-			
-			lodkey.readDataStream(dis);
-			
-			dis.close();
-			
-		}catch(Exception exc) {
-			exc.printStackTrace();
-		}
-		
-		mkey = null;
-		System.out.println(lodkey.toJSON().toString());
-		
-		for(int i=0;i<5;i++) {
-			MiniData sig = lodkey.sign(data);
-			System.out.println(i+")\tSigLength:"
-					+sig.getLength()+"\thash:"
-					+Crypto.getInstance().hashObject(sig,160).to0xString()
-					+"\tVerify  : "+lodkey.verify(data, sig));
-			System.out.println(lodkey.toJSON().toString());
-			System.out.println();
-		}
+//		System.out.println();
+//		System.out.println("Now read it in..");
+//		
+//		//Now write the key our..
+//		MultiKey lodkey = new MultiKey(); 
+//		try {
+//			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//			DataOutputStream dos = new DataOutputStream(baos);
+//			
+//			mkey.writeDataStream(dos);
+//			
+//			byte[] mdata = baos.toByteArray();
+//			
+//			dos.close();
+//			
+//			//Now read it back in..
+//			ByteArrayInputStream bais = new ByteArrayInputStream(mdata);
+//			DataInputStream dis = new DataInputStream(bais);
+//			
+//			lodkey.readDataStream(dis);
+//			
+//			dis.close();
+//			
+//		}catch(Exception exc) {
+//			exc.printStackTrace();
+//		}
+//		
+//		mkey = null;
+//		System.out.println(lodkey.toJSON().toString());
+//		
+//		for(int i=0;i<5;i++) {
+//			MiniData sig = lodkey.sign(data);
+//			System.out.println(i+")\tSigLength:"
+//					+sig.getLength()+"\thash:"
+//					+Crypto.getInstance().hashObject(sig,160).to0xString()
+//					+"\tVerify  : "+lodkey.verify(data, sig));
+//			System.out.println(lodkey.toJSON().toString());
+//			System.out.println();
+//		}
 		
 	}
 

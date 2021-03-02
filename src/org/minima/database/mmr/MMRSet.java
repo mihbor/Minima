@@ -23,10 +23,10 @@ import org.minima.utils.json.JSONObject;
 public class MMRSet implements Streamable {
 	
 	/**
-	 * Maximum number of rows in this set.. 2^128 trx max.. 
+	 * Maximum number of rows in this set.. 2^160 trx max.. 
 	 * Can be set higher - but takes more memory
 	 */
-	public static int MAXROWS = 128;
+	public static int MAXROWS = 160;
 	
 	/**
 	 * What Block time does this MMR represent. Each represents 1 block.
@@ -660,24 +660,28 @@ public class MMRSet implements Streamable {
 		//Now go up the tree..
 		while(!sibling.isEmpty()) {
 			//Create the new parent
-			MiniData combined = null;
+			MMRData parentdata = null;
+//			MiniData combined = null;
 			if(entry.isLeft()) {
-				combined = Crypto.getInstance().hashObjects(entry.getHashValue(),sibling.getHashValue(), MMR_HASH_BITS);
+				parentdata = getParentMMRData(entry, sibling);
+//				combined = Crypto.getInstance().hashObjects(entry.getHashValue(),sibling.getHashValue(), MMR_HASH_BITS);
 			}else {
-				combined = Crypto.getInstance().hashObjects(sibling.getHashValue(), entry.getHashValue(), MMR_HASH_BITS);
+				parentdata = getParentMMRData(sibling, entry);
+//				combined = Crypto.getInstance().hashObjects(sibling.getHashValue(), entry.getHashValue(), MMR_HASH_BITS);
 			}
 			
 			//Combine the Values..
 			MiniNumber sumvalue = entry.getData().getValueSum().add(sibling.getData().getValueSum());
 			
 			//Create the new MMR Data
-			MMRData data = new MMRData(combined,sumvalue);
+//			MMRData data = new MMRData(combined,sumvalue);
 			
 			//Set the Sibling in this MMRSET!.. this way the MMR peaks still work.. (as the max in a row MUST be on the left to be a peak ))
-			setEntry(sibling.getRow(), sibling.getEntryNumber(),sibling.getData());
+			setEntry(sibling.getRow(), sibling.getEntryNumber(), sibling.getData());
 			
 			//Set the Parent
-			entry = setEntry(entry.getParentRow(), entry.getParentEntry(), data);
+//			entry = setEntry(entry.getParentRow(), entry.getParentEntry(), data);
+			entry = setEntry(entry.getParentRow(), entry.getParentEntry(), parentdata);
 			
 			//Is this is a Peak ? - if so, go no further..
 			for(MMREntry peak : peaks) {
@@ -1161,10 +1165,23 @@ public class MMRSet implements Streamable {
 	 */
 	private MMRData getParentMMRData(MMREntry zLeftChild, MMREntry zRightChild) {
 		//Combine the hashes..
-		MiniData combined = Crypto.getInstance().hashObjects(zLeftChild.getHashValue(),zRightChild.getHashValue(), MMR_HASH_BITS);
+//		MiniData combined = Crypto.getInstance().hashObjects(zLeftChild.getHashValue(),zRightChild.getHashValue(), MMR_HASH_BITS);
 		
 		//Combine the Values..
 		MiniNumber sumvalue = zLeftChild.getData().getValueSum().add(zRightChild.getData().getValueSum());
+		//MinimaLogger.log("sum : "+sumvalue);
+		
+		//What are the parent coordinates..
+		MiniNumber parententry 	= zLeftChild.getParentEntry();
+		MiniNumber parentrow    = new MiniNumber(zLeftChild.getParentRow());
+		
+		//Make the unique MMRData Hash
+		MiniData combined = Crypto.getInstance().hashAllObjects( MMR_HASH_BITS,
+								zLeftChild.getHashValue(),
+								zRightChild.getHashValue(), 
+								zLeftChild.getData().getValueSum(),
+								zRightChild.getData().getValueSum(),
+								sumvalue);
 		
 		//Create a new data proof
 		return new MMRData(combined,sumvalue);
