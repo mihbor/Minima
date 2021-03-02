@@ -41,6 +41,9 @@ public class MMRDataTest {
                 MMRData mmrd2 = new MMRData(new MiniData(), new MiniNumber(1234567890));
                 mmrd2.readDataStream(dis1);
 
+                System.out.println("1: "+mmrd1.getValueSum());
+                System.out.println("2: "+mmrd2.getValueSum());
+                
                 assertEquals("should be equal ", mmrd1.getFinalHash(), mmrd2.getFinalHash());
                 assertEquals("should be equal ", mmrd1.getValueSum(), mmrd2.getValueSum());
                 //assertEquals("should be equal ", mmrd1.isSpent(), mmrd2.isSpent());

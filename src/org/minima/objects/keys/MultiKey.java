@@ -259,7 +259,7 @@ public class MultiKey extends BaseKey {
 		long timediff     = 0;
 		
 		System.out.println("MAKE KEY Start");
-		MultiKey mkey = new MultiKey(privseed, new MiniNumber("2"), new MiniNumber("1"));
+		MultiKey mkey = new MultiKey(privseed, new MiniNumber("7"), new MiniNumber("2"));
 		System.out.println(mkey.toJSON().toString());
 		
 		//Timer..
@@ -296,7 +296,7 @@ public class MultiKey extends BaseKey {
 //		if(true) {System.exit(0);}
 		
 		//MULTI SIGN EXAMPLE
-		for(int i=0;i<1;i++) {
+		for(int i=0;i<30;i++) {
 			MiniData sig = mkey.sign(data);
 			System.out.println(i+")\tSigLength:"
 					+sig.getLength()+"\thash:"

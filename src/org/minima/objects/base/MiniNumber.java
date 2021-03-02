@@ -250,6 +250,11 @@ public class MiniNumber implements Streamable, Comparable<MiniNumber> {
 		return mNumber.compareTo(zCompare.getAsBigDecimal());
 	}
 	
+	@Override
+	public boolean equals(Object zObj) {
+		return isEqual((MiniNumber)zObj);
+	}
+	
 	public boolean isEqual(MiniNumber zNumber) {
 		return compareTo(zNumber)==0;
 	}

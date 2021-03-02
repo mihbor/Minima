@@ -732,7 +732,7 @@ public class MMRSet implements Streamable {
 		MiniData keepvalue = zPeak;
 		while(peaks.size() > 1) {
 			//Create a new MMR
-			MMRSet newmmr = new MMRSet(MMR_HASH_BITS);
+			MMRSet newmmr = new MMRSet(MMR_HASH_BITS,false);
 			
 			//Add all the peaks to it..
 			for(MMREntry peak : peaks) {
@@ -940,13 +940,12 @@ public class MMRSet implements Streamable {
 		
 		//Now take all those values and put THEM in an MMR..
 		while(peaks.size() > 1) {
-		
 			//Create a new MMR
-			MMRSet newmmr = new MMRSet(MMR_HASH_BITS);
+			MMRSet newmmr = new MMRSet(MMR_HASH_BITS,false);
 			
 			//Add all the peaks to it..
 			for(MMREntry peak : peaks) {
-				newmmr.addUnspentCoin(new MMRData(peak.getHashValue(), peak.getData().getValueSum()));	
+				newmmr.addUnspentCoin(new MMRData(peak.getHashValue(), peak.getData().getValueSum()));
 			}
 			
 			//Now get the peaks.. repeat..
@@ -1144,13 +1143,17 @@ public class MMRSet implements Streamable {
 		MiniNumber parententry 	= zLeftChild.getParentEntry();
 		
 		//Make the unique MMRData Hash
-		MiniData combined = Crypto.getInstance().hashAllObjects( MMR_HASH_BITS,
-								zLeftChild.getHashValue(),
-								zRightChild.getHashValue(),
-								sumvalue,
-								parentrow,
-								parententry);
+//		MiniData combined = Crypto.getInstance().hashAllObjects( MMR_HASH_BITS,
+//								zLeftChild.getHashValue(),
+//								zRightChild.getHashValue(),
+//								sumvalue,
+//								parentrow,
+//								parententry);
 		
+		MiniData combined = Crypto.getInstance().hashAllObjects( MMR_HASH_BITS,
+				zLeftChild.getHashValue(),
+				zRightChild.getHashValue());
+
 		//Create a new data proof
 		return new MMRData(combined,sumvalue);
 	}

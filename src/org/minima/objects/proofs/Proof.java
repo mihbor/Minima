@@ -242,19 +242,28 @@ public class Proof implements Streamable {
 			MiniNumber parententry 	= chunk.getEntry().divRoundDownWhole(MiniNumber.TWO);
 			
 			if(chunk.getLeft().isTrue()) {
+//				current = Crypto.getInstance().hashAllObjects(HASH_BITS, 
+//						chunk.getHash(), 
+//						current, 
+//						value,
+//						parentrow, 
+//						parententry);
+				
 				current = Crypto.getInstance().hashAllObjects(HASH_BITS, 
 						chunk.getHash(), 
-						current, 
-						value,
-						parentrow, 
-						parententry);
+						current);
+				
 			}else {
+//				current = Crypto.getInstance().hashAllObjects(HASH_BITS, 
+//						current, 
+//						chunk.getHash(), 
+//						value,
+//						parentrow, 
+//						parententry);
+				
 				current = Crypto.getInstance().hashAllObjects(HASH_BITS, 
 						current, 
-						chunk.getHash(), 
-						value,
-						parentrow, 
-						parententry);
+						chunk.getHash());
 			}
 			
 			
