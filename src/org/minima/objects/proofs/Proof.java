@@ -235,7 +235,7 @@ public class Proof implements Streamable {
 			ProofChunk chunk = mProofChain.get(i);
 			
 			//What is the SUM
-			value = value.add(chunk.getValue());
+			//value = value.add(chunk.getValue());
 			
 			//What is the position
 			MiniNumber parentrow    = chunk.getRow().increment();
@@ -249,9 +249,13 @@ public class Proof implements Streamable {
 //						parentrow, 
 //						parententry);
 				
+				System.out.println("HASH ["+chunk.getHash()+"|"+current+"]");
+				
 				current = Crypto.getInstance().hashAllObjects(HASH_BITS, 
 						chunk.getHash(), 
 						current);
+				
+				System.out.println("="+current);
 				
 			}else {
 //				current = Crypto.getInstance().hashAllObjects(HASH_BITS, 
@@ -261,9 +265,14 @@ public class Proof implements Streamable {
 //						parentrow, 
 //						parententry);
 				
+				System.out.println("HASH ["+current+"|"+chunk.getHash()+"]");
+				
 				current = Crypto.getInstance().hashAllObjects(HASH_BITS, 
 						current, 
 						chunk.getHash());
+				
+				System.out.println("="+current);
+				
 			}
 			
 			

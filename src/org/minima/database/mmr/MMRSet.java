@@ -719,7 +719,7 @@ public class MMRSet implements Streamable {
 	/**
 	 * Get Proof to ROOT
 	 */
-	private MMRProof getPeakToRoot(MiniData zPeak) {
+	private MMRProof getPeakToRoot2(MiniData zPeak) {
 		//Sum of all the initial proofs...
 		MMRProof totalproof = new MMRProof();
 		totalproof.setHashBitLength(MMR_HASH_BITS);
@@ -758,6 +758,61 @@ public class MMRSet implements Streamable {
 			
 			//Now get the peaks.. repeat..
 			peaks = newmmr.getMMRPeaks();
+		}
+		
+		return totalproof;
+	}
+	
+	private MMRProof getPeakToRoot(MiniData zPeak) {
+		//Sum of all the initial proofs...
+		MMRProof totalproof = new MMRProof();
+		totalproof.setHashBitLength(MMR_HASH_BITS);
+		
+		//Get the Peaks..
+		ArrayList<MMREntry> peaks = getMMRPeaks();
+		
+		//Now take all those values and put THEM in an MMR..
+		MMREntry keeper      = null;
+		MiniData keepvalue = zPeak;
+		while(peaks.size() > 1) {
+			//Create a new MMR
+			System.out.println("NEW ROUND "+peaks.size());
+			MMRSet newmmr = new MMRSet(MMR_HASH_BITS,false);
+			
+			//Add all the peaks to it..
+			for(MMREntry peak : peaks) {
+				System.out.println("Peak : "+peak.getHashValue());
+				
+				//Create the new input..
+				MMRData data = new MMRData(peak.getHashValue(), peak.getData().getValueSum());
+				
+				//Is this the one to follow..
+				if(peak.getHashValue().isEqual(keepvalue)) {
+					keeper = newmmr.addUnspentCoin(data);
+					System.out.println("KEEPER FOUND : "+keeper.getHashValue());
+				}else {
+					newmmr.addUnspentCoin(data);	
+				}	
+			}
+			
+			//Now get the keeper proof..
+			MMRProof proof = newmmr.getProof(keeper.getEntryNumber());
+			
+			//Now add that to the total proof..
+			int len = proof.getProofLen();
+			for(int i=0;i<len;i++) {
+				totalproof.addProofChunk(proof.getProofChunk(i));
+			}
+			
+			//Now get the peaks.. repeat..
+			peaks = newmmr.getMMRPeaks();
+			
+			//What to follow..
+			proof.setData(keepvalue);
+			keepvalue = proof.getFinalHash();
+			keeper    = null;
+			
+			System.out.println("NEW KEEPVALUE : "+keepvalue);
 		}
 		
 		return totalproof;
@@ -1222,4 +1277,58 @@ public class MMRSet implements Streamable {
 		finalizeSet();
 	}
 	
+	
+	public static void main(String[] zARgs) {
+		MMRSet testset = new MMRSet(160, false);
+		
+		testset.addLeafNode(new MiniData("0xFF"));
+		testset.addLeafNode(new MiniData("0xFF"));
+		testset.addLeafNode(new MiniData("0xFF"));
+		testset.addLeafNode(new MiniData("0xFF"));
+		
+		testset.addLeafNode(new MiniData("0xFF"));
+		testset.addLeafNode(new MiniData("0xFF"));
+//		
+		testset.addLeafNode(new MiniData("0xFF"));
+		
+		//Get the Root.
+		MMRData root = testset.getMMRRoot();
+		System.out.println("ROOT : "+root.getFinalHash());
+		System.out.println();
+		
+		//Get the peaks..
+		ArrayList<MMREntry> peaks =  testset.getMMRPeaks();
+		for(MMREntry peak : peaks) {
+			//System.out.println("PEAK : "+peak);
+			MiniData hash = peak.getHashValue();
+			System.out.println("PEAK : "+hash);
+			
+			MMRProof pp = testset.getPeakToRoot2(hash);
+			int len = pp.getProofLen();
+			for(int i=0;i<len;i++) {
+				System.out.println("pprf : "+pp.getProofChunk(i).toJSON());
+			}
+			//Set the data..
+			pp.setData(hash);
+			System.out.println("final: "+pp.getFinalHash());
+			
+			System.out.println();
+		}
+		
+//		for(int i=0;i<7;i++) {
+//			MMRProof proof = testset.getProof(new MiniNumber(i));
+//			System.out.println(i+"TPEAK: "+proof.getFinalHash());
+//			
+//			proof = testset.getFullProofToRoot(new MiniNumber(i));
+//			int len = proof.getProofLen();
+//			for(int p=0;p<len;p++) {
+//				System.out.println("pprf : "+proof.getProofChunk(p).toJSON());
+//			}
+//			System.out.println(i+"    : "+proof.getFinalHash());
+//			System.out.println();
+//			
+//		}
+		
+		
+	}
 }
