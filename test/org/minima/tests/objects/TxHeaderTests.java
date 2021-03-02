@@ -23,7 +23,7 @@ public class TxHeaderTests {
         TxHeader mHeader = new TxHeader();
         mHeader.mTxBodyHash = Crypto.getInstance().hashObject(new MiniData("Hello World"));
         mHeader.mBlockDifficulty = new MiniData("0xffff");
-        mHeader.mTimeSecs = new MiniNumber(99999999).divRoundDown(MiniNumber.THOUSAND);
+        mHeader.mTimeSecs = new MiniNumber(99999999).divRoundDownWhole(MiniNumber.THOUSAND);
         mHeader.mBlockNumber = new MiniNumber(123450);
         mHeader.mNonce = new MiniNumber(900000);
         assertTrue("tx header should have a body hash", mHeader.getBodyHash() != null);

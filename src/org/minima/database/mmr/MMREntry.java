@@ -148,7 +148,7 @@ public class MMREntry implements Streamable {
 	}
 	
 	public MiniNumber getParentEntry() {
-		return mEntryNumber.divRoundDown(MiniNumber.TWO);
+		return mEntryNumber.divRoundDownWhole(MiniNumber.TWO);
 	}
 	
 	public MiniNumber getLeftChildEntry() {
