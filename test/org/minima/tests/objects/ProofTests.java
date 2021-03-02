@@ -37,7 +37,7 @@ public class ProofTests {
         MiniNumber l = k;
         MiniByte j = new MiniByte(1);
         MiniByte m = new MiniByte(8);
-        Proof.ProofChunk pc = p.new ProofChunk(j, proofValue, l);
+        Proof.ProofChunk pc = p.new ProofChunk(j, proofValue, l, MiniNumber.ZERO, MiniNumber.ZERO);
         assertEquals("should be equal", proofValue, pc.getHash());
         assertEquals("should be equal", j, pc.getLeft());
         assertEquals("should be equal", l, pc.getValue());
