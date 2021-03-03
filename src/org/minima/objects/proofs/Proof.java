@@ -7,6 +7,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import org.minima.database.mmr.MMREntry;
 import org.minima.objects.base.MiniByte;
 import org.minima.objects.base.MiniData;
 import org.minima.objects.base.MiniNumber;
@@ -158,11 +159,11 @@ public class Proof implements Streamable {
 	}
 	
 	public void addProofChunk(MiniByte zLeft, MiniData zHash) {
-		addProofChunk(zLeft, zHash, MiniNumber.ZERO, MiniNumber.ZERO, MiniNumber.ZERO);
+		addProofChunk(zLeft, zHash, MiniNumber.ZERO, 0, MiniNumber.ZERO);
 	}
 	
-	public void addProofChunk(MiniByte zLeft, MiniData zHash, MiniNumber zValue, MiniNumber zRow, MiniNumber zEntry) {
-		addProofChunk(new ProofChunk(zLeft, zHash, zValue, zRow, zEntry));
+	public void addProofChunk(MiniByte zLeft, MiniData zHash, MiniNumber zValue, int zRow, MiniNumber zEntry) {
+		addProofChunk(new ProofChunk(zLeft, zHash, zValue, new MiniNumber(zRow), zEntry));
 	}
 	
 	public void addProofChunk(ProofChunk zChunk) {
@@ -227,58 +228,87 @@ public class Proof implements Streamable {
 		}
 		
 		//Get the Final Hash of the Data
-		MiniData current = mData;
+		MiniData currentdata = mData;
 		MiniNumber value = mValue;
+		
+		//And LEFT ENtry
+		MMREntry currententry = null;
 		
 		int len = getProofLen();
 		for(int i=0;i<len;i++) {
 			ProofChunk chunk = mProofChain.get(i);
 			
-			//What is the SUM
-			//value = value.add(chunk.getValue());
+			//First Chunk sets the orientation..
+			if(i==0) {
+				MMREntry initialchunk = new MMREntry(chunk.getRow().getAsInt(), chunk.getEntry());
+				
+				if(initialchunk.getRow() == 0) {
+					currententry = new MMREntry(0, initialchunk.getSibling());
+				}else {
+					//Tree size//
+					MiniNumber treespan = new MiniNumber(2).pow(initialchunk.getRow());
+					currententry = new MMREntry(0, treespan);
+				}
+				
+				System.out.println("Initial Pos :"+currententry.getEntryNumber());
+			}
 			
-			//What is the position
-			MiniNumber parentrow    = chunk.getRow().increment();
-			MiniNumber parententry 	= chunk.getEntry().divRoundDownWhole(MiniNumber.TWO);
+			//What is the SUM
+			value = value.add(chunk.getValue());
 			
 			if(chunk.getLeft().isTrue()) {
+				
+				currentdata = Crypto.getInstance().hashAllObjects(HASH_BITS, 
+						chunk.getHash(), 
+						currentdata, 
+						value,
+						chunk.getRow(),chunk.getEntry(),
+						new MiniNumber(currententry.getRow()),currententry.getEntryNumber());
+
+				//What is the position
+				MiniNumber leftparentrow    = chunk.getRow().increment();
+				MiniNumber leftparententry 	= chunk.getEntry().divRoundDownWhole(MiniNumber.TWO);
+
+				currententry = new MMREntry(leftparentrow.getAsInt(), leftparententry);
+				
+//				System.out.println("HASH ["+chunk.getHash()+"|"+current+"]");
+				
 //				current = Crypto.getInstance().hashAllObjects(HASH_BITS, 
 //						chunk.getHash(), 
-//						current, 
-//						value,
-//						parentrow, 
-//						parententry);
+//						current);
 				
-				System.out.println("HASH ["+chunk.getHash()+"|"+current+"]");
-				
-				current = Crypto.getInstance().hashAllObjects(HASH_BITS, 
-						chunk.getHash(), 
-						current);
-				
-				System.out.println("="+current);
+//				System.out.println("LEFT "+parentrow+" "+parententry);
 				
 			}else {
+				
+				currentdata = Crypto.getInstance().hashAllObjects(HASH_BITS, 
+						currentdata, 
+						chunk.getHash(), 
+						value,
+						new MiniNumber(currententry.getRow()),currententry.getEntryNumber(),
+						chunk.getRow(),chunk.getEntry());
+
+				//What is the position
+				MiniNumber leftparentrow    = new MiniNumber(currententry.getRow()+1);
+				MiniNumber leftparententry 	= currententry.getEntryNumber().divRoundDownWhole(MiniNumber.TWO);
+
+				currententry = new MMREntry(leftparentrow.getAsInt(), leftparententry);
+
+//				System.out.println("HASH ["+current+"|"+chunk.getHash()+"]");
+				
 //				current = Crypto.getInstance().hashAllObjects(HASH_BITS, 
 //						current, 
-//						chunk.getHash(), 
-//						value,
-//						parentrow, 
-//						parententry);
+//						chunk.getHash());
 				
-				System.out.println("HASH ["+current+"|"+chunk.getHash()+"]");
-				
-				current = Crypto.getInstance().hashAllObjects(HASH_BITS, 
-						current, 
-						chunk.getHash());
-				
-				System.out.println("="+current);
+//				System.out.println("="+current);
+//				System.out.println("RIGHT "+parentrow+" "+parententry);
 				
 			}
 			
 			
 		}
 		
-		return current;
+		return currentdata;
 	}
 
 	public JSONObject toJSON() {
