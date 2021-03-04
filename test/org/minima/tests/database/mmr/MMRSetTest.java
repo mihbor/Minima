@@ -31,64 +31,65 @@ public class MMRSetTest {
 
     @Test
     public void testWriteAndReadDataStream() {
-        //try {
-        //    MMRSet mmrs1 = new MMRSet();
-        //
-        //    ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        //    DataOutputStream dos = new DataOutputStream(bos);
-        //
-        //    mmrs1.writeDataStream(dos);
-        //
-        //    InputStream inputStream = new ByteArrayInputStream(bos.toByteArray());
-        //    DataInputStream dis = new DataInputStream(inputStream);
-        //
-        //    MMRSet mmrs2 = new MMRSet();
-        //    mmrs2.readDataStream(dis);
-        //
-        //    assertEquals("should be equal ", mmrs1., mmrs2.;
-        //} catch (final IOException e) {
-        //    System.out.println("IOException: " + e.toString() + " msg=" + e.getMessage());
-        //    assertTrue(" there should not be an IOException", false);
-        //}
+        try {
+            MMRSet mmrs1 = new MMRSet();
 
-        //try {
-        //    MMRSet mmrs1 = new MMRSet(512);
-        //
-        //    ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        //    DataOutputStream dos = new DataOutputStream(bos);
-        //
-        //    mmrs1.writeDataStream(dos);
-        //
-        //    InputStream inputStream = new ByteArrayInputStream(bos.toByteArray());
-        //    DataInputStream dis = new DataInputStream(inputStream);
-        //
-        //    MMRSet mmrs2 = new MMRSet();
-        //    mmrs2.readDataStream(dis);
-        //
-        //    //assertEquals("should be equal ", mmrs1., mmrs2.;
-        //} catch (final IOException e) {
-        //    System.out.println("IOException: " + e.toString() + " msg=" + e.getMessage());
-        //    assertTrue(" there should not be an IOException", false);
-        //}
-        //try {
-        //    MMRSet mmrs1 = new MMRSet(512);
-        //
-        //    ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        //    DataOutputStream dos = new DataOutputStream(bos);
-        //
-        //    mmrs1.writeDataStream(dos);
-        //
-        //    InputStream inputStream = new ByteArrayInputStream(bos.toByteArray());
-        //    DataInputStream dis = new DataInputStream(inputStream);
-        //
-        //    MMRSet mmrs2 = new MMRSet();
-        //    mmrs2.readDataStream(dis);
-        //
-        //    //assertEquals("should be equal ", mmrs1., mmrs2.;
-        //} catch (final IOException e) {
-        //    System.out.println("IOException: " + e.toString() + " msg=" + e.getMessage());
-        //    assertTrue(" there should not be an IOException", false);
-        //}
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            DataOutputStream dos = new DataOutputStream(bos);
+
+            mmrs1.writeDataStream(dos);
+
+            InputStream inputStream = new ByteArrayInputStream(bos.toByteArray());
+            DataInputStream dis = new DataInputStream(inputStream);
+
+            MMRSet mmrs2 = new MMRSet();
+            mmrs2.readDataStream(dis);
+
+            assertEquals("should be equal ", mmrs1., mmrs2.;
+        } catch (final IOException e) {
+            System.out.println("IOException: " + e.toString() + " msg=" + e.getMessage());
+            assertTrue(" there should not be an IOException", false);
+        }
+
+        try {
+            MMRSet mmrs1 = new MMRSet(512);
+
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            DataOutputStream dos = new DataOutputStream(bos);
+
+            mmrs1.writeDataStream(dos);
+
+            InputStream inputStream = new ByteArrayInputStream(bos.toByteArray());
+            DataInputStream dis = new DataInputStream(inputStream);
+
+            MMRSet mmrs2 = new MMRSet();
+            mmrs2.readDataStream(dis);
+
+            //assertEquals("should be equal ", mmrs1., mmrs2.;
+        } catch (final IOException e) {
+            System.out.println("IOException: " + e.toString() + " msg=" + e.getMessage());
+            assertTrue(" there should not be an IOException", false);
+        }
+        try {
+            MMRSet mmrs1 = new MMRSet(512);
+
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            DataOutputStream dos = new DataOutputStream(bos);
+
+            mmrs1.writeDataStream(dos);
+
+            InputStream inputStream = new ByteArrayInputStream(bos.toByteArray());
+            DataInputStream dis = new DataInputStream(inputStream);
+
+            MMRSet mmrs2 = new MMRSet();
+            mmrs2.readDataStream(dis);
+
+            //assertEquals("should be equal ", mmrs1., mmrs2.;
+        } catch (final IOException e) {
+            System.out.println("IOException: " + e.toString() + " msg=" + e.getMessage());
+            assertTrue(" there should not be an IOException", false);
+        }
+
         try {
             MMRSet mmrs1 = new MMRSet();
 

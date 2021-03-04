@@ -75,32 +75,32 @@ public class MMREntryTest {
 
     @Test
     public void testWriteAndReadDataStream() {
-        //{
-        //    try {
-        //        MMREntry mmre1 = new MMREntry(123, new MiniInteger(1234567890));
-        //
-        //        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        //        DataOutputStream dos = new DataOutputStream(bos);
-        //
-        //        mmre1.writeDataStream(dos);
-        //
-        //        InputStream inputStream = new ByteArrayInputStream(bos.toByteArray());
-        //        DataInputStream dis = new DataInputStream(inputStream);
-        //
-        //        MMREntry mmre2 = new MMREntry(0, new MiniInteger(0));
-        //        mmre2.readDataStream(dis);
-        //
-        //        assertEquals("should be equal ", mmre1.getBlockTime().getAsBigDecimal(), mmre2.getBlockTime().getAsBigDecimal());
-        //        assertEquals("should be equal ", mmre1.getChildRow(), mmre2.getChildRow());
-        //        assertEquals("should be equal ", mmre1.getEntryNumber().getNumber(), mmre2.getEntryNumber().getNumber());
-        //        assertEquals("should be equal ", 0, mmre1.getHashValue().compare(mmre2.getHashValue()));
-        //        assertEquals("should be equal ", mmre1.getParentRow(), mmre2.getParentRow());
-        //        assertEquals("should be equal ", mmre1.getRow(), mmre2.getRow());
-        //    } catch (final IOException e) {
-        //        System.out.println("IOException: " + e.toString() + " msg=" + e.getMessage());
-        //        assertTrue(" there should not be an IOException", false);
-        //    }
-        //}
+        {
+            try {
+                MMREntry mmre1 = new MMREntry(123, new MiniInteger(1234567890));
+
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                DataOutputStream dos = new DataOutputStream(bos);
+
+                mmre1.writeDataStream(dos);
+
+                InputStream inputStream = new ByteArrayInputStream(bos.toByteArray());
+                DataInputStream dis = new DataInputStream(inputStream);
+
+                MMREntry mmre2 = new MMREntry(0, new MiniInteger(0));
+                mmre2.readDataStream(dis);
+
+                assertEquals("should be equal ", mmre1.getBlockTime().getAsBigDecimal(), mmre2.getBlockTime().getAsBigDecimal());
+                assertEquals("should be equal ", mmre1.getChildRow(), mmre2.getChildRow());
+                assertEquals("should be equal ", mmre1.getEntryNumber().getNumber(), mmre2.getEntryNumber().getNumber());
+                assertEquals("should be equal ", 0, mmre1.getHashValue().compare(mmre2.getHashValue()));
+                assertEquals("should be equal ", mmre1.getParentRow(), mmre2.getParentRow());
+                assertEquals("should be equal ", mmre1.getRow(), mmre2.getRow());
+            } catch (final IOException e) {
+                System.out.println("IOException: " + e.toString() + " msg=" + e.getMessage());
+                assertTrue(" there should not be an IOException", false);
+            }
+        }
 
         {
             try {
@@ -145,14 +145,14 @@ public class MMREntryTest {
 
     @Test
     public void testJSONConversion() {
-        //{
-        //    MMREntry mmre = new MMREntry(123, new MiniInteger(1234567890));
-        //    JSONObject json = mmre.toJSON();
-        //    assertTrue("JSON object should contain block key", json.containsKey("block"));
-        //    assertTrue("JSON object should contain row key", json.containsKey("row"));
-        //    assertTrue("JSON object should contain entry key", json.containsKey("entry"));
-        //    assertTrue("JSON object should contain data key", json.containsKey("data"));
-        //}
+        {
+            MMREntry mmre = new MMREntry(123, new MiniInteger(1234567890));
+            JSONObject json = mmre.toJSON();
+            assertTrue("JSON object should contain block key", json.containsKey("block"));
+            assertTrue("JSON object should contain row key", json.containsKey("row"));
+            assertTrue("JSON object should contain entry key", json.containsKey("entry"));
+            assertTrue("JSON object should contain data key", json.containsKey("data"));
+        }
 
         {
             MMREntry mmre = new MMREntry(123, new MiniInteger(1234567890));

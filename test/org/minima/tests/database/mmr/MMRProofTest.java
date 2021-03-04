@@ -70,38 +70,38 @@ public class MMRProofTest {
 
     @Test
     public void testWriteAndReadDataStream() {
-        //{
-        //    try {
-        //        MMRProof mmrp1 = new MMRProof();
-        //
-        //        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        //        DataOutputStream dos = new DataOutputStream(bos);
-        //
-        //        //mmrp1.writeDataStream(dos);
-        //        InputStream inputStream = new ByteArrayInputStream(bos.toByteArray());
-        //        DataInputStream dis = new DataInputStream(inputStream);
-        //
-        //        MMRProof mmrp2 = new MMRProof();
-        //        mmrp2.readDataStream(dis);
-        //
-        //        assertEquals("should be equal ", mmrp1.getBlockTime().getAsBigDecimal(), mmrp2.getBlockTime().getAsBigDecimal());
-        //        assertEquals("should be equal ", mmrp1.getEntryNumber().getNumber(), mmrp2.getEntryNumber().getNumber());
-        //        assertEquals("should be equal ", mmrp1.getMMRData().getFinalHash(), mmrp2.getMMRData().getFinalHash());
-        //
-        //        InputStream inputStream2 = new ByteArrayInputStream(bos.toByteArray());
-        //        DataInputStream dis2 = new DataInputStream(inputStream2);
-        //
-        //        MMRProof mmrp3 = MMRProof.ReadFromStream(dis2);
-        //
-        //        assertEquals("should be equal ", mmrp1.getBlockTime().getAsBigDecimal(), mmrp3.getBlockTime().getAsBigDecimal());
-        //        assertEquals("should be equal ", mmrp1.getEntryNumber().getNumber(), mmrp3.getEntryNumber().getNumber());
-        //        assertEquals("should be equal ", mmrp1.getMMRData().getFinalHash(), mmrp3.getMMRData().getFinalHash());
-        //
-        //    } catch (final IOException e) {
-        //        System.out.println("IOException: " + e.toString() + " msg=" + e.getMessage());
-        //        assertTrue(" there should not be an IOException", false);
-        //    }
-        //}
+        {
+            try {
+                MMRProof mmrp1 = new MMRProof();
+
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                DataOutputStream dos = new DataOutputStream(bos);
+
+                //mmrp1.writeDataStream(dos);
+                InputStream inputStream = new ByteArrayInputStream(bos.toByteArray());
+                DataInputStream dis = new DataInputStream(inputStream);
+
+                MMRProof mmrp2 = new MMRProof();
+                mmrp2.readDataStream(dis);
+
+                assertEquals("should be equal ", mmrp1.getBlockTime().getAsBigDecimal(), mmrp2.getBlockTime().getAsBigDecimal());
+                assertEquals("should be equal ", mmrp1.getEntryNumber().getNumber(), mmrp2.getEntryNumber().getNumber());
+                assertEquals("should be equal ", mmrp1.getMMRData().getFinalHash(), mmrp2.getMMRData().getFinalHash());
+
+                InputStream inputStream2 = new ByteArrayInputStream(bos.toByteArray());
+                DataInputStream dis2 = new DataInputStream(inputStream2);
+
+                MMRProof mmrp3 = MMRProof.ReadFromStream(dis2);
+
+                assertEquals("should be equal ", mmrp1.getBlockTime().getAsBigDecimal(), mmrp3.getBlockTime().getAsBigDecimal());
+                assertEquals("should be equal ", mmrp1.getEntryNumber().getNumber(), mmrp3.getEntryNumber().getNumber());
+                assertEquals("should be equal ", mmrp1.getMMRData().getFinalHash(), mmrp3.getMMRData().getFinalHash());
+
+            } catch (final IOException e) {
+                System.out.println("IOException: " + e.toString() + " msg=" + e.getMessage());
+                assertTrue(" there should not be an IOException", false);
+            }
+        }
 
         {
             try {
@@ -139,14 +139,14 @@ public class MMRProofTest {
 
     @Test
     public void testJSONConversion() {
-        //{
-        //    MMRProof mmrp = new MMRProof();
-        //    JSONObject json = mmrp.toJSON();
-        //    assertTrue("JSON object should contain blocktime key", json.containsKey("blocktime"));
-        //    assertTrue("JSON object should contain entry key", json.containsKey("entry"));
-        //    assertTrue("JSON object should contain data key", json.containsKey("data"));
-        //    assertTrue("JSON object should contain proof key", json.containsKey("proof"));
-        //}
+        {
+            MMRProof mmrp = new MMRProof();
+            JSONObject json = mmrp.toJSON();
+            assertTrue("JSON object should contain blocktime key", json.containsKey("blocktime"));
+            assertTrue("JSON object should contain entry key", json.containsKey("entry"));
+            assertTrue("JSON object should contain data key", json.containsKey("data"));
+            assertTrue("JSON object should contain proof key", json.containsKey("proof"));
+        }
 
         {
             MMRProof mmrp = new MMRProof(new MiniInteger(1234567890), new MMRData(new MiniData(), new MMRSumNumber(new MiniNumber(1234567890))), new MiniNumber(987654321));
@@ -161,12 +161,12 @@ public class MMRProofTest {
 
     @Test
     public void testToString() {
-        //{
-        //    MMRProof mmrp = new MMRProof();
-        //    String exp_s = mmrp.toJSON().toString();
-        //    String obj_s = mmrp.toString();
-        //    assertEquals("should be equal ", exp_s, obj_s);
-        //}
+        {
+            MMRProof mmrp = new MMRProof();
+            String exp_s = mmrp.toJSON().toString();
+            String obj_s = mmrp.toString();
+            assertEquals("should be equal ", exp_s, obj_s);
+        }
 
         {
             MMRProof mmrp = new MMRProof(new MiniInteger(1234567890), new MMRData(new MiniData(), new MMRSumNumber(new MiniNumber(1234567890))), new MiniNumber(987654321));
