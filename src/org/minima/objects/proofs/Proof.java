@@ -21,20 +21,16 @@ import org.minima.utils.json.JSONObject;
 public class Proof implements Streamable {
 
 	public class ProofChunk implements Streamable {
+		MiniByte    mLeftRight;
 		MiniData    mHash;
 		MiniNumber  mValue;
-		MiniByte    mLeftRight;
-		MiniNumber  mRow;
-		MiniNumber  mEntry;
 		
 		public ProofChunk() {}
 		
-		public ProofChunk(MiniByte zLeft, MiniData zHash, MiniNumber zValue, MiniNumber zRow, MiniNumber zEntry) {
+		public ProofChunk(MiniByte zLeft, MiniData zHash, MiniNumber zValue) {
 			mLeftRight 	= zLeft;
 			mHash 		= zHash;
 			mValue 		= zValue;
-			mRow 		= zRow;
-			mEntry 		= zEntry;
 		}
 		
 		public MiniByte getLeft() {
@@ -49,22 +45,12 @@ public class Proof implements Streamable {
 			return mValue;
 		}
 		
-		public MiniNumber getRow() {
-			return mRow;
-		}
-		
-		public MiniNumber getEntry() {
-			return mEntry;
-		}
-		
 		public JSONObject toJSON() {
 			JSONObject json = new JSONObject();
 			
 			json.put("left", getLeft().isTrue());
 			json.put("hash", getHash().to0xString());
 			json.put("value", getValue().toString());
-			json.put("row", getRow().toString());
-			json.put("entry", getEntry().toString());
 			
 			return json;
 		}
@@ -74,8 +60,6 @@ public class Proof implements Streamable {
 			mLeftRight.writeDataStream(zOut);
 			mHash.writeDataStream(zOut);
 			mValue.writeDataStream(zOut);
-			mRow.writeDataStream(zOut);
-			mEntry.writeDataStream(zOut);
 		}
 
 		@Override
@@ -83,8 +67,6 @@ public class Proof implements Streamable {
 			mLeftRight 	= MiniByte.ReadFromStream(zIn);
 			mHash      	= MiniData.ReadFromStream(zIn);
 			mValue     	= MiniNumber.ReadFromStream(zIn);
-			mRow		= MiniNumber.ReadFromStream(zIn);
-			mEntry		= MiniNumber.ReadFromStream(zIn);
 		}
 	}
 	
@@ -159,11 +141,11 @@ public class Proof implements Streamable {
 	}
 	
 	public void addProofChunk(MiniByte zLeft, MiniData zHash) {
-		addProofChunk(zLeft, zHash, MiniNumber.ZERO, 0, MiniNumber.ZERO);
+		addProofChunk(zLeft, zHash, MiniNumber.ZERO);
 	}
 	
-	public void addProofChunk(MiniByte zLeft, MiniData zHash, MiniNumber zValue, int zRow, MiniNumber zEntry) {
-		addProofChunk(new ProofChunk(zLeft, zHash, zValue, new MiniNumber(zRow), zEntry));
+	public void addProofChunk(MiniByte zLeft, MiniData zHash, MiniNumber zValue) {
+		addProofChunk(new ProofChunk(zLeft, zHash, zValue));
 	}
 	
 	public void addProofChunk(ProofChunk zChunk) {
@@ -238,74 +220,15 @@ public class Proof implements Streamable {
 		for(int i=0;i<len;i++) {
 			ProofChunk chunk = mProofChain.get(i);
 			
-//			//First Chunk sets the orientation..
-//			if(i==0) {
-//				MMREntry initialchunk = new MMREntry(chunk.getRow().getAsInt(), chunk.getEntry());
-//				
-//				if(initialchunk.getRow() == 0) {
-//					currententry = new MMREntry(0, initialchunk.getSibling());
-//				}else {
-//					//Tree size//
-//					MiniNumber treespan = new MiniNumber(2).pow(initialchunk.getRow());
-//					currententry = new MMREntry(0, treespan);
-//				}
-//				
-//				System.out.println("Initial Pos :"+currententry.getEntryNumber());
-//			}
-			
 			//What is the SUM
 			value = value.add(chunk.getValue());
 			
+			//Hash in the correct order
 			if(chunk.getLeft().isTrue()) {
-				
-//				currentdata = Crypto.getInstance().hashAllObjects(HASH_BITS, 
-//						chunk.getHash(), 
-//						currentdata, 
-//						value,
-//						chunk.getRow(),chunk.getEntry(),
-//						new MiniNumber(currententry.getRow()),currententry.getEntryNumber());
-//
-//				//What is the position
-//				MiniNumber leftparentrow    = chunk.getRow().increment();
-//				MiniNumber leftparententry 	= chunk.getEntry().divRoundDownWhole(MiniNumber.TWO);
-//
-//				currententry = new MMREntry(leftparentrow.getAsInt(), leftparententry);
-				
-//				System.out.println("HASH ["+chunk.getHash()+"|"+current+"]");
-				
-				current = Crypto.getInstance().hashAllObjects(HASH_BITS, 
-						chunk.getHash(), 
-						current);
-				
-//				System.out.println("LEFT "+parentrow+" "+parententry);
-				
+				current = Crypto.getInstance().hashAllObjects(HASH_BITS, chunk.getHash(), current,value);
 			}else {
-//				
-//				currentdata = Crypto.getInstance().hashAllObjects(HASH_BITS, 
-//						currentdata, 
-//						chunk.getHash(), 
-//						value,
-//						new MiniNumber(currententry.getRow()),currententry.getEntryNumber(),
-//						chunk.getRow(),chunk.getEntry());
-//
-//				//What is the position
-//				MiniNumber leftparentrow    = new MiniNumber(currententry.getRow()+1);
-//				MiniNumber leftparententry 	= currententry.getEntryNumber().divRoundDownWhole(MiniNumber.TWO);
-//
-//				currententry = new MMREntry(leftparentrow.getAsInt(), leftparententry);
-
-//				System.out.println("HASH ["+current+"|"+chunk.getHash()+"]");
-				
-				current = Crypto.getInstance().hashAllObjects(HASH_BITS, 
-						current, 
-						chunk.getHash());
-				
-//				System.out.println("="+current);
-//				System.out.println("RIGHT "+parentrow+" "+parententry);
-				
+				current = Crypto.getInstance().hashAllObjects(HASH_BITS, current, chunk.getHash(),value);
 			}
-			
-			
 		}
 		
 		return current;
@@ -321,6 +244,7 @@ public class Proof implements Streamable {
 		}
 		
 		json.put("data", mData.to0xString());
+		json.put("value", mValue.toString());
 		json.put("hashbits", HASH_BITS);
 		json.put("proofchain", proof);
 		json.put("chainsha", getChainSHAProof().to0xString());

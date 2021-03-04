@@ -700,11 +700,7 @@ public class MMRSet implements Streamable {
 		MMREntry sibling = getEntry(entry.getRow(), entry.getSibling());
 		while(!sibling.isEmpty()) {
 			//Add to our Proof..
-			proof.addProofChunk(new MiniByte(sibling.isLeft()), 
-								sibling.getHashValue(), 
-								sibling.getData().getValueSum(),
-								sibling.getRow(),
-								sibling.getEntryNumber());	
+			proof.addProofChunk(new MiniByte(sibling.isLeft()),sibling.getHashValue(),sibling.getData().getValueSum());	
 			
 			//Now get the Parent.. just need a reference even if is empty. To find the sibling.
 			MMREntry parent = new MMREntry( sibling.getParentRow(), sibling.getParentEntry() );
@@ -1364,26 +1360,10 @@ public class MMRSet implements Streamable {
 	private MMRData getParentMMRData(MMREntry zLeftChild, MMREntry zRightChild) {
 		//Combine the Values..
 		MiniNumber sumvalue   = zLeftChild.getData().getValueSum().add(zRightChild.getData().getValueSum());
-//		
-//		//Both nodes used in HASH.. position is critical. Different position different hash
-//		MiniNumber leftrow    	= new MiniNumber(zLeftChild.getRow());
-//		MiniNumber leftentry  	= zLeftChild.getEntryNumber();
-//		MiniNumber leftsum 		= zLeftChild.getData().getValueSum();
-//		
-//		MiniNumber rightrow   = new MiniNumber(zRightChild.getRow());
-//		MiniNumber rightentry = zRightChild.getEntryNumber();
-//		MiniNumber rightsum   = zRightChild.getData().getValueSum();
 		
 		//Make the unique MMRData Hash
 		MiniData combined = Crypto.getInstance().hashAllObjects( MMR_HASH_BITS,
-									zLeftChild.getHashValue(),
-									zRightChild.getHashValue());
-		
-//		MiniData combined = Crypto.getInstance().hashAllObjects( MMR_HASH_BITS,
-//				zLeftChild.getHashValue(),
-//				zRightChild.getHashValue());
-
-//		System.out.println("HASH["+zLeftChild.getHashValue()+"|"+zRightChild.getHashValue()+"] = "+combined);
+				zLeftChild.getHashValue(),zRightChild.getHashValue(),sumvalue);
 		
 		//Create a new data proof
 		return new MMRData(combined,sumvalue);
@@ -1459,7 +1439,7 @@ public class MMRSet implements Streamable {
 		System.out.println("Start Tests");
 		
 		//RUN THROUGH MANY SIZES
-		for(int testsize=1;testsize<8;testsize++) {
+		for(int testsize=1;testsize<16;testsize++) {
 			
 //			int testsize = 7;
 			
