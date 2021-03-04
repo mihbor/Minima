@@ -826,6 +826,13 @@ public class MMRSet implements Streamable {
 				}	
 			}
 			
+			if(peakentry == null) {
+				MinimaLogger.log("ERROR peaks "+peaks.size()+" "+proofpeak.to0xString());
+				for(MMREntry peak : peaks) {
+					MinimaLogger.log("ERROR peak "+peak);
+				}
+			}
+			
 			//Finalise
 			newmmr.finalizeSet();
 			
@@ -1224,7 +1231,7 @@ public class MMRSet implements Streamable {
 		System.out.println("Start Tests");
 		
 		//RUN THROUGH MANY SIZES
-		for(int testsize=1;testsize<16;testsize++) {
+		for(int testsize=1;testsize<37;testsize++) {
 			
 //			int testsize = 7;
 			
