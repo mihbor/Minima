@@ -17,7 +17,7 @@ public class MMRProof extends Proof {
 	MiniNumber mBlockTime = new MiniNumber(0);
 	
 	/**
-	 * The Entry number in the MMR
+	 * The Entry number in the MMR - row is always ZERO
 	 */
 	MiniNumber mEntryNumber = new MiniNumber(0);
 	
@@ -43,7 +43,11 @@ public class MMRProof extends Proof {
 	}
 	
 	public MiniNumber getEntryNumber() {
-		return mEntryNumber;
+		if(mData.isHashOnly()) {
+			return mEntryNumber;
+		}
+		
+		return mData.getEntryNumber();
 	}
 	
 	public MMRData getMMRData() {

@@ -74,7 +74,7 @@ public class MMRDataTest {
                 states.clear();
                 states.add(new StateVariable(0, "dummy"));
 
-                MMRData mmrd1 = new MMRData(new MiniByte(0), new Coin(new MiniData("0x00"), addr.getAddressData(), MiniNumber.TEN, new MiniData("0x00")), new MiniNumber(1234567890), states);
+                MMRData mmrd1 = new MMRData(MiniNumber.ZERO, new MiniByte(0), new Coin(new MiniData("0x00"), addr.getAddressData(), MiniNumber.TEN, new MiniData("0x00")), new MiniNumber(1234567890), states);
 
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
                 DataOutputStream dos = new DataOutputStream(bos);
@@ -117,7 +117,7 @@ public class MMRDataTest {
                 states.clear();
                 states.add(new StateVariable(0, "dummy"));
 
-                MMRData mmrd1 = new MMRData(new MiniByte(123), new Coin(new MiniData("0x00"), addr.getAddressData(), MiniNumber.TEN, new MiniData("0x00")), new MiniNumber(1234567890), states);
+                MMRData mmrd1 = new MMRData(MiniNumber.ZERO, new MiniByte(123), new Coin(new MiniData("0x00"), addr.getAddressData(), MiniNumber.TEN, new MiniData("0x00")), new MiniNumber(1234567890), states);
 
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
                 DataOutputStream dos = new DataOutputStream(bos);
@@ -180,7 +180,7 @@ public class MMRDataTest {
             states.clear();
             states.add(new StateVariable(0, "dummy"));
 
-            MMRData mmrd = new MMRData(new MiniByte(0), new Coin(new MiniData("0x00"), addr.getAddressData(), MiniNumber.TEN, new MiniData("0x00")), new MiniNumber(1234567890), states);
+            MMRData mmrd = new MMRData(MiniNumber.ZERO, new MiniByte(0), new Coin(new MiniData("0x00"), addr.getAddressData(), MiniNumber.TEN, new MiniData("0x00")), new MiniNumber(1234567890), states);
             JSONObject json = mmrd.toJSON();
             assertTrue("JSON object should contain hashonly key", json.containsKey("hashonly"));
             assertTrue("JSON object should contain value key", json.containsKey("value"));
@@ -199,7 +199,7 @@ public class MMRDataTest {
             states.clear();
             states.add(new StateVariable(0, "dummy"));
 
-            MMRData mmrd = new MMRData(new MiniByte(123), new Coin(new MiniData("0x00"), addr.getAddressData(), MiniNumber.TEN, new MiniData("0x00")), new MiniNumber(1234567890), states);
+            MMRData mmrd = new MMRData(MiniNumber.ZERO, new MiniByte(123), new Coin(new MiniData("0x00"), addr.getAddressData(), MiniNumber.TEN, new MiniData("0x00")), new MiniNumber(1234567890), states);
             JSONObject json = mmrd.toJSON();
             assertTrue("JSON object should contain hashonly key", json.containsKey("hashonly"));
             assertTrue("JSON object should contain value key", json.containsKey("value"));

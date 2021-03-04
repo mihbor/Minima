@@ -446,10 +446,11 @@ public class TxPoWChecker {
 				Coin mmrcoin = new Coin(coinid, output.getAddress(), output.getAmount(), tokid);
 				
 				//Now add as an unspent to the MMR
-				MMRData mmrdata = new MMRData(MiniByte.FALSE, mmrcoin, tBlockNumber, trans.getCompleteState());
+//				MMRData mmrdata = new MMRData(MiniByte.FALSE, mmrcoin, tBlockNumber, trans.getCompleteState());
 				
 				//And Add it..
-				MMREntry unspent = zMMRSet.addUnspentCoin(mmrdata);
+				MMREntry unspent = zMMRSet.addUnspentCoin(mmrcoin, tBlockNumber, trans.getCompleteState());
+//				MMREntry unspent = zMMRSet.addUnspentCoin(mmrdata);
 				
 				//Do we keep this output..
 				boolean reladdress = zDB.getUserDB().isCoinRelevant(output);

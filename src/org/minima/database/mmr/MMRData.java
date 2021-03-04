@@ -19,6 +19,11 @@ import org.minima.utils.json.JSONObject;
 public class MMRData implements Streamable{
 	
 	/**
+	 * The Entry Number in the MMR
+	 */
+	MiniNumber mEntryNumber;
+
+	/**
 	 * Spent or Unspent
 	 */
 	MiniByte mSpent;
@@ -78,7 +83,8 @@ public class MMRData implements Streamable{
 	 * Create an Unspent MMRDATA coin from a coin
 	 * @param zOutput
 	 */
-	public MMRData(MiniByte zSpent, Coin zCoin, MiniNumber zInBlock, ArrayList<StateVariable> zState) {
+	public MMRData(MiniNumber zEntryNumber, MiniByte zSpent, Coin zCoin, MiniNumber zInBlock, ArrayList<StateVariable> zState) {
+		mEntryNumber = zEntryNumber;
 		mSpent 		 = zSpent;
 		mCoin 		 = zCoin;
 		mBlockNumber = zInBlock;
@@ -158,6 +164,10 @@ public class MMRData implements Streamable{
 		return mPrevState;
 	}
 	
+	public MiniNumber getEntryNumber() {
+		return mEntryNumber;
+	}
+	
 	public MiniNumber getInBlock() {
 		return mBlockNumber;
 	}
@@ -177,6 +187,7 @@ public class MMRData implements Streamable{
 		}else {
 			obj.put("finalhash", mFinalHash.toString());
 			
+			obj.put("entry", mEntryNumber.toString());
 			obj.put("spent", isSpent());
 			obj.put("coin", mCoin);
 			obj.put("inblock", mBlockNumber.toString());
@@ -212,6 +223,7 @@ public class MMRData implements Streamable{
 			MiniByte.FALSE.writeDataStream(zOut);
 		
 			//Write out the data..
+			mEntryNumber.writeDataStream(zOut);
 			mSpent.writeDataStream(zOut);
 			mCoin.writeDataStream(zOut);
 			mBlockNumber.writeDataStream(zOut);
@@ -238,6 +250,7 @@ public class MMRData implements Streamable{
 			mValueSum    = MiniNumber.ReadFromStream(zIn);
 			
 		}else {
+			mEntryNumber = MiniNumber.ReadFromStream(zIn);
 			mSpent   	 = MiniByte.ReadFromStream(zIn);
 			mCoin    	 = Coin.ReadFromStream(zIn);
 			mBlockNumber = MiniNumber.ReadFromStream(zIn);
