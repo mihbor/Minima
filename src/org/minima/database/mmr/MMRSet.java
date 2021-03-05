@@ -695,7 +695,7 @@ public class MMRSet implements Streamable {
 	/**
 	 * Get An MMR Proof
 	 */
-	public MMRProof getProof(MiniNumber zEntryNumber) {
+	private MMRProof getProofToPeak(MiniNumber zEntryNumber) {
 		//First get the initial Entry.. check parents aswell..
 		MMREntry entry = getEntry(0, zEntryNumber);
 		
@@ -809,7 +809,7 @@ public class MMRSet implements Streamable {
 			}
 			
 			//Now get the keeper proof..
-			MMRProof proof = newmmr.getProof(keeper.getEntryNumber());
+			MMRProof proof = newmmr.getProofToPeak(keeper.getEntryNumber());
 			
 			//Now add that to the total proof..
 			int len = proof.getProofLen();
@@ -824,6 +824,8 @@ public class MMRSet implements Streamable {
 //			proof.setData(keeper.getHashValue(), keeper.getData().getValueSum());
 			proof.setData(keeper.getHashValue(), keeper.getData().getValueSum());
 			currentpeak = proof.getFinalHash();
+//			currentpeak = proof.getFinalHash();
+			
 			keeper      = null;
 		}
 		
@@ -836,9 +838,9 @@ public class MMRSet implements Streamable {
 	 * @param zEntry
 	 * @return
 	 */
-	public MMRProof getFullProofToRoot(MiniNumber zEntry) {
+	public MMRProof getProof(MiniNumber zEntry) {
 		//Get the Basic Proof..
-		MMRProof proof = getProof(zEntry);
+		MMRProof proof = getProofToPeak(zEntry);
 		
 		//Now get the peak this points to..
 		MiniData peak = proof.getFinalHash();
@@ -888,34 +890,40 @@ public class MMRSet implements Streamable {
 		}
 		
 		//Check the proof point to the MMR ROOT..
-		ArrayList<MMREntry> peaks = proofset.getMMRPeaks();
+//		ArrayList<MMREntry> peaks = proofset.getMMRPeaks();
+		
+		MMRData root = proofset.getMMRRoot();
 		
 		//Calculate the proof..
 		MiniData proofpeak    = zProof.getFinalHash();
 //		MiniNumber proofvalue = zProof.getFinalValue();
 		
-		//Is this is a Peak ? - if so, go no further..
-		boolean found = false;
-		MiniNumber peakvalue = null;
-		for(MMREntry peak : peaks) {
-			if( proofpeak.isEqual(peak.getHashValue())) {
-				found     = true;
-				peakvalue = peak.getData().getValueSum();
-				break;
-			}
-//			if( proofpeak.isEqual(peak.getHashValue()) && 
-//				proofvalue.isEqual(peak.getData().getValueSum())) {
+		if(!root.getFinalHash().isEqual(proofpeak)) {
+			return false;
+		}
+		
+//		//Is this is a Peak ? - if so, go no further..
+//		boolean found = false;
+//		MiniNumber peakvalue = null;
+//		for(MMREntry peak : peaks) {
+//			if( proofpeak.isEqual(peak.getHashValue())) {
 //				found     = true;
 //				peakvalue = peak.getData().getValueSum();
 //				break;
 //			}
-		}
+////			if( proofpeak.isEqual(peak.getHashValue()) && 
+////				proofvalue.isEqual(peak.getData().getValueSum())) {
+////				found     = true;
+////				peakvalue = peak.getData().getValueSum();
+////				break;
+////			}
+//		}
 		
 		//Was it one of the peaks ?
-		if(!found) {
-//			MinimaLogger.log("ERROR Proof No Peak Found "+zProof);
-			return false;
-		}
+//		if(!found) {
+////			MinimaLogger.log("ERROR Proof No Peak Found "+zProof);
+//			return false;
+//		}
 		
 		//So the proof was valid at that time.. if it has been SPENT, it will have been AFTER this block - and in our MMR
 		MMREntry entry = getEntry(0, zProof.getEntryNumber(),zProof.getBlockTime().increment());
@@ -1332,7 +1340,7 @@ public static void main(String[] zARgs) {
 //				int nodes=6;
 //				System.out.println("Proof : "+nodes);
 				
-				MMRProof proof = testset.getFullProofToRoot(new MiniNumber(nodes));
+				MMRProof proof = testset.getProof(new MiniNumber(nodes));
 //				System.out.println(proof.toJSON());
 				
 				MiniData hash  = proof.getFinalHash();
