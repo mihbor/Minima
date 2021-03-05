@@ -713,29 +713,29 @@ public class MMRSet implements Streamable {
 		return proof;
 	}
 	
-//	public MMREntry getProofPeak(MiniNumber zEntryNumber) {
-//		//First get the initial Entry.. check parents aswell..
-//		MMREntry entry = getEntry(0, zEntryNumber);
-//		
-//		//Go up to the MMR Peak..
-//		MMREntry sibling = getEntry(entry.getRow(), entry.getSibling());
-//		while(!sibling.isEmpty()) {
-//			//And get the Sibling of the Parent..
-//			sibling = getEntry(sibling.getParentRow(), sibling.getParentEntry());
-//		
-//			//Is it empty parent..
-//			if(!sibling.isEmpty()) {
-//				entry = sibling;
-//			}
-//		}
-//		
-//		return entry;
-//	}
+	public MMREntry getProofPeak(MiniNumber zEntryNumber) {
+		//First get the initial Entry.. 
+		MMREntry entry = getEntry(0, zEntryNumber);
+		
+		//And get the sibling
+		MMREntry sibling = getEntry(entry.getRow(), entry.getSibling());
+		
+		//If you have a sibling.. you have a parent peak
+		while(!sibling.isEmpty()) {
+			//Go up one level
+			entry = getEntry(sibling.getParentRow(), sibling.getParentEntry());
+			
+			//And get the sibling of the Parent..
+			sibling = getEntry(entry.getRow(), entry.getSibling());
+		}
+		
+		return entry;
+	}
 	
 	/**
 	 * Get Proof to ROOT
 	 */
-	private MMRProof getPeakToRoot(MiniData zPeak) {
+	private MMRProof getPeakToRoot(MMREntry zPeak) {
 		//Sum of all the initial proofs...
 		MMRProof totalproof = new MMRProof();
 		totalproof.setHashBitLength(MMR_HASH_BITS);
@@ -744,9 +744,10 @@ public class MMRSet implements Streamable {
 		ArrayList<MMREntry> peaks = getMMRPeaks();
 		
 		//Now take all those values and put THEM in an MMR..
-		MMREntry keeper    = null;
+		MMREntry currentpeak    = zPeak;
 		
-		MiniData keepvalue = zPeak;
+//		MiniData keepvalue  = zPeak;
+//		MiniData checkvalue = zPeak;
 		
 		while(peaks.size() > 1) {
 			//Create a new MMR
@@ -754,10 +755,17 @@ public class MMRSet implements Streamable {
 			
 			//Add all the peaks to it..
 			for(MMREntry peak : peaks) {
-				//Create the new input..
+				//Create the new data..
 				MMRData data = new MMRData(peak.getHashValue(), peak.getData().getValueSum());
 				
+				//Add this..
+				MMREntry current = newmmr.addUnspentCoin(data);
+				
 				//Is this the one to follow..
+				if(peak.checkPosition(currentpeak)) {
+					
+				}
+				
 				if(peak.getHashValue().isEqual(keepvalue)) {
 					keeper = newmmr.addUnspentCoin(data);
 				}else {
@@ -1251,42 +1259,56 @@ public class MMRSet implements Streamable {
 	public static void main(String[] zARgs) {
 		
 		System.out.println("Start Tests");
+
+		//New set for each test
+		MMRSet mmrset = new MMRSet(160, false);
+		int num = 6;
 		
-		//RUN THROUGH MANY SIZES
-		for(int testsize=1;testsize<16;testsize++) {
-			
-//			int testsize = 8;
-			
-			//New set for each test
-			MMRSet testset = new MMRSet(160, false);
-			
-			Random rr = new Random();
-			//Add the leaf nodes
-			for(int nodes=0;nodes<testsize;nodes++) {
-				testset.addUnspentCoin(new MMRData(new MiniData("0xFF"), new MiniNumber(rr.nextInt())));
-//				testset.addLeafNode();
-			}
-			
-			//Get the root of the tree
-			MiniData root = testset.getMMRRoot().getFinalHash();
-			System.out.println("ROOT @ Testsize:"+testsize+" peaks:"+testset.getMMRPeaks().size()+" "+root);
-			
-			//Now check all the proofs point to that
-			for(int nodes=0;nodes<testsize;nodes++) {
-//				int nodes=6;
-//				System.out.println("Proof : "+nodes);
-				
-				MMRProof proof = testset.getProof(new MiniNumber(nodes));
-//				System.out.println(proof.toJSON());
-				
-				MiniData hash  = proof.getFinalHash();
-				if(!hash.equals(root)) {
-					System.out.println("ERROR @ Testsize:"+testsize+" node:"+nodes);
-				}
-				
-			}
-			
+		for(int i=0;i<num;i++) {
+			mmrset.addLeafNode(new MiniData("0xFF"));
 		}
+		
+		for(int i=0;i<num;i++) {
+			MMREntry peak = mmrset.getProofPeak(new MiniNumber(i));
+			System.out.println(i+" "+peak);
+		}
+		
+		
+//		//RUN THROUGH MANY SIZES
+//		for(int testsize=1;testsize<16;testsize++) {
+//			
+////			int testsize = 8;
+//			
+//			//New set for each test
+//			MMRSet testset = new MMRSet(160, false);
+//			
+//			Random rr = new Random();
+//			//Add the leaf nodes
+//			for(int nodes=0;nodes<testsize;nodes++) {
+//				testset.addUnspentCoin(new MMRData(new MiniData("0xFF"), new MiniNumber(rr.nextInt())));
+////				testset.addLeafNode();
+//			}
+//			
+//			//Get the root of the tree
+//			MiniData root = testset.getMMRRoot().getFinalHash();
+//			System.out.println("ROOT @ Testsize:"+testsize+" peaks:"+testset.getMMRPeaks().size()+" "+root);
+//			
+//			//Now check all the proofs point to that
+//			for(int nodes=0;nodes<testsize;nodes++) {
+////				int nodes=6;
+////				System.out.println("Proof : "+nodes);
+//				
+//				MMRProof proof = testset.getProof(new MiniNumber(nodes));
+////				System.out.println(proof.toJSON());
+//				
+//				MiniData hash  = proof.getFinalHash();
+//				if(!hash.equals(root)) {
+//					System.out.println("ERROR @ Testsize:"+testsize+" node:"+nodes);
+//				}
+//				
+//			}
+//			
+//		}
 		System.out.println("Finished Tests");
 		
 		
