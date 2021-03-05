@@ -629,7 +629,7 @@ public class MMRSet implements Streamable {
 			
 			//Do we need to fill it in..
 			if(sibling.isEmpty()) {
-//				MinimaLogger.log("EMPTY SIBLING");
+				MinimaLogger.log("EMPTY SIBLING");
 				sibling = setEntry(sibling.getRow(), sibling.getEntryNumber(), new MMRData(phash, pval));
 			}else if(sibling.getBlockTime().isLessEqual(zProof.getBlockTime())) {
 				//Is it the original.. has all the micro details.. internal nodes are just the hash anyway
@@ -676,7 +676,7 @@ public class MMRSet implements Streamable {
 				phash = chunk.getHash();
 				pval  = chunk.getValue();
 				if(sibling.isEmpty()) {
-//					MinimaLogger.log("EMPTY SIBLING 2");
+					MinimaLogger.log("EMPTY SIBLING 2");
 					sibling = setEntry(sibling.getRow(), sibling.getEntryNumber(), new MMRData(phash,pval));		
 				}else if(sibling.getBlockTime().isLessEqual(zProof.getBlockTime())) {
 					//Is it the original.. has all the micro details.. internal nodes are just the hash anyway
@@ -1227,7 +1227,7 @@ public class MMRSet implements Streamable {
 //		MiniData combined = Crypto.getInstance().hashAllObjects( MMR_HASH_BITS,
 //				zLeftChild.getHashValue(),zRightChild.getHashValue(),sumvalue);
 		MiniData combined = Crypto.getInstance().hashAllObjects( MMR_HASH_BITS,
-				zLeftChild.getHashValue(),zRightChild.getHashValue(),sumvalue);
+				zLeftChild.getHashValue(),zRightChild.getHashValue());
 		
 		//Create a new data proof
 		return new MMRData(combined,sumvalue);
