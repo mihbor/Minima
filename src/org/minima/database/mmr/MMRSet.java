@@ -676,7 +676,7 @@ public class MMRSet implements Streamable {
 					//Is it the original.. has all the micro details.. internal nodes are just the hash anyway
 					MiniData orighash = sibling.getData().getFinalHash();
 					if(!orighash.isEqual(phash)) {
-						MinimaLogger.log("SIBLING DIFFERENT HASH 2");
+						MinimaLogger.log("SIBLING DIFFERENT HASH 2 "+sibling);
 						sibling = setEntry(sibling.getRow(), sibling.getEntryNumber(), new MMRData(phash,pval));	
 					}
 				}
@@ -713,24 +713,24 @@ public class MMRSet implements Streamable {
 		return proof;
 	}
 	
-	public MMREntry getProofPeak(MiniNumber zEntryNumber) {
-		//First get the initial Entry.. 
-		MMREntry entry = getEntry(0, zEntryNumber);
-		
-		//And get the sibling
-		MMREntry sibling = getEntry(entry.getRow(), entry.getSibling());
-		
-		//If you have a sibling.. you have a parent peak
-		while(!sibling.isEmpty()) {
-			//Go up one level
-			entry = getEntry(sibling.getParentRow(), sibling.getParentEntry());
-			
-			//And get the sibling of the Parent..
-			sibling = getEntry(entry.getRow(), entry.getSibling());
-		}
-		
-		return entry;
-	}
+//	public MMREntry getProofPeak(MiniNumber zEntryNumber) {
+//		//First get the initial Entry.. 
+//		MMREntry entry = getEntry(0, zEntryNumber);
+//		
+//		//And get the sibling
+//		MMREntry sibling = getEntry(entry.getRow(), entry.getSibling());
+//		
+//		//If you have a sibling.. you have a parent peak
+//		while(!sibling.isEmpty()) {
+//			//Go up one level
+//			entry = getEntry(sibling.getParentRow(), sibling.getParentEntry());
+//			
+//			//And get the sibling of the Parent..
+//			sibling = getEntry(entry.getRow(), entry.getSibling());
+//		}
+//		
+//		return entry;
+//	}
 	
 	/**
 	 * Get Proof to ROOT
@@ -763,6 +763,9 @@ public class MMRSet implements Streamable {
 					keeper = current;
 				}
 			}
+			
+			//Finalise..
+			newmmr.finalizeSet();
 			
 			//MUST have found the desired peak..
 			if(keeper == null) {
@@ -1175,8 +1178,10 @@ public class MMRSet implements Streamable {
 		MiniNumber sumvalue   = zLeftChild.getData().getValueSum().add(zRightChild.getData().getValueSum());
 		
 		//Make the unique MMRData Hash
+//		MiniData combined = Crypto.getInstance().hashAllObjects( MMR_HASH_BITS,
+//				zLeftChild.getHashValue(),zRightChild.getHashValue(),sumvalue);
 		MiniData combined = Crypto.getInstance().hashAllObjects( MMR_HASH_BITS,
-				zLeftChild.getHashValue(),zRightChild.getHashValue(),sumvalue);
+				zLeftChild.getHashValue(),zRightChild.getHashValue());
 		
 		//Create a new data proof
 		return new MMRData(combined,sumvalue);

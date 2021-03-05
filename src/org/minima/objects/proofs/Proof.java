@@ -225,9 +225,11 @@ public class Proof implements Streamable {
 			
 			//Hash in the correct order
 			if(chunk.getLeft().isTrue()) {
-				current = Crypto.getInstance().hashAllObjects(HASH_BITS, chunk.getHash(), current,value);
+//				current = Crypto.getInstance().hashAllObjects(HASH_BITS, chunk.getHash(), current,value);
+				current = Crypto.getInstance().hashAllObjects(HASH_BITS, chunk.getHash(), current);
 			}else {
-				current = Crypto.getInstance().hashAllObjects(HASH_BITS, current, chunk.getHash(),value);
+//				current = Crypto.getInstance().hashAllObjects(HASH_BITS, current, chunk.getHash(),value);
+				current = Crypto.getInstance().hashAllObjects(HASH_BITS, current, chunk.getHash());
 			}
 		}
 		
