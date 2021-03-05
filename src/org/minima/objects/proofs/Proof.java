@@ -51,7 +51,9 @@ public class Proof implements Streamable {
 	protected ArrayList<ProofChunk> mProofChain;
 	
 	//Calculate this once
-	protected MiniData mFinalHash;
+	protected MiniData   mFinalHash;
+	protected MiniNumber mFinalValue;
+	
 	protected MiniData mChainSHA;
 	protected boolean mFinalized;
 		
@@ -133,6 +135,10 @@ public class Proof implements Streamable {
 		return mProofChain.get(zNum);
 	}
 	
+	public boolean isFinalized() {
+		return mFinalized;
+	}
+	
 	public void finalizeHash() {
 		//Reset so that can be recalculated
 		mFinalized = false;
@@ -200,9 +206,15 @@ public class Proof implements Streamable {
 			}
 		}
 		
+		mFinalValue = currentvalue;
+		
 		return currentdata;
 	}
 
+	public MiniNumber getFinalValue() {
+		return mFinalValue;
+	}
+		
 	public JSONObject toJSON() {
 		JSONObject json = new JSONObject();
 		
