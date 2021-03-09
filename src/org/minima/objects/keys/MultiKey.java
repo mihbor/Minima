@@ -246,24 +246,58 @@ public class MultiKey extends BaseKey {
 	
 	
 	public static void main(String[] zargs) {		
+		String search = zargs[0].toUpperCase();
 		
-		//get some data
-		MiniData privseed = MiniData.getRandomData(20);
-		long timenow      = System.currentTimeMillis();
-		long timediff     = 0;
+		System.out.println("Started searching for "+search);
 		
-		System.out.println("MAKE KEY Start");
-		MultiKey mkey = new MultiKey(privseed, new MiniNumber("13"), new MiniNumber("1"));
-		System.out.println(mkey.toJSON().toString());
+		//Grind a key..
+		boolean found = false;
+		long counter = 0;
+		while(!found) {
+			//Create a Random private seed
+			MiniData priv = MiniData.getRandomData(20);
+			
+			//Create the key
+			MultiKey key = new MultiKey(priv, new MiniNumber(1), MiniNumber.ONE);
+			
+			//Get the Pub Key
+			MiniData pubk = key.getPublicKey();
+			
+			//Convert to Mx..
+			String addr = BaseConverter.encode32(pubk.getData());
+			
+			//Check..
+			if(addr.startsWith(search)) {
+				System.out.println(counter+") Seed:"+priv.to0xString()+" "+addr);
+			}	
+			
+			counter++;
+			
+			if(counter % 1000 == 0) {
+				System.out.println("Current : "+counter);
+			}
+		}
 		
-		//Timer..
-		timediff = System.currentTimeMillis()-timenow;
-		System.out.println("Creation : "+Maths.ConvertMilliToTime(timediff));
+		System.out.println("Finished..");
 		
-		//get some data
-		MiniData data = MiniData.getRandomData(20);
-		System.out.println("Data    : "+data);
-		System.out.println();
+		
+//		//get some data
+//		MiniData privseed = MiniData.getRandomData(20);
+//		long timenow      = System.currentTimeMillis();
+//		long timediff     = 0;
+//		
+//		System.out.println("MAKE KEY Start");
+//		MultiKey mkey = new MultiKey(privseed, new MiniNumber("13"), new MiniNumber("1"));
+//		System.out.println(mkey.toJSON().toString());
+//		
+//		//Timer..
+//		timediff = System.currentTimeMillis()-timenow;
+//		System.out.println("Creation : "+Maths.ConvertMilliToTime(timediff));
+//		
+//		//get some data
+//		MiniData data = MiniData.getRandomData(20);
+//		System.out.println("Data    : "+data);
+//		System.out.println();
 			
 //		//SINGLE SIG EXAMPLE
 //		timenow  = System.currentTimeMillis();
@@ -287,16 +321,16 @@ public class MultiKey extends BaseKey {
 //		//Stop Here..
 //		if(true) {System.exit(0);}
 		
-		//MULTI SIGN EXAMPLE
-		for(int i=0;i<13;i++) {
-			MiniData sig = mkey.sign(data);
-			System.out.println(i+")\tSigLength:"
-					+sig.getLength()+"\thash:"
-					+Crypto.getInstance().hashObject(sig,160).to0xString()
-					+"\tVerify  : "+mkey.verify(data, sig));
-			System.out.println(mkey.toJSON().toString());
-			System.out.println();
-		}
+//		//MULTI SIGN EXAMPLE
+//		for(int i=0;i<13;i++) {
+//			MiniData sig = mkey.sign(data);
+//			System.out.println(i+")\tSigLength:"
+//					+sig.getLength()+"\thash:"
+//					+Crypto.getInstance().hashObject(sig,160).to0xString()
+//					+"\tVerify  : "+mkey.verify(data, sig));
+//			System.out.println(mkey.toJSON().toString());
+//			System.out.println();
+//		}
 		
 //		System.out.println();
 //		System.out.println("Now read it in..");
