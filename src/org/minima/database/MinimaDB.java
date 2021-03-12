@@ -820,6 +820,10 @@ public class MinimaDB {
 			//Search for the coin..
 			MMREntry entry =  basemmr.findEntry(cc.getCoinID());
 			
+			if(entry == null) {
+				MinimaLogger.log("COIN NOT FOUND : "+cc.getCoinID());
+			}
+			
 			//Which block is it in..
 			inblock = entry.getData().getInBlock();
 			
@@ -862,7 +866,8 @@ public class MinimaDB {
 //			}
 			
 			//Get a proof from a while back.. more than confirmed depth, less than cascade
-			MMRProof proof = proofmmr.getProof(entrynum);
+//			MMRProof proof = proofmmr.getProof(entrynum);
+			MMRProof proof = proofmmr.getProofNew(entrynum);
 			
 //			//Hmm.. this should not happen
 //			if(proof == null) {
