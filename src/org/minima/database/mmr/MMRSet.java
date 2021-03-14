@@ -1531,4 +1531,101 @@ public class MMRSet implements Streamable {
 		finalizeSet();
 	}
 	
+	public static Coin makeCoin(int zValue) {
+		return new Coin(MiniData.getRandomData(20), new MiniData("0x01"), new MiniNumber(zValue), MiniData.ZERO_TXPOWID);
+	}
+	
+	public static MMRData makeMMRData(int zValue) {
+		return new MMRData(MiniByte.FALSE, makeCoin(zValue), MiniNumber.ZERO, new ArrayList<>());
+	}
+	
+	public static void getAllProofs(MMRSet zSet){
+		int num = zSet.mEntryNumber.getAsInt();
+		for(int i=0;i<num;i++) {
+			MMRProof pp = zSet.getFullProofToRoot(new MiniNumber(i));
+		}
+	}
+	
+	public static void printMMR(MMRSet zSet) {
+		zSet.finalizeSet();
+		
+		System.out.println("MMR : "+zSet.getBlockTime());
+		ArrayList<MMREntry> zero = zSet.getZeroRow();
+		for(MMREntry entry : zero) {
+			System.out.println(entry.getRow()+"/"+entry.getEntryNumber()+":"+entry.getData().getValueSum()+" "+entry.getData().isHashOnly());
+		}
+		
+		ArrayList<MMREntry> peaks = zSet.getMMRPeaks(); 
+		System.out.println("PEAKS:"+peaks.size());
+		for(MMREntry entry : peaks) {
+			System.out.println(entry.getRow()+" "+entry.getEntryNumber()+" "+entry.getData().getValueSum());
+		}
+		
+		System.out.println("ROOT:"+zSet.getMMRRoot());
+		System.out.println();
+		
+		getAllProofs(zSet);
+	}
+	
+	public static void spend(MMRSet zSet, int zEntry){
+		MMRSet parent = zSet.getParent().getParent();
+		
+		MMRProof pp = parent.getProof(new MiniNumber(zEntry));
+		
+		//Check the proof
+		boolean valid = zSet.checkProof(pp);
+		if(!valid) {
+			System.out.println("ERROR PROOF");
+		}
+	
+		MiniNumber value = pp.getMMRData().getValueSum();
+		zSet.updateSpentCoin(parent.getProof(new MiniNumber(zEntry)));
+		zSet.addUnspentCoin(makeMMRData(value.getAsInt()));
+		
+	}
+	
+	public static void main(String[] zArgs) {
+		MMRSet genesis = new MMRSet();
+		MMREntry gen0 = genesis.addUnspentCoin(makeMMRData(0));
+		printMMR(genesis);
+		
+		MMRSet one = new MMRSet(genesis);
+		MMREntry gimme0 = one.addUnspentCoin(makeMMRData(5));
+		MMREntry gimme1 = one.addUnspentCoin(makeMMRData(10));
+		MMREntry gimme2 = one.addUnspentCoin(makeMMRData(30));
+		MMREntry gimme3 = one.addUnspentCoin(makeMMRData(5));
+		printMMR(one);
+		
+		MMRSet two = new MMRSet(one);
+		two.updateSpentCoin(one.getProof(gimme0.getEntryNumber()));
+		MMREntry gimme4 = two.addUnspentCoin(makeMMRData(5));;
+		printMMR(two);
+		
+		MMRSet three = new MMRSet(two);
+		spend(three, 2);
+		printMMR(three);
+		
+		MMRSet four = new MMRSet(three);
+		spend(four, 3);
+		spend(four, 5);
+//		spend(four, 6);
+		
+//		four.updateSpentCoin(two.getProof(gimme1.getEntryNumber()));
+//		four.addUnspentCoin(makeMMRData(10));
+//		four.addUnspentCoin(makeMMRData(10));
+//		four.addUnspentCoin(makeMMRData(10));
+//		four.addUnspentCoin(makeMMRData(10));
+//		four.addUnspentCoin(makeMMRData(10));
+//		four.addUnspentCoin(makeMMRData(10));
+		printMMR(four);
+		
+		MMRSet five = new MMRSet(four);
+		five.updateSpentCoin(three.getProof(gimme2.getEntryNumber()));
+		five.updateSpentCoin(three.getProof(gimme3.getEntryNumber()));
+		five.addUnspentCoin(makeMMRData(35));
+		printMMR(five);
+		
+		
+	}
+	
 }
