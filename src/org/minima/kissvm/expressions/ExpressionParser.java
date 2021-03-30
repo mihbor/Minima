@@ -61,7 +61,6 @@ public class ExpressionParser {
 				exp = new BooleanExpression(exp, getRelation(zTokens), BooleanExpression.BOOLEAN_OR);
 			}else if(tok.getToken().equals("XOR")) {
 				exp = new BooleanExpression(exp, getRelation(zTokens), BooleanExpression.BOOLEAN_XOR);
-			
 			}else if(tok.getToken().equals("NAND")) {
 				exp = new BooleanExpression(exp, getRelation(zTokens), BooleanExpression.BOOLEAN_NAND);
 			}else if(tok.getToken().equals("NOR")) {
@@ -97,6 +96,7 @@ public class ExpressionParser {
 				exp = new BooleanExpression(exp, getLogic(zTokens), BooleanExpression.BOOLEAN_LT);
 			}else if(tok.getToken().equals("LTE")) {
 				exp = new BooleanExpression(exp, getLogic(zTokens), BooleanExpression.BOOLEAN_LTE);
+			
 			}else{
 				zTokens.goBackToken();
 				break;
@@ -119,6 +119,7 @@ public class ExpressionParser {
 				exp = new OperatorExpression(exp,getAddSub(zTokens),OperatorExpression.OPERATOR_OR);
 			}else if(tok.getToken().equals("^")) {
 				exp = new OperatorExpression(exp,getAddSub(zTokens),OperatorExpression.OPERATOR_XOR);
+			
 			}else{
 				zTokens.goBackToken();
 				break;
@@ -144,6 +145,7 @@ public class ExpressionParser {
 				exp = new OperatorExpression(exp,getMulDiv(zTokens),OperatorExpression.OPERATOR_SHIFTL);
 			}else if(tok.getToken().equals(">>")) {
 				exp = new OperatorExpression(exp,getMulDiv(zTokens),OperatorExpression.OPERATOR_SHIFTR);
+			
 			}else {
 				zTokens.goBackToken();
 				break;
@@ -163,6 +165,7 @@ public class ExpressionParser {
 				exp = new OperatorExpression(exp,getBaseUnit(zTokens),OperatorExpression.OPERATOR_MUL);
 			}else if(tok.getToken().equals("/")) {
 				exp = new OperatorExpression(exp,getBaseUnit(zTokens),OperatorExpression.OPERATOR_DIV);
+			
 			}else {
 				zTokens.goBackToken();
 				break;
@@ -179,7 +182,16 @@ public class ExpressionParser {
 		//get the Token
 		Token tok = zTokens.getNextToken();
 		
-		if(tok.getTokenType() == Token.TOKEN_VALUE) {
+		//NOT and NEG are single param expressions.. so done here..
+		if(tok.getToken().equals("NOT")) {
+			//Get the NOT expression..
+			exp = new BooleanExpression(getExpression(zTokens), BooleanExpression.BOOLEAN_NOT);
+		
+		}else if(tok.getToken().equals("NEG")) {
+			//Get the NOT expression..
+			exp = new OperatorExpression(getExpression(zTokens), OperatorExpression.OPERATOR_NEG);
+		
+		}else if(tok.getTokenType() == Token.TOKEN_VALUE) {
 			exp = new ConstantExpression( Value.getValue(tok.getToken()) ); 
 			
 		}else if(tok.getTokenType() == Token.TOKEN_GLOBAL) {
@@ -237,13 +249,6 @@ public class ExpressionParser {
 				throw new MinimaParseException("Missing close bracket. Found : "+closebracket.getToken());
 			}
 	
-		}else if(tok.getToken().equals("NOT")) {
-			//Get the NOT expression..
-			exp = new BooleanExpression(getExpression(zTokens), BooleanExpression.BOOLEAN_NOT);
-		
-		}else if(tok.getToken().equals("NEG")) {
-			//Get the NOT expression..
-			exp = new OperatorExpression(getExpression(zTokens), OperatorExpression.OPERATOR_NEG);
 		}
 		
 		//Check for null.. an incorrect token..
