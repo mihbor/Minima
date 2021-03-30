@@ -149,9 +149,9 @@ public class CONCATTests {
             MinimaFunction mf = fn.getNewFunction();
             mf.addParameter(new ConstantExpression(new HEXValue(""))); // should fail for invalid input
             mf.addParameter(new ConstantExpression(new HEXValue("")));
-            //assertThrows(ExecutionException.class, () -> {
-            //    Value res = mf.runFunction(ctr);
-            //});
+            assertThrows(ExecutionException.class, () -> {
+                Value res = mf.runFunction(ctr);
+            });
             try {
                 Value res = mf.runFunction(ctr);
                 assertEquals(Value.VALUE_HEX, res.getValueType());

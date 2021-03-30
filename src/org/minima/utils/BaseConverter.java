@@ -17,6 +17,12 @@ public class BaseConverter {
 	        hexChars[j * 2 + 1] = HEX16ARRAY[v & 0x0F];
 	    }
 	    
+	    //Check for empty string
+	    if(bytes.length == 0) {
+	    	return "";
+	    }
+	    
+	    //Otherwise return a HEX string
 	    return "0x"+new String(hexChars);
 	}
 	
@@ -175,7 +181,7 @@ public class BaseConverter {
 	
 	public static void main(String[] zArgs) {
 		
-		byte[] data = decode16("0xvvFFFF");
+		byte[] data = decode16("");
 		
 		System.out.print(data.length);
 		

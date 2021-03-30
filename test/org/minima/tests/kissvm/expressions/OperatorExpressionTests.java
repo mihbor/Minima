@@ -252,9 +252,9 @@ public class OperatorExpressionTests {
         });
 
         // Should throw IllegalArgumentException/ExecutionException, modulo not defined for real numbers
-        //assertThrows(IllegalArgumentException.class, () -> {
-        //    (new OperatorExpression(ceR0_5, ceRPI, OperatorExpression.OPERATOR_MODULO)).getValue(ctr);
-        //});
+        assertThrows(IllegalArgumentException.class, () -> {
+            (new OperatorExpression(ceR0_5, ceRPI, OperatorExpression.OPERATOR_MODULO)).getValue(ctr);
+        });
         assertEquals("0.5", ((NumberValue) (new OperatorExpression(ceR0_5, ceRPI, OperatorExpression.OPERATOR_MODULO)).getValue(ctr)).getNumber().getAsBigDecimal().toString());
 
         // Should throw IllegalArgumentException/ExecutionException, modulo not defined for real numbers
