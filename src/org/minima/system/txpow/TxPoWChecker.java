@@ -690,7 +690,7 @@ public class TxPoWChecker {
 				cc.setGlobalVariable("@AMOUNT", new NumberValue(input.getAmount().mult(tokenscale)));
 				cc.setGlobalVariable("@ADDRESS", new HEXValue(input.getAddress()));
 				cc.setGlobalVariable("@COINID", new HEXValue(input.getCoinID()));
-				cc.setGlobalVariable("@SCRIPT", new StringValue(script));
+//				cc.setGlobalVariable("@SCRIPT", new StringValue(script));
 				cc.setGlobalVariable("@TOKENID", new HEXValue(input.getTokenID()));
 				cc.setGlobalVariable("@TOKENSCRIPT", new StringValue(tokscript));
 				cc.setGlobalVariable("@TOKENTOTAL", new NumberValue(tokentotal));

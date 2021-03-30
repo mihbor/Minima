@@ -388,11 +388,8 @@ public class Contract {
 		//Get it from the Transaction..
 		String stateval = mTransaction.getStateValue(zStateNum).getValue().toString();
 		
-		//Clean it
-		String clean = cleanScript(stateval);
-		
 		//Clean it..
-		return Value.getValue(clean);
+		return Value.getValue(stateval);
 	}
 	
 	public Value getPrevState(int zPrev) throws ExecutionException {
@@ -400,7 +397,7 @@ public class Contract {
 		for(StateVariable sv : mPrevState) {
 			if(sv.getPort() == zPrev) {
 				//Clean it..
-				String stateval = cleanScript(sv.getValue().toString());
+				String stateval = sv.getValue().toString();
 				
 				//Work it out
 				return Value.getValue(stateval);
