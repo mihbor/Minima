@@ -61,6 +61,11 @@ public class tokencreate extends CommandFunction {
 			return;
 		}
 		
+		if(script.equals("")) {
+			getResponseStream().endStatus(false, "CANNOT have a blank script - as then is unspendable");
+			return;
+		}
+		
 		MiniNumber coins = new MiniNumber(total);
 		if(coins.isMore(MAX_COINS)) {
 			getResponseStream().endStatus(false, MAX_COINS+" MAX.. for now..");
