@@ -37,8 +37,7 @@ public class ContractTests {
             assertTrue(ctr.isParseOK());
             assertFalse(ctr.isException());
             assertEquals("", ctr.getException());
-            assertEquals(false, ctr.isTrace());
-            //assertEquals(0, ctr.getCompleteTraceLog().length()); // trace log enabled, even if zTrace parameter is false
+            assertEquals(false, ctr.isLogged());
             assertEquals(0, ctr.getNumberOfInstructions());
             assertEquals("", ctr.getMiniScript());
             assertFalse(ctr.isSuccess());
@@ -77,8 +76,7 @@ public class ContractTests {
             assertTrue(ctr.isParseOK());
             assertFalse(ctr.isException());
             assertEquals("", ctr.getException());
-            //assertEquals(0, ctr.getCompleteTraceLog().length()); // trace log enabled, even if zTrace parameter is false
-
+            
             ctr.run();
             assertTrue(ctr.isSuccessSet());
             ctr.setRETURNValue(false);

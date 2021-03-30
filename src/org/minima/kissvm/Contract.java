@@ -63,7 +63,7 @@ public class Contract {
 	/**
 	 * Trace shows debug info as the program is parsed and executed
 	 */
-	boolean mTraceON = false;
+	boolean mMinimaLog = false;
 	
 	/**
 	 * Did the contract script parse ok
@@ -95,10 +95,10 @@ public class Contract {
 		this(zRamScript, zSigs, zWitness, zTransaction, zPrevState, false);
 	}
 	
-	public Contract(String zRamScript, String zSigs, Witness zWitness, Transaction zTransaction, ArrayList<StateVariable> zPrevState, boolean zTrace) {
+	public Contract(String zRamScript, String zSigs, Witness zWitness, Transaction zTransaction, ArrayList<StateVariable> zPrevState, boolean zMinimalog) {
 		//Trace?
 		mCompleteLog ="";
-		mTraceON     = zTrace;
+		mMinimaLog     = zMinimalog;
 		
 		//Clean the RamScript
 		mRamScript = cleanScript(zRamScript);
@@ -204,12 +204,12 @@ public class Contract {
 		return mExceptionString;
 	}
 	
-	public boolean isTrace() {
-		return mTraceON;
+	public boolean isLogged() {
+		return mMinimaLog;
 	}
 	
 	public void traceLog(String zLog) {
-		if(isTrace()) {
+		if(isLogged()) {
 			MinimaLogger.log("INST["+mNumInstructions+"] - "+zLog);
 		}
 		
@@ -245,7 +245,7 @@ public class Contract {
 			mBlock.run(this);
 			
 		} catch (Exception e) {
-			if(mTraceON) {
+			if(mMinimaLog) {
 				e.printStackTrace();
 			}
 			
