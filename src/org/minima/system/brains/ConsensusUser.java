@@ -472,7 +472,9 @@ public class ConsensusUser extends ConsensusProcessor {
 			
 			//These 2 are set automatically..
 			cc.setGlobalVariable("@ADDRESS", new HEXValue(ccaddress.getAddressData()));
-			cc.setGlobalVariable("@SCRIPT", new StringValue(script));
+
+			//Done automatically
+//			cc.setGlobalVariable("@SCRIPT", new StringValue(script));
 			
 			//These can be played with..
 			cc.setGlobalVariable("@BLKNUM", new NumberValue(blocknum));
