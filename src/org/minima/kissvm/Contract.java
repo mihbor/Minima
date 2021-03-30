@@ -615,7 +615,7 @@ public class Contract {
 	
 	public static void main(String[] zArgs) {
 	
-		String RamScript = "let a = NEG NEG 1 * ";
+		String RamScript = "let a = [ hello you] + [we]";
 		
 		Transaction tt = new Transaction();
 		tt.addStateVariable(new StateVariable(0, "987"));

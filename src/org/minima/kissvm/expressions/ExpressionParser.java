@@ -185,11 +185,11 @@ public class ExpressionParser {
 		//NOT and NEG are single param expressions.. so done here..
 		if(tok.getToken().equals("NOT")) {
 			//Get the NOT expression..
-			exp = new BooleanExpression(getExpression(zTokens), BooleanExpression.BOOLEAN_NOT);
+			exp = new BooleanExpression(getBaseUnit(zTokens), BooleanExpression.BOOLEAN_NOT);
 		
 		}else if(tok.getToken().equals("NEG")) {
 			//Get the NOT expression..
-			exp = new OperatorExpression(getExpression(zTokens), OperatorExpression.OPERATOR_NEG);
+			exp = new OperatorExpression(getBaseUnit(zTokens), OperatorExpression.OPERATOR_NEG);
 		
 		}else if(tok.getTokenType() == Token.TOKEN_VALUE) {
 			exp = new ConstantExpression( Value.getValue(tok.getToken()) ); 

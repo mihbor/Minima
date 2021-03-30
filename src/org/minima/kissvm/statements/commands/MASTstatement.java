@@ -43,8 +43,11 @@ public class MASTstatement implements Statement {
 		String script = scrpr.getScript().toString();
 		
 		try {
+			//Clean script..
+			String cleanscr = Contract.cleanScript(script);
+			
 			//Convert the script to KISSVM!
-			List<Token> tokens = Token.tokenize(script);
+			List<Token> tokens = Token.tokenize(cleanscr);	
 		
 			//And now convert to a statement block..
 			StatementBlock mBlock = StatementParser.parseTokens(tokens);

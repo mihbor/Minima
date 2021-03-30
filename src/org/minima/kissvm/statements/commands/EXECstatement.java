@@ -31,8 +31,11 @@ public class EXECstatement implements Statement{
 		StringValue script = (StringValue) mScript.getValue(zContract);
 		
 		try {
+			//Clean script..
+			String cleanscr = Contract.cleanScript(script.toString());
+			
 			//Convert the script to KISSVM!
-			List<Token> tokens = Token.tokenize(script.toString());	
+			List<Token> tokens = Token.tokenize(cleanscr);	
 		
 			//And now convert to a statement block..
 			StatementBlock mBlock = StatementParser.parseTokens(tokens);
