@@ -1,15 +1,12 @@
 package org.minima.tests.kissvm;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 import org.junit.Test;
 import org.minima.kissvm.Contract;
@@ -20,7 +17,7 @@ import org.minima.kissvm.functions.txn.input.GETINADDR;
 import org.minima.kissvm.values.BooleanValue;
 import org.minima.kissvm.values.HEXValue;
 import org.minima.kissvm.values.NumberValue;
-import org.minima.kissvm.values.ScriptValue;
+import org.minima.kissvm.values.StringValue;
 import org.minima.kissvm.values.Value;
 import org.minima.objects.StateVariable;
 import org.minima.objects.Transaction;
@@ -68,7 +65,7 @@ public class ContractTests {
                 PrevStates.add(new StateVariable(4 * i + 0, new BooleanValue(true).toString()));
                 PrevStates.add(new StateVariable(4 * i + 1, new HEXValue("0x12345678").toString()));
                 PrevStates.add(new StateVariable(4 * i + 2, new NumberValue(i).toString()));
-                PrevStates.add(new StateVariable(4 * i + 3, new ScriptValue("[ Hello World " + Integer.toString(4 * i + 3)).toString() + " ]"));
+                PrevStates.add(new StateVariable(4 * i + 3, new StringValue("[ Hello World " + Integer.toString(4 * i + 3)).toString() + " ]"));
             }
 
             Contract ctr = new Contract(Script, SignaturesStr, new Witness(), new Transaction(), PrevStates);
@@ -150,7 +147,7 @@ public class ContractTests {
                 PrevStates.add(new StateVariable(4 * i + 0, new BooleanValue(true).toString()));
                 PrevStates.add(new StateVariable(4 * i + 1, new HEXValue("0x12345678").toString()));
                 PrevStates.add(new StateVariable(4 * i + 2, new NumberValue(i).toString()));
-                PrevStates.add(new StateVariable(4 * i + 3, new ScriptValue("[ Hello World " + Integer.toString(4 * i + 3)).toString() + " ]"));
+                PrevStates.add(new StateVariable(4 * i + 3, new StringValue("[ Hello World " + Integer.toString(4 * i + 3)).toString() + " ]"));
             }
 
             Contract ctr = new Contract(Script, SignaturesStr, new Witness(), new Transaction(), PrevStates, true);
@@ -166,7 +163,7 @@ public class ContractTests {
     public void testGettersAndSetters() {
         {
             Hashtable<String, Value> Globals = new Hashtable<>();
-            Globals.put("@SCRIPT", new ScriptValue("0"));
+            Globals.put("@SCRIPT", new StringValue("0"));
             Globals.put("@BLKNUM", new NumberValue(1));
             Globals.put("@INBLKNUM", new NumberValue(2));
             Globals.put("@INPUT", new NumberValue(3));
@@ -179,7 +176,7 @@ public class ContractTests {
 
             Hashtable<String, Value> RetrievedGlobals = ctr.getGlobalVariables();
             assertEquals(7, RetrievedGlobals.size());
-            assertEquals("0", ((ScriptValue) RetrievedGlobals.get("@SCRIPT")).toString());
+            assertEquals("0", ((StringValue) RetrievedGlobals.get("@SCRIPT")).toString());
             assertEquals("1", ((NumberValue) RetrievedGlobals.get("@BLKNUM")).toString());
             assertEquals("2", ((NumberValue) RetrievedGlobals.get("@INBLKNUM")).toString());
             assertEquals("3", ((NumberValue) RetrievedGlobals.get("@INPUT")).toString());
@@ -194,7 +191,7 @@ public class ContractTests {
             BooleanValue bv = new BooleanValue(true);
             HEXValue hv = new HEXValue(new MiniData());
             NumberValue nv = new NumberValue(0);
-            ScriptValue sv = new ScriptValue("[]");
+            StringValue sv = new StringValue("[]");
 
             ctr.setVariable("BooleanValue", bv);
             ctr.setVariable("HEXValue", hv);
@@ -246,7 +243,7 @@ public class ContractTests {
                 PrevStates.add(new StateVariable(4 * i + 0, new BooleanValue(true).toString()));
                 PrevStates.add(new StateVariable(4 * i + 1, new HEXValue("0x12345678").toString()));
                 PrevStates.add(new StateVariable(4 * i + 2, new NumberValue(i).toString()));
-                PrevStates.add(new StateVariable(4 * i + 3, new ScriptValue("[ Hello World " + Integer.toString(4 * i + 3)).toString() + " ]"));
+                PrevStates.add(new StateVariable(4 * i + 3, new StringValue("[ Hello World " + Integer.toString(4 * i + 3)).toString() + " ]"));
             }
 
             Contract ctr = new Contract(Script, SignaturesStr, new Witness(), new Transaction(), PrevStates, true);

@@ -4,7 +4,6 @@
 package org.minima.kissvm.values;
 
 import org.minima.kissvm.tokens.Token;
-import org.minima.objects.base.MiniNumber;
 
 /**
  * @author Spartacus Rex
@@ -17,7 +16,7 @@ public abstract class Value {
 	 */
 	public static final int VALUE_HEX     = 1;
 	public static final int VALUE_NUMBER  = 2;
-	public static final int VALUE_SCRIPT  = 4;
+	public static final int VALUE_STRING  = 4;
 	public static final int VALUE_BOOLEAN = 8;
 	
 	/**
@@ -49,22 +48,25 @@ public abstract class Value {
 	 * GLOBAL STATIC FUNCTION for creating a Value from any string
 	 */
 	public static Value getValue(String zValue){
-		if(zValue.startsWith("[") && zValue.endsWith("]")) {
+		//Trim it..
+		String str = zValue.trim();
+		
+		if(str.startsWith("[") && str.endsWith("]")) {
 			//remove the square brackets..
-			String sc = zValue.substring(1,zValue.length()-1);
-			return new ScriptValue(sc);
+			String sc = str.substring(1,str.length()-1);
+			return new StringValue(sc);
 			
-		}else if(zValue.startsWith("0x")) {
-			return new HEXValue(zValue);
+		}else if(str.startsWith("0x")) {
+			return new HEXValue(str);
 
-		}else if(zValue.equals("TRUE")) {
+		}else if(str.equalsIgnoreCase("TRUE")) {
 			return BooleanValue.TRUE;
 
-		}else if(zValue.equals("FALSE")) {
+		}else if(str.equalsIgnoreCase("FALSE")) {
 			return BooleanValue.FALSE;
 
-		}else if(Token.isNumeric(zValue)){
-			return new NumberValue(zValue);
+		}else if(Token.isNumeric(str)){
+			return new NumberValue(str);
 		
 		}else {
 			throw new IllegalArgumentException("Invalid value : "+zValue);
@@ -77,7 +79,7 @@ public abstract class Value {
 	public static int getValueType(String zValue) throws IllegalArgumentException {
 		if(zValue.startsWith("[") && zValue.endsWith("]")) {
 			//Then initialise the value 
-			return VALUE_SCRIPT;
+			return VALUE_STRING;
 			
 		}else if(zValue.startsWith("0x")) {
 			return VALUE_HEX;
@@ -109,7 +111,7 @@ public abstract class Value {
 			return "HEX";
 		}else if(zType == VALUE_NUMBER) {
 			return "NUMBER";
-		}else if(zType == VALUE_SCRIPT) {
+		}else if(zType == VALUE_STRING) {
 			return "SCRIPT";
 		}
 		

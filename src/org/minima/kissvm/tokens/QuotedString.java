@@ -2,8 +2,6 @@ package org.minima.kissvm.tokens;
 
 import java.util.ArrayList;
 
-import org.minima.kissvm.Contract;
-
 public class QuotedString {
 
 	String mString;

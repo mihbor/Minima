@@ -16,7 +16,7 @@ import org.minima.kissvm.functions.base.RPLVAR;
 import org.minima.kissvm.values.BooleanValue;
 import org.minima.kissvm.values.HEXValue;
 import org.minima.kissvm.values.NumberValue;
-import org.minima.kissvm.values.ScriptValue;
+import org.minima.kissvm.values.StringValue;
 import org.minima.kissvm.values.Value;
 import org.minima.objects.Transaction;
 import org.minima.objects.Witness;
@@ -49,91 +49,91 @@ public class RPLVARTests {
 
         {
             MinimaFunction mf = fn.getNewFunction();
-            mf.addParameter(new ConstantExpression(new ScriptValue("LET A = 5")));
-            mf.addParameter(new ConstantExpression(new ScriptValue("A")));
-            mf.addParameter(new ConstantExpression(new ScriptValue("B")));
+            mf.addParameter(new ConstantExpression(new StringValue("LET A = 5")));
+            mf.addParameter(new ConstantExpression(new StringValue("A")));
+            mf.addParameter(new ConstantExpression(new StringValue("B")));
             try {
                 Value res = mf.runFunction(ctr);
-                assertEquals(Value.VALUE_SCRIPT, res.getValueType());
-                assertEquals("LET a = b", ((ScriptValue) res).toString());
+                assertEquals(Value.VALUE_STRING, res.getValueType());
+                assertEquals("LET a = b", ((StringValue) res).toString());
             } catch (ExecutionException ex) {
                 fail();
             }
         }
         {
             MinimaFunction mf = fn.getNewFunction();
-            mf.addParameter(new ConstantExpression(new ScriptValue("LET A123B = 5")));
-            mf.addParameter(new ConstantExpression(new ScriptValue("A123B")));
-            mf.addParameter(new ConstantExpression(new ScriptValue("B")));
+            mf.addParameter(new ConstantExpression(new StringValue("LET A123B = 5")));
+            mf.addParameter(new ConstantExpression(new StringValue("A123B")));
+            mf.addParameter(new ConstantExpression(new StringValue("B")));
             try {
                 Value res = mf.runFunction(ctr);
-                assertEquals(Value.VALUE_SCRIPT, res.getValueType());
-                assertEquals("LET a123b = b", ((ScriptValue) res).toString());
+                assertEquals(Value.VALUE_STRING, res.getValueType());
+                assertEquals("LET a123b = b", ((StringValue) res).toString());
             } catch (ExecutionException ex) {
                 fail();
             }
         }
         {
             MinimaFunction mf = fn.getNewFunction();
-            mf.addParameter(new ConstantExpression(new ScriptValue("LET A = 5")));
-            mf.addParameter(new ConstantExpression(new ScriptValue("B")));
-            mf.addParameter(new ConstantExpression(new ScriptValue("C")));
+            mf.addParameter(new ConstantExpression(new StringValue("LET A = 5")));
+            mf.addParameter(new ConstantExpression(new StringValue("B")));
+            mf.addParameter(new ConstantExpression(new StringValue("C")));
             try {
                 Value res = mf.runFunction(ctr);
-                assertEquals(Value.VALUE_SCRIPT, res.getValueType());
-                assertEquals("LET a = 5", ((ScriptValue) res).toString());
+                assertEquals(Value.VALUE_STRING, res.getValueType());
+                assertEquals("LET a = 5", ((StringValue) res).toString());
             } catch (ExecutionException ex) {
                 fail();
             }
         }
         {
             MinimaFunction mf = fn.getNewFunction();
-            mf.addParameter(new ConstantExpression(new ScriptValue("LET A = 5 LET B = A + 1 LET A = B")));
-            mf.addParameter(new ConstantExpression(new ScriptValue("A")));
-            mf.addParameter(new ConstantExpression(new ScriptValue("C")));
+            mf.addParameter(new ConstantExpression(new StringValue("LET A = 5 LET B = A + 1 LET A = B")));
+            mf.addParameter(new ConstantExpression(new StringValue("A")));
+            mf.addParameter(new ConstantExpression(new StringValue("C")));
             try {
                 Value res = mf.runFunction(ctr);
-                assertEquals(Value.VALUE_SCRIPT, res.getValueType());
-                assertEquals("LET a = c LET b = a + 1 LET a = b", ((ScriptValue) res).toString()); // Replaces only first occurence
+                assertEquals(Value.VALUE_STRING, res.getValueType());
+                assertEquals("LET a = c LET b = a + 1 LET a = b", ((StringValue) res).toString()); // Replaces only first occurence
             } catch (ExecutionException ex) {
                 fail();
             }
         }
         {
             MinimaFunction mf = fn.getNewFunction();
-            mf.addParameter(new ConstantExpression(new ScriptValue("LET A = CONCAT(A B C D)")));
-            mf.addParameter(new ConstantExpression(new ScriptValue("A")));
-            mf.addParameter(new ConstantExpression(new ScriptValue("C")));
+            mf.addParameter(new ConstantExpression(new StringValue("LET A = CONCAT(A B C D)")));
+            mf.addParameter(new ConstantExpression(new StringValue("A")));
+            mf.addParameter(new ConstantExpression(new StringValue("C")));
             try {
                 Value res = mf.runFunction(ctr);
-                assertEquals(Value.VALUE_SCRIPT, res.getValueType());
-                assertEquals("LET a = c", ((ScriptValue) res).toString());
+                assertEquals(Value.VALUE_STRING, res.getValueType());
+                assertEquals("LET a = c", ((StringValue) res).toString());
             } catch (ExecutionException ex) {
                 fail();
             }
         }
         {
             MinimaFunction mf = fn.getNewFunction();
-            mf.addParameter(new ConstantExpression(new ScriptValue("LET A = 1 + 2")));
-            mf.addParameter(new ConstantExpression(new ScriptValue("A")));
-            mf.addParameter(new ConstantExpression(new ScriptValue("C")));
+            mf.addParameter(new ConstantExpression(new StringValue("LET A = 1 + 2")));
+            mf.addParameter(new ConstantExpression(new StringValue("A")));
+            mf.addParameter(new ConstantExpression(new StringValue("C")));
             try {
                 Value res = mf.runFunction(ctr);
-                assertEquals(Value.VALUE_SCRIPT, res.getValueType());
-                assertEquals("LET a = c", ((ScriptValue) res).toString());
+                assertEquals(Value.VALUE_STRING, res.getValueType());
+                assertEquals("LET a = c", ((StringValue) res).toString());
             } catch (ExecutionException ex) {
                 fail();
             }
         }
         {
             MinimaFunction mf = fn.getNewFunction();
-            mf.addParameter(new ConstantExpression(new ScriptValue("LET A = 1 + 2 as")));
-            mf.addParameter(new ConstantExpression(new ScriptValue("A")));
-            mf.addParameter(new ConstantExpression(new ScriptValue("C")));
+            mf.addParameter(new ConstantExpression(new StringValue("LET A = 1 + 2 as")));
+            mf.addParameter(new ConstantExpression(new StringValue("A")));
+            mf.addParameter(new ConstantExpression(new StringValue("C")));
             try {
                 Value res = mf.runFunction(ctr);
-                assertEquals(Value.VALUE_SCRIPT, res.getValueType());
-                assertEquals("LET a = c", ((ScriptValue) res).toString());
+                assertEquals(Value.VALUE_STRING, res.getValueType());
+                assertEquals("LET a = c", ((StringValue) res).toString());
             } catch (ExecutionException ex) {
                 fail();
             }
@@ -155,25 +155,25 @@ public class RPLVARTests {
         }
         {
             MinimaFunction mf = fn.getNewFunction();
-            mf.addParameter(new ConstantExpression(new ScriptValue("LET A = 5")));
+            mf.addParameter(new ConstantExpression(new StringValue("LET A = 5")));
             assertThrows(ExecutionException.class, () -> {
                 Value res = mf.runFunction(ctr);
             });
         }
         {
             MinimaFunction mf = fn.getNewFunction();
-            mf.addParameter(new ConstantExpression(new ScriptValue("LET A = 5")));
-            mf.addParameter(new ConstantExpression(new ScriptValue("A")));
+            mf.addParameter(new ConstantExpression(new StringValue("LET A = 5")));
+            mf.addParameter(new ConstantExpression(new StringValue("A")));
             assertThrows(ExecutionException.class, () -> {
                 Value res = mf.runFunction(ctr);
             });
         }
         {
             MinimaFunction mf = fn.getNewFunction();
-            mf.addParameter(new ConstantExpression(new ScriptValue("LET A = 5")));
-            mf.addParameter(new ConstantExpression(new ScriptValue("A")));
-            mf.addParameter(new ConstantExpression(new ScriptValue("B")));
-            mf.addParameter(new ConstantExpression(new ScriptValue("C")));
+            mf.addParameter(new ConstantExpression(new StringValue("LET A = 5")));
+            mf.addParameter(new ConstantExpression(new StringValue("A")));
+            mf.addParameter(new ConstantExpression(new StringValue("B")));
+            mf.addParameter(new ConstantExpression(new StringValue("C")));
             assertThrows(ExecutionException.class, () -> {
                 Value res = mf.runFunction(ctr);
             });
@@ -182,26 +182,26 @@ public class RPLVARTests {
         // Invalid param domain
         {
             MinimaFunction mf = fn.getNewFunction();
-            mf.addParameter(new ConstantExpression(new ScriptValue("ABCDEFGHIJKLMNOPQRSTUVWXYZ")));
-            mf.addParameter(new ConstantExpression(new ScriptValue("99")));
-            mf.addParameter(new ConstantExpression(new ScriptValue("45")));
+            mf.addParameter(new ConstantExpression(new StringValue("ABCDEFGHIJKLMNOPQRSTUVWXYZ")));
+            mf.addParameter(new ConstantExpression(new StringValue("99")));
+            mf.addParameter(new ConstantExpression(new StringValue("45")));
             try {
                 Value res = mf.runFunction(ctr);
-                assertEquals(Value.VALUE_SCRIPT, res.getValueType());
-                assertEquals("abcdefghijklmnopqrstuvwxyz", ((ScriptValue) res).toString());
+                assertEquals(Value.VALUE_STRING, res.getValueType());
+                assertEquals("abcdefghijklmnopqrstuvwxyz", ((StringValue) res).toString());
             } catch (ExecutionException ex) {
                 fail();
             }
         }
         {
             MinimaFunction mf = fn.getNewFunction();
-            mf.addParameter(new ConstantExpression(new ScriptValue("ABCDEFGHIJKLMNOPQRSTUVWXYZ 99")));
-            mf.addParameter(new ConstantExpression(new ScriptValue("99")));
-            mf.addParameter(new ConstantExpression(new ScriptValue("45")));
+            mf.addParameter(new ConstantExpression(new StringValue("ABCDEFGHIJKLMNOPQRSTUVWXYZ 99")));
+            mf.addParameter(new ConstantExpression(new StringValue("99")));
+            mf.addParameter(new ConstantExpression(new StringValue("45")));
             try {
                 Value res = mf.runFunction(ctr);
-                assertEquals(Value.VALUE_SCRIPT, res.getValueType());
-                assertEquals("abcdefghijklmnopqrstuvwxyz 99", ((ScriptValue) res).toString());
+                assertEquals(Value.VALUE_STRING, res.getValueType());
+                assertEquals("abcdefghijklmnopqrstuvwxyz 99", ((StringValue) res).toString());
             } catch (ExecutionException ex) {
                 fail();
             }
@@ -211,8 +211,8 @@ public class RPLVARTests {
         {
             MinimaFunction mf = fn.getNewFunction();
             mf.addParameter(new ConstantExpression(new BooleanValue(true)));
-            mf.addParameter(new ConstantExpression(new ScriptValue("A")));
-            mf.addParameter(new ConstantExpression(new ScriptValue("B")));
+            mf.addParameter(new ConstantExpression(new StringValue("A")));
+            mf.addParameter(new ConstantExpression(new StringValue("B")));
             assertThrows(ExecutionException.class, () -> {
                 Value res = mf.runFunction(ctr);
             });
@@ -220,8 +220,8 @@ public class RPLVARTests {
         {
             MinimaFunction mf = fn.getNewFunction();
             mf.addParameter(new ConstantExpression(new HEXValue("0x1234")));
-            mf.addParameter(new ConstantExpression(new ScriptValue("A")));
-            mf.addParameter(new ConstantExpression(new ScriptValue("B")));
+            mf.addParameter(new ConstantExpression(new StringValue("A")));
+            mf.addParameter(new ConstantExpression(new StringValue("B")));
             assertThrows(ExecutionException.class, () -> {
                 Value res = mf.runFunction(ctr);
             });
@@ -229,43 +229,43 @@ public class RPLVARTests {
         {
             MinimaFunction mf = fn.getNewFunction();
             mf.addParameter(new ConstantExpression(new NumberValue(100)));
-            mf.addParameter(new ConstantExpression(new ScriptValue("A")));
-            mf.addParameter(new ConstantExpression(new ScriptValue("B")));
+            mf.addParameter(new ConstantExpression(new StringValue("A")));
+            mf.addParameter(new ConstantExpression(new StringValue("B")));
             assertThrows(ExecutionException.class, () -> {
                 Value res = mf.runFunction(ctr);
             });
         }
         {
             MinimaFunction mf = fn.getNewFunction();
-            mf.addParameter(new ConstantExpression(new ScriptValue("LET A = 5")));
+            mf.addParameter(new ConstantExpression(new StringValue("LET A = 5")));
             mf.addParameter(new ConstantExpression(new BooleanValue(true)));
-            mf.addParameter(new ConstantExpression(new ScriptValue("B")));
+            mf.addParameter(new ConstantExpression(new StringValue("B")));
             assertThrows(ExecutionException.class, () -> {
                 Value res = mf.runFunction(ctr);
             });
         }
         {
             MinimaFunction mf = fn.getNewFunction();
-            mf.addParameter(new ConstantExpression(new ScriptValue("LET A = 5")));
+            mf.addParameter(new ConstantExpression(new StringValue("LET A = 5")));
             mf.addParameter(new ConstantExpression(new HEXValue("0x1234")));
-            mf.addParameter(new ConstantExpression(new ScriptValue("B")));
+            mf.addParameter(new ConstantExpression(new StringValue("B")));
             assertThrows(ExecutionException.class, () -> {
                 Value res = mf.runFunction(ctr);
             });
         }
         {
             MinimaFunction mf = fn.getNewFunction();
-            mf.addParameter(new ConstantExpression(new ScriptValue("LET A = 5")));
+            mf.addParameter(new ConstantExpression(new StringValue("LET A = 5")));
             mf.addParameter(new ConstantExpression(new NumberValue(100)));
-            mf.addParameter(new ConstantExpression(new ScriptValue("B")));
+            mf.addParameter(new ConstantExpression(new StringValue("B")));
             assertThrows(ExecutionException.class, () -> {
                 Value res = mf.runFunction(ctr);
             });
         }
         {
             MinimaFunction mf = fn.getNewFunction();
-            mf.addParameter(new ConstantExpression(new ScriptValue("LET A = 5")));
-            mf.addParameter(new ConstantExpression(new ScriptValue("A")));
+            mf.addParameter(new ConstantExpression(new StringValue("LET A = 5")));
+            mf.addParameter(new ConstantExpression(new StringValue("A")));
             mf.addParameter(new ConstantExpression(new BooleanValue(true)));
             assertThrows(ExecutionException.class, () -> {
                 Value res = mf.runFunction(ctr);
@@ -273,8 +273,8 @@ public class RPLVARTests {
         }
         {
             MinimaFunction mf = fn.getNewFunction();
-            mf.addParameter(new ConstantExpression(new ScriptValue("LET A = 5")));
-            mf.addParameter(new ConstantExpression(new ScriptValue("A")));
+            mf.addParameter(new ConstantExpression(new StringValue("LET A = 5")));
+            mf.addParameter(new ConstantExpression(new StringValue("A")));
             mf.addParameter(new ConstantExpression(new NumberValue(100)));
             assertThrows(ExecutionException.class, () -> {
                 Value res = mf.runFunction(ctr);
@@ -282,8 +282,8 @@ public class RPLVARTests {
         }
         {
             MinimaFunction mf = fn.getNewFunction();
-            mf.addParameter(new ConstantExpression(new ScriptValue("LET A = 5")));
-            mf.addParameter(new ConstantExpression(new ScriptValue("A")));
+            mf.addParameter(new ConstantExpression(new StringValue("LET A = 5")));
+            mf.addParameter(new ConstantExpression(new StringValue("A")));
             mf.addParameter(new ConstantExpression(new NumberValue(100)));
             assertThrows(ExecutionException.class, () -> {
                 Value res = mf.runFunction(ctr);

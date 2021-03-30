@@ -12,7 +12,7 @@ import org.minima.kissvm.expressions.VariableExpression;
 import org.minima.kissvm.values.BooleanValue;
 import org.minima.kissvm.values.HEXValue;
 import org.minima.kissvm.values.NumberValue;
-import org.minima.kissvm.values.ScriptValue;
+import org.minima.kissvm.values.StringValue;
 import org.minima.objects.StateVariable;
 import org.minima.objects.Transaction;
 import org.minima.objects.Witness;
@@ -45,7 +45,7 @@ public class VariableExpressionTests {
         BooleanValue bv = new BooleanValue(true);
         HEXValue hv = new HEXValue(new MiniData());
         NumberValue nv = new NumberValue(0);
-        ScriptValue sv = new ScriptValue("[]");
+        StringValue sv = new StringValue("[]");
 
         ctr.setVariable("BooleanValue", bv);
         ctr.setVariable("HEXValue", hv);

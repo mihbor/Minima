@@ -1,8 +1,6 @@
 package org.minima.tests.kissvm.expressions;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertThrows;
 
 import java.math.BigInteger;
@@ -16,7 +14,7 @@ import org.minima.kissvm.expressions.OperatorExpression;
 import org.minima.kissvm.values.BooleanValue;
 import org.minima.kissvm.values.HEXValue;
 import org.minima.kissvm.values.NumberValue;
-import org.minima.kissvm.values.ScriptValue;
+import org.minima.kissvm.values.StringValue;
 import org.minima.objects.Transaction;
 import org.minima.objects.Witness;
 import org.minima.objects.base.MiniNumber;
@@ -61,9 +59,9 @@ public class OperatorExpressionTests {
         ConstantExpression ceRPI = new ConstantExpression(new NumberValue(new MiniNumber("3.14")));
         ConstantExpression ceR_PI = new ConstantExpression(new NumberValue(new MiniNumber("-3.14")));
 
-        ConstantExpression ceScriptEmpty = new ConstantExpression(new ScriptValue(""));
-        ConstantExpression ceScriptDummy = new ConstantExpression(new ScriptValue("[Hello World]"));
-        ConstantExpression ceScriptMinima = new ConstantExpression(new ScriptValue("LET A = 1"));
+        ConstantExpression ceScriptEmpty = new ConstantExpression(new StringValue(""));
+        ConstantExpression ceScriptDummy = new ConstantExpression(new StringValue("[Hello World]"));
+        ConstantExpression ceScriptMinima = new ConstantExpression(new StringValue("LET A = 1"));
 
         assertEquals(5, ((NumberValue) (new OperatorExpression(ce5, ce0, OperatorExpression.OPERATOR_ADD)).getValue(ctr)).getNumber().getAsLong());
         assertEquals(5, ((NumberValue) (new OperatorExpression(ce0, ce5, OperatorExpression.OPERATOR_ADD)).getValue(ctr)).getNumber().getAsLong());
@@ -99,17 +97,17 @@ public class OperatorExpressionTests {
             (new OperatorExpression(ce1, ce0, OperatorExpression.OPERATOR_DIV)).getValue(ctr);
         });
 
-        assertEquals("", ((ScriptValue) (new OperatorExpression(ceScriptEmpty, ceScriptEmpty, OperatorExpression.OPERATOR_ADD)).getValue(ctr)).toString());
-        assertEquals("[ hello world ]", ((ScriptValue) (new OperatorExpression(ceScriptEmpty, ceScriptDummy, OperatorExpression.OPERATOR_ADD)).getValue(ctr)).toString());
-        assertEquals("[ hello world ]", ((ScriptValue) (new OperatorExpression(ceScriptDummy, ceScriptEmpty, OperatorExpression.OPERATOR_ADD)).getValue(ctr)).toString());
-        assertEquals("LET a = 1", ((ScriptValue) (new OperatorExpression(ceScriptEmpty, ceScriptMinima, OperatorExpression.OPERATOR_ADD)).getValue(ctr)).toString());
-        assertEquals("LET a = 1", ((ScriptValue) (new OperatorExpression(ceScriptMinima, ceScriptEmpty, OperatorExpression.OPERATOR_ADD)).getValue(ctr)).toString());
+        assertEquals("", ((StringValue) (new OperatorExpression(ceScriptEmpty, ceScriptEmpty, OperatorExpression.OPERATOR_ADD)).getValue(ctr)).toString());
+        assertEquals("[ hello world ]", ((StringValue) (new OperatorExpression(ceScriptEmpty, ceScriptDummy, OperatorExpression.OPERATOR_ADD)).getValue(ctr)).toString());
+        assertEquals("[ hello world ]", ((StringValue) (new OperatorExpression(ceScriptDummy, ceScriptEmpty, OperatorExpression.OPERATOR_ADD)).getValue(ctr)).toString());
+        assertEquals("LET a = 1", ((StringValue) (new OperatorExpression(ceScriptEmpty, ceScriptMinima, OperatorExpression.OPERATOR_ADD)).getValue(ctr)).toString());
+        assertEquals("LET a = 1", ((StringValue) (new OperatorExpression(ceScriptMinima, ceScriptEmpty, OperatorExpression.OPERATOR_ADD)).getValue(ctr)).toString());
 
-        assertEquals("[ hello world ] [ hello world ]", ((ScriptValue) (new OperatorExpression(ceScriptDummy, ceScriptDummy, OperatorExpression.OPERATOR_ADD)).getValue(ctr)).toString());
-        assertEquals("[ hello world ] LET a = 1", ((ScriptValue) (new OperatorExpression(ceScriptDummy, ceScriptMinima, OperatorExpression.OPERATOR_ADD)).getValue(ctr)).toString());
-        assertEquals("LET a = 1 [ hello world ]", ((ScriptValue) (new OperatorExpression(ceScriptMinima, ceScriptDummy, OperatorExpression.OPERATOR_ADD)).getValue(ctr)).toString());
+        assertEquals("[ hello world ] [ hello world ]", ((StringValue) (new OperatorExpression(ceScriptDummy, ceScriptDummy, OperatorExpression.OPERATOR_ADD)).getValue(ctr)).toString());
+        assertEquals("[ hello world ] LET a = 1", ((StringValue) (new OperatorExpression(ceScriptDummy, ceScriptMinima, OperatorExpression.OPERATOR_ADD)).getValue(ctr)).toString());
+        assertEquals("LET a = 1 [ hello world ]", ((StringValue) (new OperatorExpression(ceScriptMinima, ceScriptDummy, OperatorExpression.OPERATOR_ADD)).getValue(ctr)).toString());
 
-        assertEquals("LET a = 1 LET a = 1", ((ScriptValue) (new OperatorExpression(ceScriptMinima, ceScriptMinima, OperatorExpression.OPERATOR_ADD)).getValue(ctr)).toString());
+        assertEquals("LET a = 1 LET a = 1", ((StringValue) (new OperatorExpression(ceScriptMinima, ceScriptMinima, OperatorExpression.OPERATOR_ADD)).getValue(ctr)).toString());
 
         assertEquals(0, ((NumberValue) (new OperatorExpression(ce0, OperatorExpression.OPERATOR_NEG)).getValue(ctr)).getNumber().getAsLong());
         assertEquals(-1, ((NumberValue) (new OperatorExpression(ce1, OperatorExpression.OPERATOR_NEG)).getValue(ctr)).getNumber().getAsLong());

@@ -4,7 +4,7 @@ import org.minima.kissvm.Contract;
 import org.minima.kissvm.exceptions.ExecutionException;
 import org.minima.kissvm.functions.MinimaFunction;
 import org.minima.kissvm.tokens.Token;
-import org.minima.kissvm.values.ScriptValue;
+import org.minima.kissvm.values.StringValue;
 import org.minima.kissvm.values.Value;
 
 /**
@@ -23,14 +23,14 @@ public class RPLVAR extends MinimaFunction {
 		checkExactParamNumber(3);
 		
 		//Get the script..
-		ScriptValue script = zContract.getScriptParam(0, this);
+		StringValue script = zContract.getStringParam(0, this);
 		String ss = script.toString();
 		
 		//Get the variable name
-		ScriptValue var    = zContract.getScriptParam(1, this);;
+		StringValue var    = zContract.getStringParam(1, this);;
 		
 		//Get the expression
-		ScriptValue exp    = zContract.getScriptParam(2, this);;
+		StringValue exp    = zContract.getStringParam(2, this);;
 				
 		//Now replace.. 
 		String search = "LET "+var+" = ";
@@ -39,7 +39,7 @@ public class RPLVAR extends MinimaFunction {
 		
 		//Not Found..
 		if(index == -1) {
-			return new ScriptValue(ss);
+			return new StringValue(ss);
 		}
 		
 		//Otherwise..
@@ -61,7 +61,7 @@ public class RPLVAR extends MinimaFunction {
 		ret += " "+exp.toString()+" ";
 		ret += ss.substring(end);
 		
-		return new ScriptValue(ret);
+		return new StringValue(ret);
 	}
 	
 	@Override

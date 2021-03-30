@@ -7,7 +7,7 @@ import org.minima.kissvm.exceptions.ExecutionException;
 import org.minima.kissvm.expressions.Expression;
 import org.minima.kissvm.functions.MinimaFunction;
 import org.minima.kissvm.values.HEXValue;
-import org.minima.kissvm.values.ScriptValue;
+import org.minima.kissvm.values.StringValue;
 import org.minima.kissvm.values.Value;
 
 public class CONCAT extends MinimaFunction{
@@ -30,7 +30,7 @@ public class CONCAT extends MinimaFunction{
 		int ptype = valcheck.getValueType();
 		if(ptype == Value.VALUE_HEX) {
 			isHex = true;
-		}else if(ptype == Value.VALUE_SCRIPT) {
+		}else if(ptype == Value.VALUE_STRING) {
 			isHex = false;
 		}else {
 			throw new ExecutionException("CONCAT parameters must be HEX or SCRIPT");
@@ -71,18 +71,18 @@ public class CONCAT extends MinimaFunction{
 		
 		}else {
 			//Sum them
-			String fullstring = "";
+			StringValue fullstring = new StringValue("");
 			for(Expression exp : params) {
 				Value vv = exp.getValue(zContract);
 				
 				//This is a ScriptValue
-				ScriptValue scr = (ScriptValue)vv;
+				StringValue scr = (StringValue)vv;
 				
 				//Add it..
-				fullstring += scr.toString()+" ";
+				fullstring = fullstring.add(scr);
 			}
 				
-			return new ScriptValue(fullstring.trim());
+			return fullstring;
 		}
 	}
 	

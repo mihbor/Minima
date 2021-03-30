@@ -8,14 +8,14 @@ import org.junit.Test;
 import org.minima.kissvm.values.BooleanValue;
 import org.minima.kissvm.values.HEXValue;
 import org.minima.kissvm.values.NumberValue;
-import org.minima.kissvm.values.ScriptValue;
+import org.minima.kissvm.values.StringValue;
 import org.minima.kissvm.values.Value;
 
 public class ValueTests {
 
     @Test
     public void testGettersAndSetters() {
-        assertEquals("should be equal ", new ScriptValue("return true").toString(), Value.getValue("[ RETURN TRUE ]").toString());
+        assertEquals("should be equal ", new StringValue("return true").toString(), Value.getValue("[ RETURN TRUE ]").toString());
         assertEquals("should be equal ", new HEXValue("0xFFFF").toString(), Value.getValue("0xFFFF").toString());
         assertEquals("should be equal ", BooleanValue.TRUE, Value.getValue("TRUE"));
         assertEquals("should be equal ", BooleanValue.FALSE, Value.getValue("FALSE"));
@@ -33,7 +33,7 @@ public class ValueTests {
             Value.getValue("z");
         });
 
-        assertEquals("should be equal ", ScriptValue.VALUE_SCRIPT, Value.getValueType("[RETURN TRUE]"));
+        assertEquals("should be equal ", StringValue.VALUE_STRING, Value.getValueType("[RETURN TRUE]"));
         assertEquals("should be equal ", HEXValue.VALUE_HEX, Value.getValueType("0xFFFF"));
         assertEquals("should be equal ", BooleanValue.VALUE_BOOLEAN, Value.getValueType("TRUE"));
         assertEquals("should be equal ", BooleanValue.VALUE_BOOLEAN, Value.getValueType("FALSE"));
@@ -54,7 +54,7 @@ public class ValueTests {
         assertEquals("should be equal ", "BOOLEAN", Value.getValueTypeString(Value.VALUE_BOOLEAN));
         assertEquals("should be equal ", "HEX", Value.getValueTypeString(Value.VALUE_HEX));
         assertEquals("should be equal ", "NUMBER", Value.getValueTypeString(Value.VALUE_NUMBER));
-        assertEquals("should be equal ", "SCRIPT", Value.getValueTypeString(Value.VALUE_SCRIPT));
+        assertEquals("should be equal ", "SCRIPT", Value.getValueTypeString(Value.VALUE_STRING));
         assertEquals("should be equal ", "ERROR_UNKNOWN_TYPE", Value.getValueTypeString(-99));
     }
 
@@ -83,15 +83,15 @@ public class ValueTests {
             fail();
         }
         assertThrows(IllegalArgumentException.class, () -> {
-            (new NumberValue(0)).verifyType(Value.VALUE_SCRIPT);
+            (new NumberValue(0)).verifyType(Value.VALUE_STRING);
         });
         try {
-            (new ScriptValue("Hello World")).verifyType(Value.VALUE_SCRIPT);
+            (new StringValue("Hello World")).verifyType(Value.VALUE_STRING);
         } catch (Exception e) {
             fail();
         }
         assertThrows(IllegalArgumentException.class, () -> {
-            (new ScriptValue("Hello World")).verifyType(Value.VALUE_BOOLEAN);
+            (new StringValue("Hello World")).verifyType(Value.VALUE_BOOLEAN);
         });
 
         try {
@@ -125,12 +125,12 @@ public class ValueTests {
             fail();
         }
         try {
-            Value.checkSameType(new ScriptValue("Hello World"), new ScriptValue("Hello World"));
+            Value.checkSameType(new StringValue("Hello World"), new StringValue("Hello World"));
         } catch (Exception e) {
             fail();
         }
         try {
-            Value.checkSameType(new ScriptValue("Hello World"), new ScriptValue("Hello World"), Value.VALUE_SCRIPT);
+            Value.checkSameType(new StringValue("Hello World"), new StringValue("Hello World"), Value.VALUE_STRING);
         } catch (Exception e) {
             fail();
         }
@@ -156,23 +156,23 @@ public class ValueTests {
         });
 
         assertThrows(IllegalArgumentException.class, () -> {
-            Value.checkSameType(new NumberValue(0), new ScriptValue("Hello World"));
+            Value.checkSameType(new NumberValue(0), new StringValue("Hello World"));
         });
         assertThrows(IllegalArgumentException.class, () -> {
-            Value.checkSameType(new NumberValue(0), new ScriptValue("Hello World"), Value.VALUE_NUMBER);
+            Value.checkSameType(new NumberValue(0), new StringValue("Hello World"), Value.VALUE_NUMBER);
         });
         assertThrows(IllegalArgumentException.class, () -> {
-            Value.checkSameType(new NumberValue(0), new NumberValue(0), Value.VALUE_SCRIPT);
+            Value.checkSameType(new NumberValue(0), new NumberValue(0), Value.VALUE_STRING);
         });
 
         assertThrows(IllegalArgumentException.class, () -> {
-            Value.checkSameType(new ScriptValue("Hello World"), new BooleanValue(true));
+            Value.checkSameType(new StringValue("Hello World"), new BooleanValue(true));
         });
         assertThrows(IllegalArgumentException.class, () -> {
-            Value.checkSameType(new ScriptValue("Hello World"), new BooleanValue(true), Value.VALUE_SCRIPT);
+            Value.checkSameType(new StringValue("Hello World"), new BooleanValue(true), Value.VALUE_STRING);
         });
         assertThrows(IllegalArgumentException.class, () -> {
-            Value.checkSameType(new ScriptValue("Hello World"), new ScriptValue("Hello World"), Value.VALUE_BOOLEAN);
+            Value.checkSameType(new StringValue("Hello World"), new StringValue("Hello World"), Value.VALUE_BOOLEAN);
         });
     }
 }

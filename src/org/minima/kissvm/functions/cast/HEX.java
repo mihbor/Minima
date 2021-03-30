@@ -5,7 +5,7 @@ import org.minima.kissvm.exceptions.ExecutionException;
 import org.minima.kissvm.functions.MinimaFunction;
 import org.minima.kissvm.values.HEXValue;
 import org.minima.kissvm.values.NumberValue;
-import org.minima.kissvm.values.ScriptValue;
+import org.minima.kissvm.values.StringValue;
 import org.minima.kissvm.values.Value;
 
 public class HEX extends MinimaFunction{
@@ -38,9 +38,9 @@ public class HEX extends MinimaFunction{
 				throw new ExecutionException(nexc.toString());
 			}
 	
-		}else if(val.getValueType() == Value.VALUE_SCRIPT) {
-			ScriptValue nv = (ScriptValue)val;
-			return new HEXValue(nv.getMiniData().to0xString());
+		}else if(val.getValueType() == Value.VALUE_STRING) {
+			StringValue nv = (StringValue)val;
+			return new HEXValue(nv.getMiniString().getData());
 		}
 		
 		return val;

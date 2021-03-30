@@ -4,7 +4,7 @@ import org.minima.kissvm.Contract;
 import org.minima.kissvm.exceptions.ExecutionException;
 import org.minima.kissvm.functions.MinimaFunction;
 import org.minima.kissvm.values.HEXValue;
-import org.minima.kissvm.values.ScriptValue;
+import org.minima.kissvm.values.StringValue;
 import org.minima.kissvm.values.Value;
 import org.minima.objects.proofs.TokenProof;
 
@@ -28,7 +28,7 @@ public class TOKENSCRIPT extends MinimaFunction {
 		}
 		
 		// Return reversed value
-		return new ScriptValue(td.getTokenScript().toString());
+		return new StringValue(td.getTokenScript().toString());
 	}
 
 	@Override

@@ -17,7 +17,7 @@ import org.minima.kissvm.functions.state.SAMESTATE;
 import org.minima.kissvm.values.BooleanValue;
 import org.minima.kissvm.values.HEXValue;
 import org.minima.kissvm.values.NumberValue;
-import org.minima.kissvm.values.ScriptValue;
+import org.minima.kissvm.values.StringValue;
 import org.minima.kissvm.values.Value;
 import org.minima.objects.StateVariable;
 import org.minima.objects.Transaction;
@@ -51,7 +51,7 @@ public class SAMESTATETests {
             PrevStates.add(new StateVariable(4 * i + 0, new BooleanValue(true).toString()));
             PrevStates.add(new StateVariable(4 * i + 1, new HEXValue("0x12345678").toString()));
             PrevStates.add(new StateVariable(4 * i + 2, new NumberValue(i).toString()));
-            PrevStates.add(new StateVariable(4 * i + 3, new ScriptValue("[ Hello World " + Integer.toString(4 * i + 3)).toString() + " ]"));
+            PrevStates.add(new StateVariable(4 * i + 3, new StringValue("[ Hello World " + Integer.toString(4 * i + 3)).toString() + " ]"));
         }
 
         ArrayList<StateVariable> SameStates = new ArrayList<StateVariable>();
@@ -59,12 +59,12 @@ public class SAMESTATETests {
             SameStates.add(new StateVariable(4 * i + 0, new BooleanValue(true).toString()));
             SameStates.add(new StateVariable(4 * i + 1, new HEXValue("0x12345678").toString()));
             SameStates.add(new StateVariable(4 * i + 2, new NumberValue(i).toString()));
-            SameStates.add(new StateVariable(4 * i + 3, new ScriptValue("[ Hello World " + Integer.toString(4 * i + 3)).toString() + " ]"));
+            SameStates.add(new StateVariable(4 * i + 3, new StringValue("[ Hello World " + Integer.toString(4 * i + 3)).toString() + " ]"));
         }
 
         ArrayList<StateVariable> DfrnStates = new ArrayList<StateVariable>();
         for (int i = 0; i < 16; i++) {
-            DfrnStates.add(new StateVariable(4 * i + 0, new ScriptValue("[ Hello World " + Integer.toString(4 * i + 0)).toString() + " ]"));
+            DfrnStates.add(new StateVariable(4 * i + 0, new StringValue("[ Hello World " + Integer.toString(4 * i + 0)).toString() + " ]"));
             DfrnStates.add(new StateVariable(4 * i + 1, new NumberValue(i).toString()));
             DfrnStates.add(new StateVariable(4 * i + 2, new HEXValue("0x12345678").toString()));
             DfrnStates.add(new StateVariable(4 * i + 3, new BooleanValue(true).toString()));
@@ -203,7 +203,7 @@ public class SAMESTATETests {
         {
             MinimaFunction mf = fn.getNewFunction();
             mf.addParameter(new ConstantExpression(new BooleanValue(true)));
-            mf.addParameter(new ConstantExpression(new ScriptValue("Hello World")));
+            mf.addParameter(new ConstantExpression(new StringValue("Hello World")));
             assertThrows(ExecutionException.class, () -> {
                 Value res = mf.runFunction(ctr);
             });
@@ -235,7 +235,7 @@ public class SAMESTATETests {
         {
             MinimaFunction mf = fn.getNewFunction();
             mf.addParameter(new ConstantExpression(new HEXValue("0x01234567")));
-            mf.addParameter(new ConstantExpression(new ScriptValue("Hello World")));
+            mf.addParameter(new ConstantExpression(new StringValue("Hello World")));
             assertThrows(ExecutionException.class, () -> {
                 Value res = mf.runFunction(ctr);
             });
@@ -259,14 +259,14 @@ public class SAMESTATETests {
         {
             MinimaFunction mf = fn.getNewFunction();
             mf.addParameter(new ConstantExpression(new NumberValue(0)));
-            mf.addParameter(new ConstantExpression(new ScriptValue("Hello World")));
+            mf.addParameter(new ConstantExpression(new StringValue("Hello World")));
             assertThrows(ExecutionException.class, () -> {
                 Value res = mf.runFunction(ctr);
             });
         }
         {
             MinimaFunction mf = fn.getNewFunction();
-            mf.addParameter(new ConstantExpression(new ScriptValue("Hello World")));
+            mf.addParameter(new ConstantExpression(new StringValue("Hello World")));
             mf.addParameter(new ConstantExpression(new BooleanValue(true)));
             assertThrows(ExecutionException.class, () -> {
                 Value res = mf.runFunction(ctr);
@@ -274,7 +274,7 @@ public class SAMESTATETests {
         }
         {
             MinimaFunction mf = fn.getNewFunction();
-            mf.addParameter(new ConstantExpression(new ScriptValue("Hello World")));
+            mf.addParameter(new ConstantExpression(new StringValue("Hello World")));
             mf.addParameter(new ConstantExpression(new HEXValue("0x01234567")));
             assertThrows(ExecutionException.class, () -> {
                 Value res = mf.runFunction(ctr);
@@ -282,7 +282,7 @@ public class SAMESTATETests {
         }
         {
             MinimaFunction mf = fn.getNewFunction();
-            mf.addParameter(new ConstantExpression(new ScriptValue("Hello World")));
+            mf.addParameter(new ConstantExpression(new StringValue("Hello World")));
             mf.addParameter(new ConstantExpression(new NumberValue(0)));
             assertThrows(ExecutionException.class, () -> {
                 Value res = mf.runFunction(ctr);
@@ -290,8 +290,8 @@ public class SAMESTATETests {
         }
         {
             MinimaFunction mf = fn.getNewFunction();
-            mf.addParameter(new ConstantExpression(new ScriptValue("Hello World")));
-            mf.addParameter(new ConstantExpression(new ScriptValue("Hello World")));
+            mf.addParameter(new ConstantExpression(new StringValue("Hello World")));
+            mf.addParameter(new ConstantExpression(new StringValue("Hello World")));
             assertThrows(ExecutionException.class, () -> {
                 Value res = mf.runFunction(ctr);
             });

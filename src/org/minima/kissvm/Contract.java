@@ -14,13 +14,12 @@ import org.minima.kissvm.tokens.Token;
 import org.minima.kissvm.values.BooleanValue;
 import org.minima.kissvm.values.HEXValue;
 import org.minima.kissvm.values.NumberValue;
-import org.minima.kissvm.values.ScriptValue;
+import org.minima.kissvm.values.StringValue;
 import org.minima.kissvm.values.Value;
 import org.minima.objects.StateVariable;
 import org.minima.objects.Transaction;
 import org.minima.objects.Witness;
 import org.minima.objects.base.MiniData;
-import org.minima.objects.base.MiniNumber;
 import org.minima.utils.MinimaLogger;
 import org.minima.utils.json.JSONObject;
 
@@ -354,12 +353,12 @@ public class Contract {
 		return (HEXValue)vv;
 	}
 	
-	public ScriptValue getScriptParam(int zParamNumber, MinimaFunction zFunction) throws ExecutionException {
+	public StringValue getStringParam(int zParamNumber, MinimaFunction zFunction) throws ExecutionException {
 		Value vv = zFunction.getParameter(zParamNumber).getValue(this);
-		if(vv.getValueType() != Value.VALUE_SCRIPT) {
+		if(vv.getValueType() != Value.VALUE_STRING) {
 			throw new ExecutionException("Incorrect Parameter type - should be ScriptValue @ "+zParamNumber+" "+zFunction.getName());
 		}
-		return (ScriptValue)vv;
+		return (StringValue)vv;
 	}
 	
 	public BooleanValue getBoolParam(int zParamNumber, MinimaFunction zFunction) throws ExecutionException {

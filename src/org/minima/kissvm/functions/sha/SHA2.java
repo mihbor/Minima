@@ -24,7 +24,7 @@ public class SHA2 extends MinimaFunction {
 		checkExactParamNumber(1);
 		
 		Value vv = getParameter(0).getValue(zContract);
-		checkIsOfType(vv, Value.VALUE_HEX | Value.VALUE_SCRIPT);
+		checkIsOfType(vv, Value.VALUE_HEX | Value.VALUE_STRING);
 		
 		//get the Input Data - HEX or SCRIPT
 		HEXValue hex = (HEXValue)vv;

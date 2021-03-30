@@ -21,7 +21,7 @@ import org.minima.kissvm.Contract;
 import org.minima.kissvm.values.BooleanValue;
 import org.minima.kissvm.values.HEXValue;
 import org.minima.kissvm.values.NumberValue;
-import org.minima.kissvm.values.ScriptValue;
+import org.minima.kissvm.values.StringValue;
 import org.minima.kissvm.values.Value;
 import org.minima.objects.Address;
 import org.minima.objects.Coin;
@@ -472,7 +472,7 @@ public class ConsensusUser extends ConsensusProcessor {
 			
 			//These 2 are set automatically..
 			cc.setGlobalVariable("@ADDRESS", new HEXValue(ccaddress.getAddressData()));
-			cc.setGlobalVariable("@SCRIPT", new ScriptValue(script));
+			cc.setGlobalVariable("@SCRIPT", new StringValue(script));
 			
 			//These can be played with..
 			cc.setGlobalVariable("@BLKNUM", new NumberValue(blocknum));
@@ -485,7 +485,7 @@ public class ConsensusUser extends ConsensusProcessor {
 			cc.setGlobalVariable("@TOTOUT", new NumberValue(trans.getAllOutputs().size()));
 			
 			cc.setGlobalVariable("@TOKENID", new HEXValue("0x00"));
-			cc.setGlobalVariable("@TOKENSCRIPT", new ScriptValue(""));
+			cc.setGlobalVariable("@TOKENSCRIPT", new StringValue(""));
 			cc.setGlobalVariable("@TOKENTOTAL", new NumberValue(MiniNumber.BILLION));
 			
 			

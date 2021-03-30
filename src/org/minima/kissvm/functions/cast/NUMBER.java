@@ -5,7 +5,6 @@ import org.minima.kissvm.exceptions.ExecutionException;
 import org.minima.kissvm.functions.MinimaFunction;
 import org.minima.kissvm.values.HEXValue;
 import org.minima.kissvm.values.NumberValue;
-import org.minima.kissvm.values.ScriptValue;
 import org.minima.kissvm.values.Value;
 import org.minima.objects.base.MiniData;
 import org.minima.objects.base.MiniNumber;
@@ -40,14 +39,11 @@ public class NUMBER extends MinimaFunction{
 			HEXValue nv = (HEXValue)val;
 			MiniData md1 = nv.getMiniData();
 			MiniNumber num = new MiniNumber(md1.getDataValue());
+			
 			return new NumberValue(num);
-	
-		}else if(val.getValueType() == Value.VALUE_SCRIPT) {
-			ScriptValue nv = (ScriptValue)val;
-			return new HEXValue(nv.getMiniData().to0xString());
 		}
-	
-		return val;
+		
+		throw new ExecutionException("Cannot convert String to Number");
 	}
 
 	@Override

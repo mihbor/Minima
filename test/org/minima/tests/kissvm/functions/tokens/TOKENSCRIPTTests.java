@@ -16,7 +16,7 @@ import org.minima.kissvm.functions.tokens.TOKENSCRIPT;
 import org.minima.kissvm.values.BooleanValue;
 import org.minima.kissvm.values.HEXValue;
 import org.minima.kissvm.values.NumberValue;
-import org.minima.kissvm.values.ScriptValue;
+import org.minima.kissvm.values.StringValue;
 import org.minima.kissvm.values.Value;
 import org.minima.objects.Transaction;
 import org.minima.objects.Witness;
@@ -80,8 +80,8 @@ public class TOKENSCRIPTTests {
             mf.addParameter(new ConstantExpression(new HEXValue(tp1.getTokenID())));
             try {
                 Value res = mf.runFunction(ctr);
-                assertEquals(Value.VALUE_SCRIPT, res.getValueType());
-                assertEquals(tp1.getTokenScript().toString().toLowerCase(), ((ScriptValue) res).toString());
+                assertEquals(Value.VALUE_STRING, res.getValueType());
+                assertEquals(tp1.getTokenScript().toString().toLowerCase(), ((StringValue) res).toString());
             } catch (ExecutionException ex) {
                 fail();
             }
@@ -91,8 +91,8 @@ public class TOKENSCRIPTTests {
             mf.addParameter(new ConstantExpression(new HEXValue(tp2.getTokenID())));
             try {
                 Value res = mf.runFunction(ctr);
-                assertEquals(Value.VALUE_SCRIPT, res.getValueType());
-                assertEquals(tp2.getTokenScript().toString().toLowerCase(), ((ScriptValue) res).toString());
+                assertEquals(Value.VALUE_STRING, res.getValueType());
+                assertEquals(tp2.getTokenScript().toString().toLowerCase(), ((StringValue) res).toString());
             } catch (ExecutionException ex) {
                 fail();
             }
@@ -102,8 +102,8 @@ public class TOKENSCRIPTTests {
             mf.addParameter(new ConstantExpression(new HEXValue(tp3.getTokenID())));
             try {
                 Value res = mf.runFunction(ctr);
-                assertEquals(Value.VALUE_SCRIPT, res.getValueType());
-                assertEquals(tp3.getTokenScript().toString().toLowerCase(), ((ScriptValue) res).toString());
+                assertEquals(Value.VALUE_STRING, res.getValueType());
+                assertEquals(tp3.getTokenScript().toString().toLowerCase(), ((StringValue) res).toString());
             } catch (ExecutionException ex) {
                 fail();
             }
@@ -158,7 +158,7 @@ public class TOKENSCRIPTTests {
         }
         {
             MinimaFunction mf = fn.getNewFunction();
-            mf.addParameter(new ConstantExpression(new ScriptValue("Hello World")));
+            mf.addParameter(new ConstantExpression(new StringValue("Hello World")));
             assertThrows(ExecutionException.class, () -> {
                 Value res = mf.runFunction(ctr);
             });

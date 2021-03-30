@@ -36,7 +36,7 @@ public class SHA3 extends MinimaFunction {
 		int bitlength = zContract.getNumberParam(0, this).getNumber().getAsInt();
 		
 		Value vv = getParameter(1).getValue(zContract);
-		checkIsOfType(vv, Value.VALUE_HEX | Value.VALUE_SCRIPT);
+		checkIsOfType(vv, Value.VALUE_HEX | Value.VALUE_STRING);
 		
 		//get the Input Data - HEX or SCRIPT
 		HEXValue hex = (HEXValue)vv;

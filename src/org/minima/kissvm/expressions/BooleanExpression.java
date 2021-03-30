@@ -9,7 +9,6 @@ import org.minima.kissvm.values.BooleanValue;
 import org.minima.kissvm.values.HEXValue;
 import org.minima.kissvm.values.NumberValue;
 import org.minima.kissvm.values.Value;
-import org.minima.utils.MinimaLogger;
 
 /**
  * @author Spartacus Rex
@@ -68,7 +67,7 @@ public class BooleanExpression implements Expression {
 		}
 		
 		//Check the value is number, boolean or HEX
-		if(lval.getValueType() == Value.VALUE_SCRIPT) {
+		if(lval.getValueType() == Value.VALUE_STRING) {
 			throw new ExecutionException("Boolean operator values must be Boolean, Number or HEX");
 		}
 				

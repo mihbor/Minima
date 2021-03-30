@@ -9,13 +9,12 @@ import java.util.ArrayList;
 import org.junit.Test;
 import org.minima.kissvm.Contract;
 import org.minima.kissvm.exceptions.ExecutionException;
-import org.minima.kissvm.exceptions.MinimaParseException;
 import org.minima.kissvm.expressions.BooleanExpression;
 import org.minima.kissvm.expressions.ConstantExpression;
 import org.minima.kissvm.values.BooleanValue;
 import org.minima.kissvm.values.HEXValue;
 import org.minima.kissvm.values.NumberValue;
-import org.minima.kissvm.values.ScriptValue;
+import org.minima.kissvm.values.StringValue;
 import org.minima.objects.Transaction;
 import org.minima.objects.Witness;
 
@@ -228,8 +227,8 @@ public class BooleanExpressionTests {
         }
 
         {
-            ConstantExpression cet = new ConstantExpression(new ScriptValue("[ Hello Wolrd ]"));
-            ConstantExpression cef = new ConstantExpression(new ScriptValue(""));
+            ConstantExpression cet = new ConstantExpression(new StringValue("[ Hello Wolrd ]"));
+            ConstantExpression cef = new ConstantExpression(new StringValue(""));
 
             BooleanExpression be;
 
