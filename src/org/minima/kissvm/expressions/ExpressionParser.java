@@ -154,15 +154,15 @@ public class ExpressionParser {
 	}
 
 	private static Expression getMulDiv(LexicalTokenizer zTokens) throws MinimaParseException{
-		Expression exp = getPrimary(zTokens);
+		Expression exp = getBaseUnit(zTokens);
 		
 		while(zTokens.hasMoreElements()) {
 			Token tok = zTokens.getNextToken();
 			
 			if(tok.getToken().equals("*")) {
-				exp = new OperatorExpression(exp,getPrimary(zTokens),OperatorExpression.OPERATOR_MUL);
+				exp = new OperatorExpression(exp,getBaseUnit(zTokens),OperatorExpression.OPERATOR_MUL);
 			}else if(tok.getToken().equals("/")) {
-				exp = new OperatorExpression(exp,getPrimary(zTokens),OperatorExpression.OPERATOR_DIV);
+				exp = new OperatorExpression(exp,getBaseUnit(zTokens),OperatorExpression.OPERATOR_DIV);
 			}else {
 				zTokens.goBackToken();
 				break;
@@ -171,32 +171,7 @@ public class ExpressionParser {
 		
 		return exp;
 	}
-	
-	private static Expression getPrimary(LexicalTokenizer zTokens) throws MinimaParseException{
-		//NOT and NEG treated slightly differently..
-		Expression exp = null;
 		
-		while(zTokens.hasMoreElements()) {
-			Token tok = zTokens.getNextToken();
-			
-			if(tok.getToken().equals("NOT")) {
-				//Return immediately.. no more drilling..
-				return new BooleanExpression(getPrimary(zTokens), BooleanExpression.BOOLEAN_NOT);
-				
-			}else if(tok.getToken().equals("NEG")) {
-				//Return immediately.. no more drilling..
-				return new OperatorExpression(getPrimary(zTokens), OperatorExpression.OPERATOR_NEG);
-				
-			}else {
-				zTokens.goBackToken();
-				exp = getBaseUnit(zTokens);
-				break;
-			}
-		}
-		
-		return exp;
-	}
-	
 	private static Expression getBaseUnit(LexicalTokenizer zTokens) throws MinimaParseException{
 		//The final result
 		Expression exp = null; 
@@ -262,7 +237,17 @@ public class ExpressionParser {
 				throw new MinimaParseException("Missing close bracket. Found : "+closebracket.getToken());
 			}
 	
-		}else{
+		}else if(tok.getToken().equals("NOT")) {
+			//Get the NOT expression..
+			exp = new BooleanExpression(getExpression(zTokens), BooleanExpression.BOOLEAN_NOT);
+		
+		}else if(tok.getToken().equals("NEG")) {
+			//Get the NOT expression..
+			exp = new OperatorExpression(getExpression(zTokens), OperatorExpression.OPERATOR_NEG);
+		}
+		
+		//Check for null.. an incorrect token..
+		if(exp == null) {
 			throw new MinimaParseException("Incorrect Token in script "+tok.getToken());
 		}
 		

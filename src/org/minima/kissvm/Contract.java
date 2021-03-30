@@ -20,6 +20,7 @@ import org.minima.objects.StateVariable;
 import org.minima.objects.Transaction;
 import org.minima.objects.Witness;
 import org.minima.objects.base.MiniData;
+import org.minima.objects.base.MiniNumber;
 import org.minima.utils.MinimaLogger;
 import org.minima.utils.json.JSONObject;
 
@@ -176,6 +177,9 @@ public class Contract {
 			
 			traceLog("PARSE ERROR : "+mExceptionString);
 		}
+		
+		//Set the @SCRIPT global variable..
+		setGlobalVariable("@SCRIPT", new StringValue(mRamScript));
 	}
 	
 	public void setGlobalVariable(String zGlobal, Value zValue) {
@@ -245,7 +249,7 @@ public class Contract {
 			
 		} catch (Exception e) {
 			if(mMinimaLog) {
-				e.printStackTrace();
+				MinimaLogger.log(e);
 			}
 			
 			mException = true;
@@ -607,5 +611,32 @@ public class Contract {
 				
 		//Boom..
 		return finalstring.trim();
+	}
+	
+	public static void main(String[] zArgs) {
+	
+		String RamScript = "let a = NEG NEG 1 * ";
+		
+		Transaction tt = new Transaction();
+		tt.addStateVariable(new StateVariable(0, "987"));
+		//tt.setStateValue(0, new StateVariable("[ let y = 0xFF ]"));
+//		tt.setStateValue(2, new StateVariable("1.2345"));
+		
+		Contract ctr = new Contract(RamScript,
+				"0x74A2222436C592046A6F576F67200C75DB3D9051BE31262BD0A0BF0DB30137C4",
+				new Witness(),
+				tt,null,true);
+		
+		ctr.setFloating(true);
+		
+		ctr.setGlobalVariable("@BLKNUM", new NumberValue(new MiniNumber("31")));
+		ctr.setGlobalVariable("@INBLKNUM", new NumberValue(new MiniNumber("10")));
+		ctr.setGlobalVariable("@INPUT", new NumberValue(new MiniNumber("1")));
+		ctr.setGlobalVariable("@ADDRESS", new HEXValue("0x67876AB"));
+		ctr.setGlobalVariable("@TOKENID", new HEXValue("0x00"));
+		ctr.setGlobalVariable("@AMOUNT", new NumberValue(new MiniNumber("1")));
+		
+		ctr.run();
+		
 	}
 }
