@@ -9,6 +9,7 @@ import org.minima.kissvm.values.BooleanValue;
 import org.minima.kissvm.values.HEXValue;
 import org.minima.kissvm.values.NumberValue;
 import org.minima.kissvm.values.Value;
+import org.minima.utils.MinimaLogger;
 
 /**
  * @author Spartacus Rex
@@ -60,8 +61,16 @@ public class BooleanExpression implements Expression {
 		Value lval = mLeft.getValue(zContract);
 		Value rval = mRight.getValue(zContract);
 
-		//Make sure both Values are of the same type
-		Value.checkSameType(lval, rval);
+		//Check if this is a one parameter expression
+		if(mBooleanType != BOOLEAN_NOT) {
+			//Make sure both Values are of the same type
+			Value.checkSameType(lval, rval);
+		}
+		
+		//Check the value is number, boolean or HEX
+		if(lval.getValueType() == Value.VALUE_SCRIPT) {
+			throw new ExecutionException("Boolean operator values must be Boolean, Number or HEX");
+		}
 				
 		//TRUE or FALSE - all types have this
 		boolean left   	= lval.isTrue(); 
