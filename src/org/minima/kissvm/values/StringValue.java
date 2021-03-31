@@ -39,6 +39,6 @@ public class StringValue extends Value {
 
 	@Override
 	public boolean isFalse() {
-		return mString.toString().toLowerCase().equals("FALSE");
+		return mString.toString().toLowerCase().equals("false");
 	}
 }
