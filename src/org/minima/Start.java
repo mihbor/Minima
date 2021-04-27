@@ -22,18 +22,18 @@ import org.minima.utils.MinimaLogger;
  */
 public class Start {
 	
-	/**
-	 * A list of default valid nodes to connect to at startup..
-	 */
-//	public static final String[] VALID_BOOTSTRAP_NODES = 
-//		{"35.204.181.120",
-//		 "35.204.119.15",
-//		 "34.91.220.49",
-//		 "35.204.62.177",
-//		 "35.204.139.141",
-//		 "35.204.194.45"};
-	
-	public static final String[] VALID_BOOTSTRAP_NODES = {"35.228.18.150"};
+//	/**
+//	 * A list of default valid nodes to connect to at startup..
+//	 */
+////	public static final String[] VALID_BOOTSTRAP_NODES = 
+////		{"35.204.181.120",
+////		 "35.204.119.15",
+////		 "34.91.220.49",
+////		 "35.204.62.177",
+////		 "35.204.139.141",
+////		 "35.204.194.45"};
+//	
+//	public static final String[] VALID_BOOTSTRAP_NODES = {"35.228.18.150"};
 	
 	/**
 	 * A static link to the main server - for Android
@@ -43,6 +43,9 @@ public class Start {
 		return mMainServer;
 	}
 	
+	/**
+	 * The configuration folder for this instance of Minima
+	 */
 	public String mConfFolder;
 	
 	/**
@@ -95,20 +98,16 @@ public class Start {
 	public static void main(String[] zArgs){
 		//Check command line inputs
 		int arglen 				= zArgs.length;
+		
+		//Default Port
 		int port 				= 9001;
-		
-		boolean connect         = true;
-		
-		//Pick a random host
-		Random rand = new Random();
-		int hostnum = rand.nextInt(VALID_BOOTSTRAP_NODES.length);
-		//hostnum = 3;
-		
-		ArrayList<String> connectlist = new ArrayList<>();
-		String connecthost      = VALID_BOOTSTRAP_NODES[hostnum];
-		int connectport         = 9001;
 		String host             = "";
-
+		
+		//We connect as normal
+		boolean normalconnect         = true;
+		ArrayList<String> connectlist = new ArrayList<>();
+		
+		//Is there an external URL 
 		String external 		= "";
 		
 		boolean clean           = false;
@@ -157,11 +156,11 @@ public class Start {
 				
 				}else if(arg.equals("-private")) {
 					genesis     = true;
-					connect 	= false;
+					normalconnect 	= false;
 					automine    = true;
 					
 				}else if(arg.equals("-noconnect")) {
-					connect = false;
+					normalconnect = false;
 				
 				}else if(arg.equals("-daemon")) {
 					daemon = true;
@@ -170,6 +169,9 @@ public class Start {
 					automine = true;
 				
 				}else if(arg.equals("-connect")) {
+					normalconnect = false;
+					
+					//Add tro the list of connect peers
 					String newconn = zArgs[counter++]+":"+zArgs[counter++];
 					connectlist.add(newconn);
 
@@ -191,7 +193,7 @@ public class Start {
 					TestParams.setTestParams();
 				
 				}else if(arg.equals("")) {
-					//Do nothing..
+					//Do nothing.. issue fix for DOCKER
 					
 				}else {
 					MinimaLogger.log("UNKNOWN arg.. : "+arg);
@@ -223,20 +225,17 @@ public class Start {
 		mMainServer = rcmainserver;
 		
 		//Have we added any connect hosts..
-		if(!connect) {
+		if(!normalconnect) {
 			rcmainserver.setNormalConnect(false);
 		}
 		
-//		if(connectlist.size() == 0 && connect) {
-//			rcmainserver.addAutoConnectHostPort(connecthost+":"+connectport);
-//		}else {
-//			for(String hostport : connectlist) {
-//				rcmainserver.addAutoConnectHostPort(hostport);
-//			}
-//		}
+		//Add the peers you wish to connect to
+		for(String hostport : connectlist) {
+			rcmainserver.addAutoConnectHostPort(hostport);
+		}
 		
 		//Set the connect properties
-		rcmainserver.setAutoConnect(connect);
+		rcmainserver.setAutoConnect(normalconnect);
 		
 		//Are we private!
 		if(genesis) {
@@ -247,7 +246,7 @@ public class Start {
 			rcmainserver.setAutoMine();
 		}
 		
-		if(!connect) {
+		if(!normalconnect) {
 			rcmainserver.setRequireNoInitialSync();
 		}
 		
