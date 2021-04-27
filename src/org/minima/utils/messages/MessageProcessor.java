@@ -92,7 +92,7 @@ public abstract class MessageProcessor extends MessageStack implements Runnable{
                 try{
                 	//Are we logging  ?
                 	if(mLogON) {
-                		MinimaLogger.log("["+getSize()+"] "+sdf.format(new Date())+" [ "+mMainThread.getName()+" ] \t"+msg);
+                		MinimaLogger.log("[size:"+getSize()+"] [ "+mMainThread.getName()+" ] \t"+msg);
                 	}
                 
                 	//Process Message

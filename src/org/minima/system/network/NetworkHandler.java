@@ -16,7 +16,8 @@ import org.minima.system.network.base.MinimaServer;
 import org.minima.system.network.maxima.Maxima;
 import org.minima.system.network.minidapps.DAPPManager;
 import org.minima.system.network.minidapps.websocket.WebSocketManager;
-import org.minima.system.network.p2p.DiscoveryManager;
+import org.minima.system.network.p2p.P2PManager;
+import org.minima.system.network.p2p.Peer;
 import org.minima.system.network.rpc.RPCServer;
 import org.minima.system.network.sshtunnel.SSHTunnel;
 import org.minima.utils.MinimaLogger;
@@ -44,6 +45,11 @@ public class NetworkHandler extends MessageProcessor {
 	public static final String NETWORK_SENDALL 		= "NETWORK_SENDALL";
 	
 	public static final String NETWORK_WEBPROXY 	= "NETWORK_WEBPROXY";
+	
+	/**
+	 * Peer functions
+	 */
+	public static final String NETWORK_DEFAULTCONNECT	= "NETWORK_DEFAULTCONNECT";
 	
 	public static final String NETWORK_CLEARSEEDS	= "NETWORK_CLEARSEEDS";
 	public static final String NETWORK_ADDSEED		= "NETWORK_ADDSEED";
@@ -88,7 +94,7 @@ public class NetworkHandler extends MessageProcessor {
 	/**
 	 * The Peers Manager
 	 */
-	DiscoveryManager mPeersManager;
+	P2PManager mPeersManager;
 	
 	/**
 	 * All the network channels..
@@ -315,7 +321,7 @@ public class NetworkHandler extends MessageProcessor {
 			mTunnel = new SSHTunnel();
 			
 			//The Peer Manager
-			mPeersManager = new DiscoveryManager();
+			mPeersManager = new P2PManager();
 			
 		}else if(zMessage.isMessageType(NETWORK_SHUTDOWN)) {
 			//Stop the server
@@ -348,6 +354,11 @@ public class NetworkHandler extends MessageProcessor {
 				MinimaLogger.log(exc);
 			}
 			
+			//Stop the Peer Manmager
+			try {mPeersManager.shutdown();}catch(Exception exc) {
+				MinimaLogger.log(exc);
+			}
+			
 			//Shutdown all the clients
 			for(MinimaClient client : mClients) {
 				client.shutdown();
@@ -356,19 +367,9 @@ public class NetworkHandler extends MessageProcessor {
 			//And finish up..
 			stopMessageProcessor();
 		
-		
-		}else if(zMessage.isMessageType(NETWORK_ADDPEER)) {
-			
-		}else if(zMessage.isMessageType(NETWORK_CLEARSEEDS)) {
-			mPeersManager.clearSeeds();
-		
-		}else if(zMessage.isMessageType(NETWORK_ADDSEED)) {
-			String host = zMessage.getString("host");
-			int port    = zMessage.getInteger("port");
-			mPeersManager.addSeedPeer(host, port);
-			
-		}else if(zMessage.isMessageType(NETWORK_PEERCONNECT)) {
-			
+		}else if(zMessage.isMessageType(NETWORK_DEFAULTCONNECT)) {
+			//Connect normally to a seed peer..
+			mPeersManager.PostMessage(P2PManager.P2P_DEFAULTCONNECT);
 			
 		}else if(zMessage.isMessageType(NETWORK_CONNECT)) {
 			String host = zMessage.getString("host");

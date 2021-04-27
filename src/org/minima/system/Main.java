@@ -73,6 +73,9 @@ public class Main extends MessageProcessor {
 	/**
 	 * Default nodes to connect to
 	 */
+	public boolean mNormalAutoConnect  = true;
+	
+	
 	public boolean mAutoConnect        = false;
 	ArrayList<String> mAutoConnectList = new ArrayList<>();
 	
@@ -125,6 +128,10 @@ public class Main extends MessageProcessor {
 		MinimaLogger.log("Welcome to Minima. For assistance type help. Then press enter.");
 		MinimaLogger.log("Minima files : "+zConfFolder);
 		MinimaLogger.log("Minima version "+GlobalParams.MINIMA_VERSION);
+	}
+	
+	public void setNormalConnect(boolean zNormal) {
+		mNormalAutoConnect = zNormal;
 	}
 	
 	public void setAutoConnect(boolean zAuto) {
@@ -216,22 +223,31 @@ public class Main extends MessageProcessor {
 			mNetwork.PostMessage(NetworkHandler.NETWORK_STARTUP);
 
 			//And do we do an automatic logon..
-			if(mAutoConnect) {
-				//Connect to the the list of auto connect
-				for(String hostport : mAutoConnectList) {
-					int div     = hostport.indexOf(":");
-					String host = hostport.substring(0,div);
-					int port    = Integer.parseInt(hostport.substring(div+1));
-					
-					//Send a TimedMessage..
-					Message connect  = new Message(NetworkHandler.NETWORK_CONNECT)
-							.addInteger("port", port).addString("host", host);
-					getNetworkHandler().PostMessage(connect);
+			if(mNormalAutoConnect) {
+				//Connect normally to a seed peer
+				getNetworkHandler().PostMessage(NetworkHandler.NETWORK_DEFAULTCONNECT);
 				
-					//Small Pause.. 10 seconds..
-					Thread.sleep(10000);
-				}
+			}else {
+				//Connect to the provided list of peers
+				
 			}
+			
+//			if(mAutoConnect) {
+//				//Connect to the the list of auto connect
+//				for(String hostport : mAutoConnectList) {
+//					int div     = hostport.indexOf(":");
+//					String host = hostport.substring(0,div);
+//					int port    = Integer.parseInt(hostport.substring(div+1));
+//					
+//					//Send a TimedMessage..
+//					Message connect  = new Message(NetworkHandler.NETWORK_CONNECT)
+//							.addInteger("port", port).addString("host", host);
+//					getNetworkHandler().PostMessage(connect);
+//				
+//					//Small Pause.. 10 seconds..
+//					Thread.sleep(10000);
+//				}
+//			}
 			
 		}else if ( zMessage.isMessageType(SYSTEM_SHUTDOWN) ) {
 			

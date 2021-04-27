@@ -223,13 +223,17 @@ public class Start {
 		mMainServer = rcmainserver;
 		
 		//Have we added any connect hosts..
-		if(connectlist.size() == 0 && connect) {
-			rcmainserver.addAutoConnectHostPort(connecthost+":"+connectport);
-		}else {
-			for(String hostport : connectlist) {
-				rcmainserver.addAutoConnectHostPort(hostport);
-			}
+		if(!connect) {
+			rcmainserver.setNormalConnect(false);
 		}
+		
+//		if(connectlist.size() == 0 && connect) {
+//			rcmainserver.addAutoConnectHostPort(connecthost+":"+connectport);
+//		}else {
+//			for(String hostport : connectlist) {
+//				rcmainserver.addAutoConnectHostPort(hostport);
+//			}
+//		}
 		
 		//Set the connect properties
 		rcmainserver.setAutoConnect(connect);

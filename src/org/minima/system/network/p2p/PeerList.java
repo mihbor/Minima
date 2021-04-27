@@ -22,10 +22,6 @@ public class PeerList implements Streamable {
 		return mPeers.get(rand);
 	}
 	
-//	public PeerList getSample(int zSampleSize) {
-//		return new PeerList();
-//	}
-	
 	public int size() {
 		return mPeers.size();
 	}
