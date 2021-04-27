@@ -12,17 +12,27 @@ import org.minima.utils.json.JSONObject;
 
 public class Peer implements Comparable<Peer>, Streamable {
 
-	public String 	mHost;
-	public int 		mPort;
-	public long 	mLastComms;
-	public boolean 	mInBound;
+	/**
+	 * Peer details
+	 */
+	public String 	mHost 		 = "";
+	public int 		mPort 		 = -1;
+	
+	/**
+	 * The Peer Info you receive once connected
+	 */
+	public boolean  mPeerInfoSet = false;
+	public String 	mVersion 	 = "";
+	public long 	mLastComms 	 = -1;
+	public boolean 	mExternal	 = false;
+	public boolean 	mInBound  	 = false;
+	public boolean  mArchive 	 = false;
 	
 	private Peer() {}
 	
 	public Peer(String zHost, int zPort) {
 		mHost = zHost;
 		mPort = zPort;
-		setLastComms();
 	}
 	
 	public String getHost() {
@@ -50,8 +60,12 @@ public class Peer implements Comparable<Peer>, Streamable {
 		
 		json.put("host", mHost);
 		json.put("port", ""+mPort);
+		
+		json.put("version", mVersion);
 		json.put("lastcomms", ""+mLastComms);
 		json.put("inbound", mInBound);
+		json.put("external", mExternal);
+		json.put("archive", mArchive);
 		
 		return json;
 	}
@@ -73,18 +87,24 @@ public class Peer implements Comparable<Peer>, Streamable {
 
 	@Override
 	public void writeDataStream(DataOutputStream zOut) throws IOException {
+		new MiniString(mVersion).writeDataStream(zOut);
 		new MiniString(mHost).writeDataStream(zOut);
 		new MiniNumber(mPort).writeDataStream(zOut);
 		new MiniNumber(mLastComms).writeDataStream(zOut);
 		new MiniByte(mInBound).writeDataStream(zOut);
+		new MiniByte(mExternal).writeDataStream(zOut);
+		new MiniByte(mArchive).writeDataStream(zOut);
 	}
 
 	@Override
 	public void readDataStream(DataInputStream zIn) throws IOException {
-		mHost = MiniString.ReadFromStream(zIn).toString();
-		mPort = MiniNumber.ReadFromStream(zIn).getAsInt();
-		mLastComms = MiniNumber.ReadFromStream(zIn).getAsLong();
-		mInBound = MiniByte.ReadFromStream(zIn).isTrue();
+		mVersion 	= MiniString.ReadFromStream(zIn).toString(); 
+		mHost 		= MiniString.ReadFromStream(zIn).toString();
+		mPort 		= MiniNumber.ReadFromStream(zIn).getAsInt();
+		mLastComms 	= MiniNumber.ReadFromStream(zIn).getAsLong();
+		mInBound 	= MiniByte.ReadFromStream(zIn).isTrue();
+		mExternal 	= MiniByte.ReadFromStream(zIn).isTrue();
+		mArchive 	= MiniByte.ReadFromStream(zIn).isTrue();
 	}
 	
 	public static Peer ReadFromStream(DataInputStream zIn) throws IOException {
@@ -92,5 +112,4 @@ public class Peer implements Comparable<Peer>, Streamable {
 		pp.readDataStream(zIn);
 		return pp;
 	}
-	
 }

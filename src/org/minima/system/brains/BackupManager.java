@@ -52,14 +52,18 @@ public class BackupManager extends MessageProcessor {
 	
 	File mTunnelRoot;
 	
+	File mPeersInfo;
+	
 	static File mTempFolder = new File(System.getProperty("java.io.tmpdir"));
 	
 	MiniNumber mLastBlock  = MiniNumber.ZERO;
 	MiniNumber mFirstBlock = MiniNumber.MINUSONE;
 	
 	//500,000 blocks @ 4320 blocks a day.. ~3 months
-	private static MiniNumber MAX_BLOCKS  = MiniNumber.MILLION.div(MiniNumber.TWO);
-	
+//	private static MiniNumber MAX_BLOCKS  = MiniNumber.MILLION.div(MiniNumber.TWO);
+	//2 weeks
+	private static MiniNumber MAX_BLOCKS  = new MiniNumber(4320).mult(new MiniNumber(14));
+		
 	public BackupManager(String zConfFolder) {
 		super("BACKUP");
 		
@@ -90,6 +94,10 @@ public class BackupManager extends MessageProcessor {
 
 	public File getSSHTunnelFolder() {
 		return mTunnelRoot;
+	}
+	
+	public File getPeersFolder() {
+		return mPeersInfo;
 	}
 	
 	public File getMiniDAPPFolder(String zMiniDAPPID) {
@@ -340,6 +348,9 @@ public class BackupManager extends MessageProcessor {
 		//SSHTunnel folder
 		mTunnelRoot = ensureFolder(new File(mRoot,"tunnel"));
 		
+		//Peers Folder
+		mPeersInfo = ensureFolder(new File(mRoot,"peers"));
+		
 		//The Test Web folder
 		mWebRoot = ensureFolder(new File(mRoot,"webroot"));
 				
@@ -363,6 +374,7 @@ public class BackupManager extends MessageProcessor {
 		MiniFile.deleteFileOrFolder(mRootPath,new File(zFolder,"backup"));
 		MiniFile.deleteFileOrFolder(mRootPath,new File(zFolder,"maxima"));
 		MiniFile.deleteFileOrFolder(mRootPath,new File(zFolder,"tunnel"));
+		MiniFile.deleteFileOrFolder(mRootPath,new File(zFolder,"peers"));
 		MiniFile.deleteFileOrFolder(mRootPath,new File(zFolder,"temp"));
 	}
 	

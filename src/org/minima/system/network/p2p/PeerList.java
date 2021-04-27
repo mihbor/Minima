@@ -16,7 +16,7 @@ public class PeerList implements Streamable {
 		mPeers = new ArrayList<Peer>();
 	}
 	
-	public PeerList getRandomSample() {
+	public PeerList getSample(int zSampleSize) {
 		return new PeerList();
 	}
 	
@@ -24,23 +24,24 @@ public class PeerList implements Streamable {
 		return mPeers.size();
 	}
 	
+	public void clear() {
+		mPeers.clear();
+	}
+	
 	public void addPeer(Peer zPeer) {
 		mPeers.add(zPeer);
 	}
 
-	public void updatePeer(Peer zPeer) {
+	public Peer getPeer(String zHost, int zPort) {
 		for(Peer peer : mPeers) {
-			if(peer.isEqual(zPeer)) {
-				peer.setLastComms();
-				return;
+			if(peer.getHost().equals(zHost) && peer.getPort()==zPort) {
+				return peer;
 			}
 		}
 		
-		//We don't have it add to the list..
-		addPeer(zPeer);
-		zPeer.setLastComms();
+		return null;
 	}
-
+	
 	@Override
 	public void writeDataStream(DataOutputStream zOut) throws IOException {
 		int len = mPeers.size();
@@ -52,11 +53,12 @@ public class PeerList implements Streamable {
 
 	@Override
 	public void readDataStream(DataInputStream zIn) throws IOException {
+		mPeers = new ArrayList<>();
 		int len = MiniNumber.ReadFromStream(zIn).getAsInt();
 		for(int i=0;i<len;i++) {
-			
+			Peer pp = Peer.ReadFromStream(zIn);
+			mPeers.add(pp);
 		}
-		
 	}
 	
 }

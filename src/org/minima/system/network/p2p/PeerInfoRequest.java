@@ -6,9 +6,9 @@ package org.minima.system.network.p2p;
  * @author spartacusrex
  *
  */
-public class PeerReqThread implements Runnable {
+public class PeerInfoRequest implements Runnable {
 
-	public PeerReqThread() {
+	public PeerInfoRequest() {
 		
 	}
 
@@ -17,6 +17,5 @@ public class PeerReqThread implements Runnable {
 		
 		
 	}
-	
 	
 }
