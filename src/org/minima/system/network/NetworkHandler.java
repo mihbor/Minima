@@ -16,6 +16,7 @@ import org.minima.system.network.base.MinimaServer;
 import org.minima.system.network.maxima.Maxima;
 import org.minima.system.network.minidapps.DAPPManager;
 import org.minima.system.network.minidapps.websocket.WebSocketManager;
+import org.minima.system.network.p2p.DiscoveryManager;
 import org.minima.system.network.rpc.RPCServer;
 import org.minima.system.network.sshtunnel.SSHTunnel;
 import org.minima.utils.MinimaLogger;
@@ -43,6 +44,11 @@ public class NetworkHandler extends MessageProcessor {
 	public static final String NETWORK_SENDALL 		= "NETWORK_SENDALL";
 	
 	public static final String NETWORK_WEBPROXY 	= "NETWORK_WEBPROXY";
+	
+	public static final String NETWORK_CLEARSEEDS	= "NETWORK_CLEARSEEDS";
+	public static final String NETWORK_ADDSEED		= "NETWORK_ADDSEED";
+	public static final String NETWORK_ADDPEER		= "NETWORK_ADDPEER";
+	public static final String NETWORK_PEERCONNECT	= "NETWORK_PEERCONNECT";
 	
 	/**
 	 * The Main Minima Server
@@ -78,6 +84,11 @@ public class NetworkHandler extends MessageProcessor {
 	 * URL to call with MiniDAPP JSON details
 	 */
 	String mExternalURL = "";
+	
+	/**
+	 * The Peers Manager
+	 */
+	DiscoveryManager mPeersManager;
 	
 	/**
 	 * All the network channels..
@@ -303,6 +314,9 @@ public class NetworkHandler extends MessageProcessor {
 			//Start the SSH Tunnel Manager
 			mTunnel = new SSHTunnel();
 			
+			//The Peer Manager
+			mPeersManager = new DiscoveryManager();
+			
 		}else if(zMessage.isMessageType(NETWORK_SHUTDOWN)) {
 			//Stop the server
 			try {mServer.stop();}catch(Exception exc) {
@@ -341,6 +355,20 @@ public class NetworkHandler extends MessageProcessor {
 			
 			//And finish up..
 			stopMessageProcessor();
+		
+		
+		}else if(zMessage.isMessageType(NETWORK_ADDPEER)) {
+			
+		}else if(zMessage.isMessageType(NETWORK_CLEARSEEDS)) {
+			mPeersManager.clearSeeds();
+		
+		}else if(zMessage.isMessageType(NETWORK_ADDSEED)) {
+			String host = zMessage.getString("host");
+			int port    = zMessage.getInteger("port");
+			mPeersManager.addSeedPeer(host, port);
+			
+		}else if(zMessage.isMessageType(NETWORK_PEERCONNECT)) {
+			
 			
 		}else if(zMessage.isMessageType(NETWORK_CONNECT)) {
 			String host = zMessage.getString("host");

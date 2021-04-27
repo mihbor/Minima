@@ -28,11 +28,26 @@ public class DiscoveryManager extends MessageProcessor {
 	
 	public DiscoveryManager() {
 		super("P2P_DISCOVERY");
+		
+		PostMessage(P2P_INIT);
 	}
 	
-//	public Peer getValidPeer() {
-//		
-//	}
+	public void shutdown() {
+		PostMessage(P2P_SHUTDOWN);
+	}
+	
+	public void clearSeeds() {
+		mSeedPeers.clear();
+	}
+	
+	public Peer getSeedPeer() {
+		return mSeedPeers.getRandomPeer();
+	}
+	
+	public void addSeedPeer(String zHost, int zPort) {
+		Peer pp = new Peer(zHost, zPort);
+		mSeedPeers.addPeer(pp);
+	}
 	
 	@Override
 	protected void processMessage(Message zMessage) throws Exception {
@@ -56,6 +71,7 @@ public class DiscoveryManager extends MessageProcessor {
 			
 			
 			
+			stopMessageProcessor();
 		}
 		
 	}

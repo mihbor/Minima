@@ -4,6 +4,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 
 import org.minima.objects.base.MiniNumber;
 import org.minima.utils.Streamable;
@@ -16,9 +17,14 @@ public class PeerList implements Streamable {
 		mPeers = new ArrayList<Peer>();
 	}
 	
-	public PeerList getSample(int zSampleSize) {
-		return new PeerList();
+	public Peer getRandomPeer() {
+		int rand = new Random().nextInt(size());
+		return mPeers.get(rand);
 	}
+	
+//	public PeerList getSample(int zSampleSize) {
+//		return new PeerList();
+//	}
 	
 	public int size() {
 		return mPeers.size();
