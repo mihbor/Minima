@@ -1,8 +1,14 @@
 package org.minima.system.network.p2p;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
-public class PeerList {
+import org.minima.objects.base.MiniNumber;
+import org.minima.utils.Streamable;
+
+public class PeerList implements Streamable {
 
 	ArrayList<Peer> mPeers;
 	
@@ -33,6 +39,24 @@ public class PeerList {
 		//We don't have it add to the list..
 		addPeer(zPeer);
 		zPeer.setLastComms();
+	}
+
+	@Override
+	public void writeDataStream(DataOutputStream zOut) throws IOException {
+		int len = mPeers.size();
+		new MiniNumber(len).writeDataStream(zOut);
+		for(Peer pp : mPeers) {
+			pp.writeDataStream(zOut);
+		}
+	}
+
+	@Override
+	public void readDataStream(DataInputStream zIn) throws IOException {
+		int len = MiniNumber.ReadFromStream(zIn).getAsInt();
+		for(int i=0;i<len;i++) {
+			
+		}
+		
 	}
 	
 }
