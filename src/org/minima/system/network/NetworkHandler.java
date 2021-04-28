@@ -443,27 +443,40 @@ public class NetworkHandler extends MessageProcessor {
 				int port    = client.getPort();
 				
 				//Is this one of the Initial Host/Port BootStrap Server ?
-				boolean bootstrapnode = false;
-				for(int i=0;i<Start.VALID_BOOTSTRAP_NODES.length;i++) {
-					if(host.equals(Start.VALID_BOOTSTRAP_NODES[i]) && port==9001) {
-						bootstrapnode = true;
-						break;
-					}
+				if (mPeersManager.isSeedPeer(host, port)) {
+					TimerMessage  recon = new TimerMessage(30000,P2PManager.P2P_DEFAULTCONNECT);
+					mPeersManager.PostTimerMessage(recon);
+					
+					MinimaLogger.log("Attempting reconnect to seed peer in 30s..");
+					
+				}else {
+					TimerMessage  recon = new TimerMessage(30000,NETWORK_CONNECT);
+					recon.addString("host", host);
+					recon.addInteger("port", port);
+					PostTimerMessage(recon);
+				
+					MinimaLogger.log("Attempting reconnect to "+host+":"+port+" in 30s..");
 				}
-				if(bootstrapnode) {
-					String oldhost = new String(host);
-					host = Start.VALID_BOOTSTRAP_NODES[new Random().nextInt(Start.VALID_BOOTSTRAP_NODES.length)];
-					MinimaLogger.log("BOOTSTRAP NODE Connection lost.. resetting from "+oldhost+" to "+host);
-				}
 				
-				//And post a message..
-				TimerMessage  recon = new TimerMessage(30000,NETWORK_CONNECT);
-				recon.addString("host", host);
-				recon.addInteger("port", port);
+//				boolean bootstrapnode = false;
+//				for(int i=0;i<Start.VALID_BOOTSTRAP_NODES.length;i++) {
+//					if(host.equals(Start.VALID_BOOTSTRAP_NODES[i]) && port==9001) {
+//						bootstrapnode = true;
+//						break;
+//					}
+//				}
+//				if(bootstrapnode) {
+//					String oldhost = new String(host);
+//					host = Start.VALID_BOOTSTRAP_NODES[new Random().nextInt(Start.VALID_BOOTSTRAP_NODES.length)];
+//					MinimaLogger.log("BOOTSTRAP NODE Connection lost.. resetting from "+oldhost+" to "+host);
+//				}
+//				
+//				//And post a message..
+//				TimerMessage  recon = new TimerMessage(30000,NETWORK_CONNECT);
+//				recon.addString("host", host);
+//				recon.addInteger("port", port);
 				
-				MinimaLogger.log("Attempting reconnect to "+host+":"+port+" in 30s..");
 				
-				PostTimerMessage(recon);
 			}
 			
 			//Remove him from our list..

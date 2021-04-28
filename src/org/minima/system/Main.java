@@ -74,9 +74,6 @@ public class Main extends MessageProcessor {
 	 * Default nodes to connect to
 	 */
 	public boolean mNormalAutoConnect  = true;
-	
-	
-	public boolean mAutoConnect        = false;
 	ArrayList<String> mAutoConnectList = new ArrayList<>();
 	
 	/**
@@ -132,10 +129,6 @@ public class Main extends MessageProcessor {
 	
 	public void setNormalConnect(boolean zNormal) {
 		mNormalAutoConnect = zNormal;
-	}
-	
-	public void setAutoConnect(boolean zAuto) {
-		mAutoConnect = zAuto;
 	}
 	
 	public void clearAutoConnectHostPort(String zHostPort) {
@@ -228,8 +221,20 @@ public class Main extends MessageProcessor {
 				getNetworkHandler().PostMessage(NetworkHandler.NETWORK_DEFAULTCONNECT);
 				
 			}else {
-				//Connect to the provided list of peers
+				//Connect to the the list of auto connect
+				for(String hostport : mAutoConnectList) {
+					int div     = hostport.indexOf(":");
+					String host = hostport.substring(0,div);
+					int port    = Integer.parseInt(hostport.substring(div+1));
+					
+					//Send a TimedMessage..
+					Message connect  = new Message(NetworkHandler.NETWORK_CONNECT)
+							.addInteger("port", port).addString("host", host);
+					getNetworkHandler().PostMessage(connect);
 				
+					//Small Pause.. 10 seconds..
+					Thread.sleep(10000);
+				}
 			}
 			
 //			if(mAutoConnect) {

@@ -11,6 +11,8 @@ public class P2PManager extends MessageProcessor {
 	public static final String P2P_INIT 		= "P2P_INIT";
 	public static final String P2P_SHUTDOWN 	= "P2P_SHUTDOWN";
 
+	public static final String P2P_REFRESHPEERS = "P2P_REFRESHPEERS";
+
 	public static final String P2P_DEFAULTCONNECT = "P2P_DEFAULTCONNECT";
 	
 //	public static final String[] VALID_BOOTSTRAP_NODES = 
@@ -56,6 +58,10 @@ public class P2PManager extends MessageProcessor {
 	public void addSeedPeer(String zHost, int zPort) {
 		Peer pp = new Peer(zHost, zPort);
 		mSeedPeers.addPeer(pp);
+	}
+	
+	public boolean isSeedPeer(String zHost, int zPort) {
+		return mSeedPeers.getPeer(zHost, zPort) != null;
 	}
 	
 	@Override

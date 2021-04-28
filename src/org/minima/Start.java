@@ -225,18 +225,13 @@ public class Start {
 		mMainServer = rcmainserver;
 		
 		//Have we added any connect hosts..
-		if(!normalconnect) {
-			rcmainserver.setNormalConnect(false);
-		}
+		rcmainserver.setNormalConnect(normalconnect);
 		
 		//Add the peers you wish to connect to
 		for(String hostport : connectlist) {
 			rcmainserver.addAutoConnectHostPort(hostport);
 		}
-		
-		//Set the connect properties
-		rcmainserver.setAutoConnect(normalconnect);
-		
+				
 		//Are we private!
 		if(genesis) {
 			rcmainserver.privateChain(clean);
