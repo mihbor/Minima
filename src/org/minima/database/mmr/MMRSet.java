@@ -1178,7 +1178,7 @@ public class MMRSet implements Streamable {
 	}
 	
 	/**
-	 * Get a DEEP copy of this transaction
+	 * Get a DEEP copy of this MMRSet
 	 * @throws IOException 
 	 */
 	public MMRSet deepCopy(){
