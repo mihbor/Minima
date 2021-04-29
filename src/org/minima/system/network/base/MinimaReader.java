@@ -217,7 +217,22 @@ public class MinimaReader implements Runnable {
 				rec.addObject("netclient", mNetClient);
 				
 				//What kind of message is it..
-				if(msgtype.isEqual(NETMESSAGE_INTRO)) {
+				if(msgtype.isEqual(NETMESSAGE_GREETING)) {
+					notifyListeners("Greeting Received..");
+					
+					String greetsize = MiniFormat.formatSize(len);
+					MinimaLogger.log("Greeting Message : "+greetsize);
+					
+					//Get the Greeting
+					Greeting greet = Greeting.ReadFromStream(inputstream);
+					
+					//Add this ID
+					rec.addObject("greeting", greet);
+				
+					//Update Peer Info..
+					mNetClient.getPeerInfo().mVersion = new String(greet.getVersion());
+				
+				}else if(msgtype.isEqual(NETMESSAGE_INTRO)) {
 					//Read in the SyncPackage
 					SyncPackage sp = new SyncPackage();
 					sp.readDataStream(inputstream);
@@ -253,21 +268,6 @@ public class MinimaReader implements Runnable {
 					//Add this ID
 					rec.addObject("txpowid", hash);
 				
-				}else if(msgtype.isEqual(NETMESSAGE_GREETING)) {
-					notifyListeners("Greeting Received..");
-					
-					String greetsize = MiniFormat.formatSize(len);
-					MinimaLogger.log("Greeting Message : "+greetsize);
-					
-					//Get the Greeting
-					Greeting greet = Greeting.ReadFromStream(inputstream);
-					
-					//Add this ID
-					rec.addObject("greeting", greet);
-				
-					//Update Peer Info..
-					mNetClient.getPeerInfo().mVersion = new String(greet.getVersion());
-					
 				}else if(msgtype.isEqual(NETMESSAGE_TXPOWLIST)) {
 					//tell us how big the sync was..
 					MinimaLogger.log("TxPoW List Message : "+MiniFormat.formatSize(len));

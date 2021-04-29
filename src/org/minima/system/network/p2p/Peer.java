@@ -16,8 +16,8 @@ public class Peer implements Comparable<Peer>, Streamable {
 	/**
 	 * Peer details
 	 */
-	public String 	mHost 		 = "";
-	public int 		mPort 		 = -1;
+	private String 	mHost 		 = "";
+	private int 		mPort 		 = -1;
 	
 	/**
 	 * The Peer Info you receive once connected
@@ -25,7 +25,7 @@ public class Peer implements Comparable<Peer>, Streamable {
 	public String 	mVersion 	 = "";
 	public long 	mLastComms 	 = -1;
 	
-	public boolean 	mInBound  	 = false;
+	private boolean 	mInBound  	 = false;
 	public boolean  mArchive 	 = false;
 	
 	private Peer() {}
@@ -33,6 +33,10 @@ public class Peer implements Comparable<Peer>, Streamable {
 	public Peer(String zHost, int zPort) {
 		mHost = zHost;
 		mPort = zPort;
+	}
+	
+	public boolean checkPeer(Peer zPeer) {
+		return zPeer.getHost().equals(getHost()) && zPeer.getPort() == getPort();
 	}
 	
 	public String getHost() {
@@ -43,6 +47,10 @@ public class Peer implements Comparable<Peer>, Streamable {
 		return mPort;
 	}
 
+	public void setInbound(boolean zInBound) {
+		mInBound = zInBound;
+	}
+	
 	public boolean isInbound() {
 		return mInBound;
 	}

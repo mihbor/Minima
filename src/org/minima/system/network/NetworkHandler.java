@@ -379,10 +379,15 @@ public class NetworkHandler extends MessageProcessor {
 			String host = zMessage.getString("host");
 			int port 	= zMessage.getInteger("port");
 			
+			boolean pref = false;
+			if(zMessage.exists("preferred")) {
+				pref = zMessage.getBoolean("preferred");
+			}
+			
 			MinimaLogger.log("Attempting to connect to "+host+":"+port);
 			
 			//Create a NetClient
-			MinimaClient client = new MinimaClient(host, port);
+			MinimaClient client = new MinimaClient(host, port, pref);
 			
 			//Store with the rest
 			PostMessage(new Message(NETWORK_NEWCLIENT).addObject("client", client));
@@ -444,11 +449,12 @@ public class NetworkHandler extends MessageProcessor {
 			boolean reconnect = client.isReconnect();
 			if(reconnect && mGlobalReconnect) {
 				
-				String host = client.getPeerInfo().getHost();
-				int port    = client.getPeerInfo().getPort();
+				String host  = client.getPeerInfo().getHost();
+				int port     = client.getPeerInfo().getPort();
+				boolean pref = client.isPreferred();
 				
 				//Is this one of the Initial Host/Port BootStrap Server ?
-				if (mPeersManager.isSeedPeer(host, port)) {
+				if (!pref) {
 					TimerMessage  recon = new TimerMessage(30000,P2PManager.P2P_DEFAULTCONNECT);
 					mPeersManager.PostTimerMessage(recon);
 					
@@ -458,29 +464,12 @@ public class NetworkHandler extends MessageProcessor {
 					TimerMessage  recon = new TimerMessage(30000,NETWORK_CONNECT);
 					recon.addString("host", host);
 					recon.addInteger("port", port);
+					recon.addBoolean("preferred", true);
+					
 					PostTimerMessage(recon);
 				
 					MinimaLogger.log("Attempting reconnect to "+host+":"+port+" in 30s..");
 				}
-				
-//				boolean bootstrapnode = false;
-//				for(int i=0;i<Start.VALID_BOOTSTRAP_NODES.length;i++) {
-//					if(host.equals(Start.VALID_BOOTSTRAP_NODES[i]) && port==9001) {
-//						bootstrapnode = true;
-//						break;
-//					}
-//				}
-//				if(bootstrapnode) {
-//					String oldhost = new String(host);
-//					host = Start.VALID_BOOTSTRAP_NODES[new Random().nextInt(Start.VALID_BOOTSTRAP_NODES.length)];
-//					MinimaLogger.log("BOOTSTRAP NODE Connection lost.. resetting from "+oldhost+" to "+host);
-//				}
-//				
-//				//And post a message..
-//				TimerMessage  recon = new TimerMessage(30000,NETWORK_CONNECT);
-//				recon.addString("host", host);
-//				recon.addInteger("port", port);
-				
 				
 			}
 			

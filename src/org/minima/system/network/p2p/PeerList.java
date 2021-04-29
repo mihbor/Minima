@@ -34,6 +34,17 @@ public class PeerList implements Streamable {
 	public void addPeer(Peer zPeer) {
 		mPeers.add(zPeer);
 	}
+	
+	public void removePeer(Peer zPeer) {
+		ArrayList<Peer> newlist = new ArrayList<Peer>();
+		for(Peer peer : mPeers) {
+			if(!peer.checkPeer(zPeer)) {
+				newlist.add(peer);
+			}
+		}
+		
+		mPeers = newlist;
+	}
 
 	public ArrayList<Peer> getAllPeers(){
 		return mPeers;

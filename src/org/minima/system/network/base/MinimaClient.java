@@ -88,6 +88,11 @@ public class MinimaClient extends MessageProcessor {
 	int mReconnectAttempts = 0;
 	
 	/**
+	 * Is thuis a preferred connection
+	 */
+	boolean mPreferred = false;
+	
+	/**
 	 * Constructor
 	 * 
 	 * @param zSock
@@ -95,16 +100,18 @@ public class MinimaClient extends MessageProcessor {
 	 * @throws IOException 
 	 * @throws UnknownHostException 
 	 */
-	public MinimaClient(String zHost, int zPort) {
+	public MinimaClient(String zHost, int zPort, boolean zPref) {
 		super("NETCLIENT");
 		
 		//Store
 		mPeerInfo = new Peer(zHost, zPort);
-		mPeerInfo.mInBound  = false;
+		mPeerInfo.setInbound(false);
 		
 		//We will attempt to reconnect if this connection breaks..
 		mReconnect  = true;
 		mReconnectAttempts = 0;
+		
+		mPreferred = zPref;
 		
 		//Create a UID
 		mUID = ""+Math.abs(new Random().nextInt());
@@ -126,7 +133,7 @@ public class MinimaClient extends MessageProcessor {
 		String host = mSocket.getInetAddress().getHostAddress();
 		int port	= mSocket.getPort();
 		mPeerInfo = new Peer(host,port);
-		mPeerInfo.mInBound = true;
+		mPeerInfo.setInbound(true);
 		
 		//Create a UID
 		mUID = ""+Math.abs(new Random().nextInt());
@@ -145,6 +152,10 @@ public class MinimaClient extends MessageProcessor {
 	
 	public void noReconnect() {
 		mReconnect=false;
+	}
+	
+	public boolean isPreferred() {
+		return mPreferred;
 	}
 	
 	public Peer getPeerInfo() {
@@ -220,8 +231,12 @@ public class MinimaClient extends MessageProcessor {
 			//Latest communication..
 			mLastPing = System.currentTimeMillis();
 			
+			//We have a valid peer
+			Main.getMainHandler().getNetworkHandler().getPeersmanager().addValidPeer(mPeerInfo);
+			
 			//Send it again in a while..
-			PostMessage(new Message(NETCLIENT_PULSE));
+			PostTimerMessage(new TimerMessage(PING_INTERVAL, NETCLIENT_PULSE));
+//			PostMessage(new Message(NETCLIENT_PULSE));
 		
 		}else if(zMessage.isMessageType(NETCLIENT_GREETING)) {
 			Greeting greet = (Greeting)zMessage.getObject("greeting");

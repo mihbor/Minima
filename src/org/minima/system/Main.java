@@ -229,7 +229,10 @@ public class Main extends MessageProcessor {
 					
 					//Send a TimedMessage..
 					Message connect  = new Message(NetworkHandler.NETWORK_CONNECT)
-							.addInteger("port", port).addString("host", host);
+							.addInteger("port", port)
+							.addString("host", host)
+							.addBoolean("preferred", true);
+					
 					getNetworkHandler().PostMessage(connect);
 				
 					//Small Pause.. 10 seconds..

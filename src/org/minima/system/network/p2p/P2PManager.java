@@ -21,7 +21,7 @@ public class P2PManager extends MessageProcessor {
 	/**
 	 * Seed Nodes
 	 */
-//	public static final String[] VALID_BOOTSTRAP_NODES = 
+//	public static final String[] SEED_PEERS = 
 //		{"35.204.181.120",
 //		 "35.204.119.15",
 //		 "34.91.220.49",
@@ -29,12 +29,8 @@ public class P2PManager extends MessageProcessor {
 //		 "35.204.139.141",
 //		 "35.204.194.45"};
 
-	public static final String[] SEED_PEERS = {"127.0.0.1"};
-	
-	/**
-	* Seed Peers are hard coded or added manually from the command line
-	*/
-	PeerList mSeedPeers;
+//	public static final String[] SEED_PEERS = {"127.0.0.1"};
+	public static final String[] SEED_PEERS = {};
 	
 	/**
 	* This list is generated from other peers
@@ -46,13 +42,20 @@ public class P2PManager extends MessageProcessor {
 	*/
 	PeerList mRecievedPeers;
 	
+	/**
+	* This list is generated from other peers
+	*/
+	PeerList mCurrentPeers;
+	
 	
 	public P2PManager() {
 		super("P2P_DISCOVERY");
 		
 		mLogON = true;
 		
-		mRecievedPeers = new PeerList();
+		mRecievedPeers 	= new PeerList();
+		mValidPeers    	= new PeerList();
+		mCurrentPeers   = new PeerList();
 		
 		PostMessage(P2P_INIT);
 		
@@ -64,21 +67,16 @@ public class P2PManager extends MessageProcessor {
 		PostMessage(P2P_SHUTDOWN);
 	}
 	
-	public void clearSeeds() {
-		mSeedPeers.clear();
+	public void addValidPeer(Peer zPeer) {
+		mValidPeers.addPeer(zPeer);
 	}
 	
-	public Peer getSeedPeer() {
-		return mSeedPeers.getRandomPeer();
+	public void addCurrentPeer(Peer zPeer) {
+		mCurrentPeers.addPeer(zPeer);
 	}
 	
-	public void addSeedPeer(String zHost, int zPort) {
-		Peer pp = new Peer(zHost, zPort);
-		mSeedPeers.addPeer(pp);
-	}
-	
-	public boolean isSeedPeer(String zHost, int zPort) {
-		return mSeedPeers.getPeer(zHost, zPort) != null;
+	public void removeCurrentPeer(Peer zPeer) {
+		mCurrentPeers.addPeer(zPeer);
 	}
 	
 	@Override
@@ -86,23 +84,16 @@ public class P2PManager extends MessageProcessor {
 		
 		if(zMessage.getMessageType().equals(P2P_INIT)) {
 			//Default list..
-			mSeedPeers = new PeerList();
 			for(String host : SEED_PEERS) {
-				mSeedPeers.addPeer(new Peer(host, 9001));
+				mValidPeers.addPeer(new Peer(host, 9001));
 			}
 			
-			//Dynamic List
-			mValidPeers = new PeerList();
-			
-			//Load the current Dynamic List of peers..
-			
-		
 		}else if(zMessage.getMessageType().equals(P2P_DEFAULTCONNECT)) {
 			//Get the Network Handler
 			NetworkHandler netw = Main.getMainHandler().getNetworkHandler();
 			
-			//Connect normally to a seed peer..
-			Peer seed = getSeedPeer();
+			//Connect normally to a peer..
+			Peer seed = mValidPeers.getRandomPeer();
 
 			//Now connect
 			Message connect  = new Message(NetworkHandler.NETWORK_CONNECT)
@@ -111,9 +102,23 @@ public class P2PManager extends MessageProcessor {
 			netw.PostMessage(connect);
 		
 		}else if(zMessage.getMessageType().equals(P2P_REFRESHPEERS)) {
+			//Get all valid outbound peers
+			PeerList validout = new PeerList();
+			for(Peer pp : mValidPeers.getAllPeers()) {
+				if(!pp.isInbound()) {
+					validout.addPeer(pp);
+				}
+			}
+			
+			for(Peer pp : mRecievedPeers.getAllPeers()) {
+				if(!pp.isInbound()) {
+					validout.addPeer(pp);
+				}
+			}
+			
 			//Send out peer list to out connected peers - if it has changed..
 			Message netmsg  = new Message(MinimaClient.NETCLIENT_PEERS)
-					.addObject("peers", mSeedPeers);
+					.addObject("peers", validout);
 			Message netw    = new Message(NetworkHandler.NETWORK_SENDALL).addObject("message", netmsg);
 			Main.getMainHandler().getNetworkHandler().PostMessage(netw);
 			
@@ -127,6 +132,12 @@ public class P2PManager extends MessageProcessor {
 			mRecievedPeers.mergePeerList(peerlist);
 			
 			MinimaLogger.log("REC PEERS : "+mRecievedPeers);
+			
+			//Check Peers..
+			for(Peer pp : mRecievedPeers.getAllPeers()) {
+				PeerChecker check = new PeerChecker(pp);
+				check.start();
+			}
 			
 		}else if(zMessage.getMessageType().equals(P2P_SHUTDOWN)) {
 			
