@@ -129,16 +129,25 @@ public class P2PManager extends MessageProcessor {
 					newlist.addPeer(pp);
 				}
 			}
+			MinimaLogger.log("NEW PEERS : "+newlist);
 			
-			//Add to our Recieved
-			mRecievedPeers.mergePeerList(newlist);
-			
-			MinimaLogger.log("REC PEERS : "+mRecievedPeers);
+			//Add to our Received
+//			mRecievedPeers.mergePeerList(newlist);
 			
 			//Check Peers..
-			for(Peer pp : mRecievedPeers.getAllPeers()) {
+			for(Peer pp : newlist.getAllPeers()) {
 				CheckPeer check = new CheckPeer(pp);
 				check.start();
+			}
+			
+		}else if(zMessage.getMessageType().equals(P2P_PEERCHECK)) {
+			MinimaLogger.log(zMessage.toString());
+		
+			if(zMessage.getBoolean("success")) {
+				Peer peer = (Peer) zMessage.getObject("peer");
+				
+				//Add this peer to valid peers
+				mValidPeers.addPeer(peer);
 			}
 			
 		}else if(zMessage.getMessageType().equals(P2P_SHUTDOWN)) {

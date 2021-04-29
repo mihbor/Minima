@@ -11,8 +11,10 @@ import org.minima.objects.base.MiniByte;
 import org.minima.objects.base.MiniData;
 import org.minima.objects.base.MiniNumber;
 import org.minima.objects.greet.Greeting;
+import org.minima.system.Main;
 import org.minima.system.network.base.MinimaReader;
 import org.minima.utils.MinimaLogger;
+import org.minima.utils.messages.Message;
 
 /**
  * Check if a peer is valid..
@@ -38,10 +40,12 @@ public class CheckPeer implements Runnable{
 		//The Socket
 		Socket socket = new Socket();
 		
+		//The final message
+		Message update = new Message(P2PManager.P2P_PEERCHECK);
+		update.addObject("peer", mPeer);
+		
 		//Start a connection to a peer..
 		try {
-			MinimaLogger.log("CHECK PEER "+mPeer);
-			
 			//Connect with timeout
 			socket.connect(new InetSocketAddress(mPeer.getHost(), mPeer.getPort()), 60000);
 		
@@ -68,35 +72,26 @@ public class CheckPeer implements Runnable{
 			//Must be
 			Greeting greet = Greeting.ReadFromStream(inputstream);
 			
-			MinimaLogger.log("Peer Checker Greeting SUCCESS : "+greet.getVersion()); 
-			
 			//Update the peer
 			mPeer.mVersion = greet.getVersion();
 			mPeer.setInbound(false);
 			mPeer.setLastComms();
 			
 			//Return TRUE to Peer Manager
-			//..
+			update.addBoolean("success", true);
+			Main.getMainHandler().getNetworkHandler().getPeersmanager().PostMessage(update);
 			
 			//Clean up..
 			inputstream.close();
 			bais.close();
 			
 		}catch (Exception e) {
-			MinimaLogger.log("Error checking peer "+mPeer+" "+e);
-			
 			//Return false to Peer Manager
-			//..
+			update.addBoolean("success", false);
+			Main.getMainHandler().getNetworkHandler().getPeersmanager().PostMessage(update);
 		}	
 		
 		//Close the socket
-		try {
-			socket.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+		try {socket.close();} catch (IOException e) {}
 	}
-
 }

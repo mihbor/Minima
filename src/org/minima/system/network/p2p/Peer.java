@@ -26,7 +26,10 @@ public class Peer implements Comparable<Peer>, Streamable {
 	public long 	mLastComms 	 = -1;
 	
 	private boolean 	mInBound  	 = false;
-	public boolean  mArchive 	 = false;
+	public boolean  mArchive 	 	 = false;
+
+	//This is internal
+	public int mCheckAttempts 		 = 0;
 	
 	private Peer() {}
 	
