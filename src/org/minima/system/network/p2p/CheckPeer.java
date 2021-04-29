@@ -11,12 +11,8 @@ import org.minima.objects.base.MiniByte;
 import org.minima.objects.base.MiniData;
 import org.minima.objects.base.MiniNumber;
 import org.minima.objects.greet.Greeting;
-import org.minima.system.Main;
-import org.minima.system.brains.ConsensusHandler;
-import org.minima.system.network.NetworkHandler;
 import org.minima.system.network.base.MinimaReader;
 import org.minima.utils.MinimaLogger;
-import org.minima.utils.messages.Message;
 
 /**
  * Check if a peer is valid..
@@ -24,11 +20,11 @@ import org.minima.utils.messages.Message;
  * @author spartacusrex
  *
  */
-public class PeerChecker implements Runnable{
+public class CheckPeer implements Runnable{
 
 	Peer mPeer;
 	
-	public PeerChecker(Peer zPeer) {
+	public CheckPeer(Peer zPeer) {
 		mPeer = zPeer;
 	}
 	
@@ -74,17 +70,23 @@ public class PeerChecker implements Runnable{
 			
 			MinimaLogger.log("Peer Checker Greeting SUCCESS : "+greet.getVersion()); 
 			
+			//Update the peer
+			mPeer.mVersion = greet.getVersion();
+			mPeer.setInbound(false);
+			mPeer.setLastComms();
+			
+			//Return TRUE to Peer Manager
+			//..
+			
 			//Clean up..
 			inputstream.close();
 			bais.close();
-			
 			
 		}catch (Exception e) {
 			MinimaLogger.log("Error checking peer "+mPeer+" "+e);
 			
 			//Return false to Peer Manager
 			//..
-			
 		}	
 		
 		//Close the socket
