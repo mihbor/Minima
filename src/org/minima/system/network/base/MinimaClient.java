@@ -235,8 +235,7 @@ public class MinimaClient extends MessageProcessor {
 			Main.getMainHandler().getNetworkHandler().getPeersmanager().addValidPeer(mPeerInfo);
 			
 			//Send it again in a while..
-			PostTimerMessage(new TimerMessage(PING_INTERVAL, NETCLIENT_PULSE));
-//			PostMessage(new Message(NETCLIENT_PULSE));
+			PostTimerMessage(new TimerMessage(30000, NETCLIENT_PULSE));
 		
 		}else if(zMessage.isMessageType(NETCLIENT_GREETING)) {
 			Greeting greet = (Greeting)zMessage.getObject("greeting");

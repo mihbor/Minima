@@ -15,7 +15,9 @@ public class P2PManager extends MessageProcessor {
 
 	public static final String P2P_REFRESHPEERS = "P2P_REFRESHPEERS";
 	public static final String P2P_PEERSLIST 	= "P2P_PEERSLIST";
-
+	
+	public static final String P2P_PEERCHECK 	= "P2P_PEERCHECK";
+	
 	public static final String P2P_DEFAULTCONNECT = "P2P_DEFAULTCONNECT";
 	
 	/**
@@ -67,16 +69,11 @@ public class P2PManager extends MessageProcessor {
 		PostMessage(P2P_SHUTDOWN);
 	}
 	
+	/**
+	 * When you connect to a peer it is valid..
+	 */
 	public void addValidPeer(Peer zPeer) {
 		mValidPeers.addPeer(zPeer);
-	}
-	
-	public void addCurrentPeer(Peer zPeer) {
-		mCurrentPeers.addPeer(zPeer);
-	}
-	
-	public void removeCurrentPeer(Peer zPeer) {
-		mCurrentPeers.addPeer(zPeer);
 	}
 	
 	@Override
@@ -110,12 +107,6 @@ public class P2PManager extends MessageProcessor {
 				}
 			}
 			
-			for(Peer pp : mRecievedPeers.getAllPeers()) {
-				if(!pp.isInbound()) {
-					validout.addPeer(pp);
-				}
-			}
-			
 			//Send out peer list to out connected peers - if it has changed..
 			Message netmsg  = new Message(MinimaClient.NETCLIENT_PEERS)
 					.addObject("peers", validout);
@@ -126,16 +117,27 @@ public class P2PManager extends MessageProcessor {
 			PostTimerMessage(new TimerMessage(60 * 1000 * 1, P2P_REFRESHPEERS));
 			
 		}else if(zMessage.getMessageType().equals(P2P_PEERSLIST)) {
+			//This one is sent to us..
 			PeerList peerlist = (PeerList)zMessage.getObject("peers");
 			
+			//These are unknown to us
+			PeerList newlist  = new PeerList();
+			
+			//Check if we already have these peers..
+			for(Peer pp : peerlist.getAllPeers()) {
+				if(!mValidPeers.hasPeer(pp)) {
+					newlist.addPeer(pp);
+				}
+			}
+			
 			//Add to our Recieved
-			mRecievedPeers.mergePeerList(peerlist);
+			mRecievedPeers.mergePeerList(newlist);
 			
 			MinimaLogger.log("REC PEERS : "+mRecievedPeers);
 			
 			//Check Peers..
 			for(Peer pp : mRecievedPeers.getAllPeers()) {
-				PeerChecker check = new PeerChecker(pp);
+				CheckPeer check = new CheckPeer(pp);
 				check.start();
 			}
 			

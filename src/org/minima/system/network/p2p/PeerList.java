@@ -32,7 +32,9 @@ public class PeerList implements Streamable {
 	}
 	
 	public void addPeer(Peer zPeer) {
-		mPeers.add(zPeer);
+		if(!hasPeer(zPeer)) {
+			mPeers.add(zPeer);
+		}
 	}
 	
 	public void removePeer(Peer zPeer) {
@@ -48,6 +50,17 @@ public class PeerList implements Streamable {
 
 	public ArrayList<Peer> getAllPeers(){
 		return mPeers;
+	}
+	
+	public boolean hasPeer(Peer zPeer) {
+		for(Peer peer : mPeers) {
+			if( peer.getHost().equals(zPeer.getHost()) && 
+				peer.getPort()==zPeer.getPort()) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 	
 	public Peer getPeer(String zHost, int zPort) {
