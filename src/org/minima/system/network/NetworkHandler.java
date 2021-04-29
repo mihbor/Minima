@@ -272,6 +272,10 @@ public class NetworkHandler extends MessageProcessor {
 		return mWebSocketManager;
 	}
 	
+	public P2PManager getPeersmanager() {
+		return mPeersManager;
+	}
+	
 	public Maxima getMaxima() {
 		return mMaxima;
 	}
@@ -291,7 +295,7 @@ public class NetworkHandler extends MessageProcessor {
 			MinimaLogger.log("Network Startup..");
 			
 			//Start the network Server
-			mServer = new MinimaServer(this,getMinimaPort());
+			mServer = new MinimaServer(getMinimaPort());
 			Thread multimain = new Thread(mServer, "Multi Server");
 			multimain.setDaemon(true);
 			multimain.start();
@@ -378,7 +382,7 @@ public class NetworkHandler extends MessageProcessor {
 			MinimaLogger.log("Attempting to connect to "+host+":"+port);
 			
 			//Create a NetClient
-			MinimaClient client = new MinimaClient(host, port, this);
+			MinimaClient client = new MinimaClient(host, port);
 			
 			//Store with the rest
 			PostMessage(new Message(NETWORK_NEWCLIENT).addObject("client", client));
@@ -439,8 +443,9 @@ public class NetworkHandler extends MessageProcessor {
 			//Is it a reconnect-er ?
 			boolean reconnect = client.isReconnect();
 			if(reconnect && mGlobalReconnect) {
-				String host = client.getHost();
-				int port    = client.getPort();
+				
+				String host = client.getPeerInfo().getHost();
+				int port    = client.getPeerInfo().getPort();
 				
 				//Is this one of the Initial Host/Port BootStrap Server ?
 				if (mPeersManager.isSeedPeer(host, port)) {

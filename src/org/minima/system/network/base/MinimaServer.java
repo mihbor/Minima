@@ -6,21 +6,19 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 
+import org.minima.system.Main;
 import org.minima.system.network.NetworkHandler;
 import org.minima.utils.MinimaLogger;
 import org.minima.utils.messages.Message;
 
 public class MinimaServer implements Runnable{
 
-	NetworkHandler mNetwork;
-	
 	ServerSocket mServerSocket;
 	int mPort;
 	
 	boolean mRunning = true;
 	
-	public MinimaServer(NetworkHandler zNetwork, int zPort) {
-		mNetwork = zNetwork;
+	public MinimaServer(int zPort) {
 		mPort = zPort;
 	}
 	
@@ -54,10 +52,10 @@ public class MinimaServer implements Runnable{
 				Socket clientsock = mServerSocket.accept();
 				
 				//create a new Client..
-				MinimaClient client = new MinimaClient(clientsock, mNetwork);
+				MinimaClient client = new MinimaClient(clientsock);
 				
 				//Tell the network Handler
-				mNetwork.PostMessage(new Message(NetworkHandler.NETWORK_NEWCLIENT).addObject("client", client));
+				Main.getMainHandler().getNetworkHandler().PostMessage(new Message(NetworkHandler.NETWORK_NEWCLIENT).addObject("client", client));
 			}
 			
 		} catch (BindException e) {

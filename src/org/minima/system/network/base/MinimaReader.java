@@ -20,6 +20,7 @@ import org.minima.system.Main;
 import org.minima.system.brains.ConsensusHandler;
 import org.minima.system.brains.ConsensusNet;
 import org.minima.system.network.NetworkHandler;
+import org.minima.system.network.p2p.PeerList;
 import org.minima.system.txpow.TxPoWChecker;
 import org.minima.utils.Crypto;
 import org.minima.utils.MiniFormat;
@@ -80,11 +81,16 @@ public class MinimaReader implements Runnable {
 	 */
 	public static final MiniByte NETMESSAGE_PING		     = new MiniByte(6);
 	
+	
 	/**
 	 * GENERIC NETWORK MESSAGE
 	 */
-	public static final MiniByte NETMESSAGE_GENERIC		     = new MiniByte(7);
+	public static final MiniByte NETMESSAGE_PEERS		     = new MiniByte(7);
 	
+	/**
+	 * GENERIC NETWORK MESSAGE
+	 */
+	public static final MiniByte NETMESSAGE_GENERIC		     = new MiniByte(8);
 	
 	/**
 	 * Netclient owner
@@ -120,6 +126,9 @@ public class MinimaReader implements Runnable {
 				//What message type
 				msgtype = MiniByte.ReadFromStream(mInput);
 				
+				//Update Peer comms time..
+				mNetClient.getPeerInfo().setLastComms();
+				
 				//What length..
 				int len = MiniNumber.ReadFromStream(mInput).getAsInt();
 				
@@ -139,8 +148,8 @@ public class MinimaReader implements Runnable {
 					if(len > MAX_TXPOW) {
 						throw new ProtocolException("Receive Invalid Message length for TXPOW type:"+msgtype+" len:"+len);
 					}
-				}else if(msgtype.isEqual(NETMESSAGE_GENERIC)) {
-					if(len > MAX_TXPOW) {
+				}else if(msgtype.isEqual(NETMESSAGE_GENERIC) || msgtype.isEqual(NETMESSAGE_PEERS)) {
+					if(len > MAX_TXPOW * 5) {
 						throw new ProtocolException("Receive Invalid GENERIC Message length :"+len);
 					}
 				}else if(msgtype.isEqual(NETMESSAGE_PING)) {
@@ -256,6 +265,9 @@ public class MinimaReader implements Runnable {
 					//Add this ID
 					rec.addObject("greeting", greet);
 				
+					//Update Peer Info..
+					mNetClient.getPeerInfo().mVersion = new String(greet.getVersion());
+					
 				}else if(msgtype.isEqual(NETMESSAGE_TXPOWLIST)) {
 					//tell us how big the sync was..
 					MinimaLogger.log("TxPoW List Message : "+MiniFormat.formatSize(len));
@@ -282,6 +294,14 @@ public class MinimaReader implements Runnable {
 					//Add this ID
 					rec.addObject("sent", mb);
 				
+				}else if(msgtype.isEqual(NETMESSAGE_PEERS)) {
+					//Load in the Peer List
+					PeerList peers = new PeerList();
+					peers.readDataStream(inputstream);
+					
+					//Add this ID
+					rec.addObject("peers", peers);
+					
 				}else if(msgtype.isEqual(NETMESSAGE_GENERIC)) {
 					MiniString msg = MiniString.ReadFromStream(inputstream);
 					
@@ -333,7 +353,7 @@ public class MinimaReader implements Runnable {
 		}
 		
 		//Tell the network Handler
-		mNetClient.getNetworkHandler().PostMessage(new Message(NetworkHandler.NETWORK_CLIENTERROR).addObject("client", mNetClient));
+		Main.getMainHandler().getNetworkHandler().PostMessage(new Message(NetworkHandler.NETWORK_CLIENTERROR).addObject("client", mNetClient));
 	}
 }
 

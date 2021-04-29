@@ -18,6 +18,8 @@ import org.minima.objects.greet.TxPoWList;
 import org.minima.system.Main;
 import org.minima.system.brains.ConsensusNet;
 import org.minima.system.network.NetworkHandler;
+import org.minima.system.network.p2p.Peer;
+import org.minima.system.network.p2p.PeerList;
 import org.minima.utils.MinimaLogger;
 import org.minima.utils.Streamable;
 import org.minima.utils.json.JSONObject;
@@ -53,6 +55,7 @@ public class MinimaClient extends MessageProcessor {
 	public static final String NETCLIENT_TXPOWLIST 	    = "NETCLIENT_TXPOWLIST";
 	public static final String NETCLIENT_TXPOWIDLIST    = "NETCLIENT_TXPOWIDLIST";
 	
+	public static final String NETCLIENT_PEERS 	        = "NETCLIENT_PEERS";
 	public static final String NETCLIENT_PULSE 	        = "NETCLIENT_PULSE";
 	public static final String NETCLIENT_PING 	        = "NETCLIENT_PING";
 	
@@ -72,8 +75,7 @@ public class MinimaClient extends MessageProcessor {
 	String mUID;
 	
 	//The Host and Port
-	String mHost;
-	int    mPort;
+	Peer mPeerInfo;
 	
 	//Ping each other to know you are still up and running.. every 10 mins..
 	public static final int PING_INTERVAL = 1000 * 60 * 10;
@@ -93,18 +95,16 @@ public class MinimaClient extends MessageProcessor {
 	 * @throws IOException 
 	 * @throws UnknownHostException 
 	 */
-	public MinimaClient(String zHost, int zPort, NetworkHandler zNetwork) {
+	public MinimaClient(String zHost, int zPort) {
 		super("NETCLIENT");
 		
 		//Store
-		mHost = zHost;
-		mPort = zPort;
+		mPeerInfo = new Peer(zHost, zPort);
+		mPeerInfo.mInBound  = false;
 		
 		//We will attempt to reconnect if this connection breaks..
 		mReconnect  = true;
 		mReconnectAttempts = 0;
-		
-		mNetworkMain 	= zNetwork;
 		
 		//Create a UID
 		mUID = ""+Math.abs(new Random().nextInt());
@@ -113,7 +113,7 @@ public class MinimaClient extends MessageProcessor {
 		PostMessage(NETCLIENT_INITCONNECT);
 	}
 	
-	public MinimaClient(Socket zSock, NetworkHandler zNetwork) {
+	public MinimaClient(Socket zSock) {
 		super("NETCLIENT");
 		
 		//This is an incoming connection.. no reconnect attempt
@@ -123,12 +123,11 @@ public class MinimaClient extends MessageProcessor {
 		mSocket 		= zSock;
 		
 		//Store
-		mHost = mSocket.getInetAddress().getHostAddress();
-		mPort = mSocket.getPort();
+		String host = mSocket.getInetAddress().getHostAddress();
+		int port	= mSocket.getPort();
+		mPeerInfo = new Peer(host,port);
+		mPeerInfo.mInBound = true;
 		
-		//Main network Handler
-		mNetworkMain 	= zNetwork;
-				
 		//Create a UID
 		mUID = ""+Math.abs(new Random().nextInt());
 		
@@ -148,28 +147,19 @@ public class MinimaClient extends MessageProcessor {
 		mReconnect=false;
 	}
 	
-	public String getHost() {
-		return mHost;
-	}
-	
-	public int getPort() {
-		return mPort;
+	public Peer getPeerInfo() {
+		return mPeerInfo;
 	}
 	
 	public String getUID() {
 		return mUID;
 	}
-	
-	public NetworkHandler getNetworkHandler() {
-		return mNetworkMain;
-	}
-	
+		
 	public JSONObject toJSON() {
 		JSONObject ret = new JSONObject();
 		
 		ret.put("uid", mUID);
-		ret.put("host", getHost());
-		ret.put("port", getPort());
+		ret.put("peer", mPeerInfo.toJSON());
 		
 		return ret;
 	}
@@ -191,14 +181,17 @@ public class MinimaClient extends MessageProcessor {
 	protected void processMessage(Message zMessage) throws Exception {
 		
 		if(zMessage.isMessageType(NETCLIENT_INITCONNECT)) {
+			String host = mPeerInfo.getHost();
+			int port 	= mPeerInfo.getPort();
+			
 			try {
 				mSocket = new Socket();
 				
 				//Connect with timeout
-				mSocket.connect(new InetSocketAddress(mHost, mPort), 60000);
+				mSocket.connect(new InetSocketAddress(host, port), 60000);
 				
 			}catch (Exception e) {
-				MinimaLogger.log("Error @ connection start : "+mHost+":"+mPort+" "+e);
+				MinimaLogger.log("Error @ connection start : "+host+":"+port+" "+e);
 				
 				// Error - let the handler know
 				mNetworkMain.PostMessage(new Message(NetworkHandler.NETWORK_CLIENTERROR).addObject("client", this));
@@ -249,7 +242,11 @@ public class MinimaClient extends MessageProcessor {
 		}else if(zMessage.isMessageType(NETCLIENT_SENDTXPOW)) {
 			TxPoW txpow = (TxPoW)zMessage.getObject("txpow");
 			sendMessage(MinimaReader.NETMESSAGE_TXPOW, txpow);
-				
+		
+		}else if(zMessage.isMessageType(NETCLIENT_PEERS)) {
+			PeerList peerlist = (PeerList)zMessage.getObject("peers");
+			sendMessage(MinimaReader.NETMESSAGE_PEERS, peerlist);
+		
 		}else if(zMessage.isMessageType(NETCLIENT_SENDTXPOWREQ)) {
 			//get the TxPOW
 			MiniData txpowid = (MiniData)zMessage.getObject("txpowid");
@@ -269,7 +266,7 @@ public class MinimaClient extends MessageProcessor {
 			long diff    = timenow - mLastPing;
 			if(diff > PING_INTERVAL*2) {
 				//Disconnect - Reconnect
-				MinimaLogger.log("PING NOT RECEIVED IN TIME @ "+mHost+":"+mPort);
+				MinimaLogger.log("PING NOT RECEIVED IN TIME @ "+mPeerInfo.getHost()+":"+mPeerInfo.getPort());
 			
 				//Disconnect..
 				PostMessage(new Message(MinimaClient.NETCLIENT_SHUTDOWN));

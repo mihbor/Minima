@@ -19,6 +19,8 @@ import org.minima.objects.proofs.TokenProof;
 import org.minima.system.Main;
 import org.minima.system.network.base.MinimaClient;
 import org.minima.system.network.base.MinimaReader;
+import org.minima.system.network.p2p.P2PManager;
+import org.minima.system.network.p2p.PeerList;
 import org.minima.system.txpow.TxPoWChecker;
 import org.minima.utils.DataTimer;
 import org.minima.utils.MinimaLogger;
@@ -54,6 +56,8 @@ public class ConsensusNet extends ConsensusProcessor {
 	public static final String CONSENSUS_NET_PING 				= CONSENSUS_PREFIX+"NET_MESSAGE_"+MinimaReader.NETMESSAGE_PING.getValue();
 	
 	public static final String CONSENSUS_NET_GENERIC 			= CONSENSUS_PREFIX+"NET_MESSAGE_"+MinimaReader.NETMESSAGE_GENERIC.getValue();
+	
+	public static final String CONSENSUS_NET_PEERS 				= CONSENSUS_PREFIX+"NET_MESSAGE_"+MinimaReader.NETMESSAGE_PEERS.getValue();
 	
 	public static final String CONSENSUS_NET_SYNCOMPLETE 		= CONSENSUS_PREFIX+"NET_MESSAGE_SYNCCOMPLETE";
 	
@@ -572,6 +576,18 @@ public class ConsensusNet extends ConsensusProcessor {
 				MinimaLogger.log("Initial Sync Complete..");
 			}
 			setInitialSyncComplete();
+		
+			/**
+			 * Recieved a list of peers
+			 */
+		}else if(zMessage.isMessageType(CONSENSUS_NET_PEERS)) {
+			PeerList peers = (PeerList) zMessage.getObject("peers");
+			
+			Message msg = new Message(P2PManager.P2P_PEERSLIST);
+			msg.addObject("peers", peers);
+			
+			//Send it to the P2PManager
+			getNetworkHandler().getPeersmanager().PostMessage(msg);
 			
 		/**
 		 * You have received multiple TxPoW messages 	

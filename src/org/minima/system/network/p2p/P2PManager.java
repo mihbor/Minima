@@ -2,9 +2,11 @@ package org.minima.system.network.p2p;
 
 import org.minima.system.Main;
 import org.minima.system.network.NetworkHandler;
+import org.minima.system.network.base.MinimaClient;
 import org.minima.utils.MinimaLogger;
 import org.minima.utils.messages.Message;
 import org.minima.utils.messages.MessageProcessor;
+import org.minima.utils.messages.TimerMessage;
 
 public class P2PManager extends MessageProcessor {
 	
@@ -12,9 +14,13 @@ public class P2PManager extends MessageProcessor {
 	public static final String P2P_SHUTDOWN 	= "P2P_SHUTDOWN";
 
 	public static final String P2P_REFRESHPEERS = "P2P_REFRESHPEERS";
+	public static final String P2P_PEERSLIST 	= "P2P_PEERSLIST";
 
 	public static final String P2P_DEFAULTCONNECT = "P2P_DEFAULTCONNECT";
 	
+	/**
+	 * Seed Nodes
+	 */
 //	public static final String[] VALID_BOOTSTRAP_NODES = 
 //		{"35.204.181.120",
 //		 "35.204.119.15",
@@ -23,7 +29,7 @@ public class P2PManager extends MessageProcessor {
 //		 "35.204.139.141",
 //		 "35.204.194.45"};
 
-	public static final String[] VALID_BOOTSTRAP_NODES = {"127.0.0.1"};
+	public static final String[] SEED_PEERS = {"127.0.0.1"};
 	
 	/**
 	* Seed Peers are hard coded or added manually from the command line
@@ -33,14 +39,25 @@ public class P2PManager extends MessageProcessor {
 	/**
 	* This list is generated from other peers
 	*/
-	PeerList mDynamicPeers;
+	PeerList mValidPeers;
+	
+	/**
+	* This list is generated from other peers
+	*/
+	PeerList mRecievedPeers;
+	
 	
 	public P2PManager() {
 		super("P2P_DISCOVERY");
 		
 		mLogON = true;
 		
+		mRecievedPeers = new PeerList();
+		
 		PostMessage(P2P_INIT);
+		
+		//Timer message to refresh the peers to those you are connected
+		PostTimerMessage(new TimerMessage(30000, P2P_REFRESHPEERS));
 	}
 	
 	public void shutdown() {
@@ -70,12 +87,12 @@ public class P2PManager extends MessageProcessor {
 		if(zMessage.getMessageType().equals(P2P_INIT)) {
 			//Default list..
 			mSeedPeers = new PeerList();
-			for(String host : VALID_BOOTSTRAP_NODES) {
+			for(String host : SEED_PEERS) {
 				mSeedPeers.addPeer(new Peer(host, 9001));
 			}
 			
 			//Dynamic List
-			mDynamicPeers = new PeerList();
+			mValidPeers = new PeerList();
 			
 			//Load the current Dynamic List of peers..
 			
@@ -92,6 +109,24 @@ public class P2PManager extends MessageProcessor {
 					.addInteger("port", seed.getPort())
 					.addString("host", seed.getHost());
 			netw.PostMessage(connect);
+		
+		}else if(zMessage.getMessageType().equals(P2P_REFRESHPEERS)) {
+			//Send out peer list to out connected peers - if it has changed..
+			Message netmsg  = new Message(MinimaClient.NETCLIENT_PEERS)
+					.addObject("peers", mSeedPeers);
+			Message netw    = new Message(NetworkHandler.NETWORK_SENDALL).addObject("message", netmsg);
+			Main.getMainHandler().getNetworkHandler().PostMessage(netw);
+			
+			//Do this every 4 hours..
+			PostTimerMessage(new TimerMessage(60 * 1000 * 1, P2P_REFRESHPEERS));
+			
+		}else if(zMessage.getMessageType().equals(P2P_PEERSLIST)) {
+			PeerList peerlist = (PeerList)zMessage.getObject("peers");
+			
+			//Add to our Recieved
+			mRecievedPeers.mergePeerList(peerlist);
+			
+			MinimaLogger.log("REC PEERS : "+mRecievedPeers);
 			
 		}else if(zMessage.getMessageType().equals(P2P_SHUTDOWN)) {
 			

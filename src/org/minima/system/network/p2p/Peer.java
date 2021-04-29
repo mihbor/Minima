@@ -3,6 +3,7 @@ package org.minima.system.network.p2p;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Date;
 
 import org.minima.objects.base.MiniByte;
 import org.minima.objects.base.MiniNumber;
@@ -21,10 +22,9 @@ public class Peer implements Comparable<Peer>, Streamable {
 	/**
 	 * The Peer Info you receive once connected
 	 */
-	public boolean  mPeerInfoSet = false;
 	public String 	mVersion 	 = "";
 	public long 	mLastComms 	 = -1;
-	public boolean 	mExternal	 = false;
+	
 	public boolean 	mInBound  	 = false;
 	public boolean  mArchive 	 = false;
 	
@@ -59,12 +59,13 @@ public class Peer implements Comparable<Peer>, Streamable {
 		JSONObject json = new JSONObject();
 		
 		json.put("host", mHost);
-		json.put("port", ""+mPort);
+		json.put("port", mPort);
 		
 		json.put("version", mVersion);
-		json.put("lastcomms", ""+mLastComms);
+		json.put("lastcomms", mLastComms);
+		json.put("date", new Date(mLastComms).toString());
+		
 		json.put("inbound", mInBound);
-		json.put("external", mExternal);
 		json.put("archive", mArchive);
 		
 		return json;
@@ -92,7 +93,6 @@ public class Peer implements Comparable<Peer>, Streamable {
 		new MiniNumber(mPort).writeDataStream(zOut);
 		new MiniNumber(mLastComms).writeDataStream(zOut);
 		new MiniByte(mInBound).writeDataStream(zOut);
-		new MiniByte(mExternal).writeDataStream(zOut);
 		new MiniByte(mArchive).writeDataStream(zOut);
 	}
 
@@ -103,7 +103,6 @@ public class Peer implements Comparable<Peer>, Streamable {
 		mPort 		= MiniNumber.ReadFromStream(zIn).getAsInt();
 		mLastComms 	= MiniNumber.ReadFromStream(zIn).getAsLong();
 		mInBound 	= MiniByte.ReadFromStream(zIn).isTrue();
-		mExternal 	= MiniByte.ReadFromStream(zIn).isTrue();
 		mArchive 	= MiniByte.ReadFromStream(zIn).isTrue();
 	}
 	

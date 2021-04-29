@@ -8,6 +8,7 @@ import java.util.Random;
 
 import org.minima.objects.base.MiniNumber;
 import org.minima.utils.Streamable;
+import org.minima.utils.json.JSONArray;
 
 public class PeerList implements Streamable {
 
@@ -34,6 +35,10 @@ public class PeerList implements Streamable {
 		mPeers.add(zPeer);
 	}
 
+	public ArrayList<Peer> getAllPeers(){
+		return mPeers;
+	}
+	
 	public Peer getPeer(String zHost, int zPort) {
 		for(Peer peer : mPeers) {
 			if(peer.getHost().equals(zHost) && peer.getPort()==zPort) {
@@ -42,6 +47,28 @@ public class PeerList implements Streamable {
 		}
 		
 		return null;
+	}
+	
+	@Override
+	public String toString() {
+		JSONArray arr = new JSONArray();
+		for(Peer pp : mPeers) {
+			arr.add(pp.toJSON());
+		}
+		
+		return arr.toString();
+	}
+	
+	public void mergePeerList(PeerList zPeers) {
+		ArrayList<Peer> peers = zPeers.getAllPeers();
+		
+		//Add them 
+		for(Peer pp : peers) {
+			if(getPeer(pp.getHost(), pp.getPort())==null) {
+				//Add it..
+				addPeer(pp);
+			}
+		}
 	}
 	
 	@Override
