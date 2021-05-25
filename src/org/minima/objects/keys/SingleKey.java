@@ -19,8 +19,14 @@ public class SingleKey extends BaseKey {
 		mMaxUses  = MiniNumber.ONE;
 		mUses     = MiniNumber.ZERO;
 		
+		//Number of Bits of security
+		mBitLength = new MiniNumber(zPrivateSeed.getLength()*8);
+		
+		//Create a random seed
+		mPrivateSeed = zPrivateSeed;
+		
 		//Initialise
-		initKeys(zPrivateSeed);
+//		initKeys(zPrivateSeed);
 	}
 	
 	@Override
@@ -40,6 +46,9 @@ public class SingleKey extends BaseKey {
 	
 	@Override
 	public MiniData sign(MiniData zData) {
+//		//Are we initialised..
+//		checkInit();
+				
 		//Create a WOTS
 		WinternitzOTSignature wots = new WinternitzOTSignature(mPrivateSeed.getData(), getHashFunction(mBitLength), getWinternitz());
 		
@@ -52,6 +61,9 @@ public class SingleKey extends BaseKey {
 
 	@Override
 	public boolean verify(MiniData zData, MiniData zSignature) {
+		//Are we initialised..
+		checkInit();
+				
 		//WOTS Verify
 		WinternitzOTSVerify wver = new WinternitzOTSVerify(getHashFunction(mBitLength), getWinternitz());
 		

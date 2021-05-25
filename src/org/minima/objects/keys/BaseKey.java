@@ -48,8 +48,21 @@ public abstract class BaseKey implements Streamable {
 	 */
 	protected MiniNumber mLevel;
 	
+	/**
+	 * Has init been called..
+	 */
+	private boolean mInited = false;
 	
-	public BaseKey() {}
+	public BaseKey() {
+		mInited = false;
+	}
+	
+	protected void checkInit() {
+		if(!mInited && mPrivateSeed != null) {
+			mInited = true;
+			initKeys(mPrivateSeed);
+		}
+	}
 	
 	/**
 	 * Initialise variables with the private key
@@ -92,6 +105,9 @@ public abstract class BaseKey implements Streamable {
 	}
 	
 	public JSONObject toJSON() {
+		//Are we initialised..
+		checkInit();
+		
 		JSONObject ret = new JSONObject();
 		
 		ret.put("bits", mBitLength);
@@ -116,6 +132,9 @@ public abstract class BaseKey implements Streamable {
 	}
 	
 	public MiniData getPublicKey() {
+		//Are we initialised..
+		checkInit();
+		
 		return mPublicKey;
 	}
 	
@@ -149,11 +168,17 @@ public abstract class BaseKey implements Streamable {
 	
 	@Override
 	public String toString() {
+		//Are we initialised..
+		checkInit();
+		
 		return mPublicKey.to0xString();
 	}
 
 	@Override
 	public void writeDataStream(DataOutputStream zOut) throws IOException {
+		//Are we initialised..
+		checkInit();
+		
 		mPublicKey.writeDataStream(zOut);
 		mPrivateSeed.writeDataStream(zOut);
 		mWinternitz.writeDataStream(zOut);
@@ -178,7 +203,7 @@ public abstract class BaseKey implements Streamable {
 		mMaxUses     = MiniNumber.ReadFromStream(zIn);
 		mUses        = MiniNumber.ReadFromStream(zIn);
 		
-		//Init the variables 
-		initKeys(mPrivateSeed);
+		//Init the variables
+		mInited = false;
 	}
 }

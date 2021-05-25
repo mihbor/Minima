@@ -35,13 +35,16 @@ public class MultiKey extends BaseKey {
 	/**
 	 * For verification only can start like this..
 	 */
-	public MultiKey() {}
+	public MultiKey() {
+		super();
+	}
 
 	/**
 	 * Create a MultiKey for verification with this public key
 	 * @param zPublicKey
 	 */
 	public MultiKey(MiniData zPublicKey) {
+		super();
 		setPublicKey(zPublicKey);
 	}
 
@@ -64,8 +67,15 @@ public class MultiKey extends BaseKey {
 		mMaxUses  = zKeysPerLevel;
 		mLevel    = zLevel;
 		mUses     = MiniNumber.ZERO;
+
+		//Can calculate from the Private Seed
+		mBitLength = new MiniNumber(zPrivateSeed.getLength()*8);
 		
-		initKeys(zPrivateSeed);
+		//Store it
+		mPrivateSeed = zPrivateSeed;
+
+		//Now init..
+//		initKeys(zPrivateSeed);
 	}
 	
 	@Override
@@ -102,10 +112,11 @@ public class MultiKey extends BaseKey {
 		mPublicKey = mMMR.getMMRRoot().getFinalHash();
 	}
 	
-	public static int totalsigns = 0;
-	
 	@Override
 	public MiniData sign(MiniData zData) {
+		//Do we have to init
+		checkInit();
+		
 		//Which key are we on..
 		MiniNumber keynum = getUses();
 		
@@ -195,7 +206,7 @@ public class MultiKey extends BaseKey {
 	 * @param zBitStrength
 	 * @return
 	 */
-	protected MiniData getHashNumberConcat(int zNumber, MiniData zData, int zBitStrength) {
+	private MiniData getHashNumberConcat(int zNumber, MiniData zData, int zBitStrength) {
 		MiniData numberdata = new MiniData(BaseConverter.numberToHex(zNumber));
 		MiniData newdata    = numberdata.concat(zData);
 		byte[] hashdata     = Crypto.getInstance().hashData(newdata.getData(), zBitStrength);
@@ -204,6 +215,9 @@ public class MultiKey extends BaseKey {
 
 	@Override
 	public boolean verify(MiniData zData, MiniData zMultiSignature) {
+		//Do we have to init
+		checkInit();
+				
 		//Check signature
 		if(zMultiSignature.getLength() == 0) {
 			MinimaLogger.log("Invalid ZERO length MultiSig");
