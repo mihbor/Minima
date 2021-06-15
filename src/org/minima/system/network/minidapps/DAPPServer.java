@@ -188,6 +188,8 @@ public class DAPPServer extends NanoHTTPD{
 						String newpage = page.replace("######", createMiniDAPPList());
 						return getOKResponse(newpage.getBytes(), "text/html");
 					}else if(logonattempt) {
+						//Small Pause.. to stop someone grinding the keys
+						Thread.sleep(2000);
 						return getOKResponse(invalidlogonhtml.returnData(), "text/html");
 					}
 						
