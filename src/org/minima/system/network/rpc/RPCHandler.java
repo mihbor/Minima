@@ -183,7 +183,13 @@ public class RPCHandler implements Runnable {
 			
 			//Was this an invlid logon..
 			if(invalidlogon) {
-				finalresult = "{\"status\":false, \"message\":\" SECURITY ERROR : INVALID CODEID FOR MINIDAPP\"}";
+				if(command.equals("topblock;balance")) {
+					//it's the initial..
+					finalresult = "[{\"status\":false, \"message\":\"STARTUP SECURITY ERROR : INVALID CODEID FOR MINIDAPP\"}, "
+								 + "{\"status\":false, \"message\":\"STARTUP SECURITY ERROR : INVALID CODEID FOR MINIDAPP\"} ]";
+				}else {
+					finalresult = "{\"status\":false, \"message\":\"SECURITY ERROR : INVALID CODEID FOR MINIDAPP\"}";
+				}
 				
 			//Is this a SQL function
 			}else if(reqtype.equals("sql")) {
