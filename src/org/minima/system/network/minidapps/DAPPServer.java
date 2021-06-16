@@ -427,11 +427,15 @@ public class DAPPServer extends NanoHTTPD{
 			//Now do it..
 			String root  = (String) app.get("root");
 			String uid  = (String) app.get("uid");
+			
+			//Get the code for this MiniDAPP to logon..
+			String codeid = mDAPPManager.getMiniDAPPCodeID(uid);
+			
 			String name  = (String) app.get("name");
 			String desc  = (String) app.get("description");
 //			String backg = root+"/"+(String) app.get("background");
 			String icon  = root+"/"+(String) app.get("icon");
-			String webpage  = root+"/index.html";
+			String webpage  = root+"/index.html?minicodeid="+codeid;
 			String download =  (String) app.get("download");
 			
 			String version  = "1.0";
