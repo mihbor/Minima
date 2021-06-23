@@ -400,9 +400,6 @@ public class TxPoWChecker {
 		
 		//ONLY NOW - Touch MMR and Add All KNOWN Tokens..
 		if(zTouchMMR) {
-			//Is there aq new token
-			TokenProof newtokdets = null;
-			
 			//Is the STATE relevant.. does it have a KEY we own..
 			boolean relstate = zDB.getUserDB().isStateListRelevant(trans.getCompleteState());
 					
@@ -441,23 +438,33 @@ public class TxPoWChecker {
 				//Is this a token create output..
 				MiniData tokid 	= output.getTokenID();
 			
+				//Token Details
+				TokenProof tokendetails = null;
+				
 				//Is this a token or are we creating a Token
 				if(tokid.isEqual(Coin.TOKENID_CREATE)) {
 					//Make it the HASH ( CoinID | Total Amount..the token details )
 					TokenProof gentoken = trans.getTokenGenerationDetails();
-					newtokdets = new TokenProof(coinid, 
+					tokendetails = new TokenProof(coinid, 
 												gentoken.getScale(), 
 												gentoken.getAmount(), 
 												gentoken.getName(), 
 												gentoken.getTokenScript());
 					
 					//Set the Globally Unique TokenID!
-					tokid = newtokdets.getTokenID();
+					tokid = tokendetails.getTokenID();
 				
+					//Add to the DB..
+					zDB.getUserDB().addTokenDetails(tokendetails);
+					
 					//Its a regular token transaction
 				}else if(!tokid.isEqual(Coin.MINIMA_TOKENID)) {
 					//Get the token..
-					newtokdets = zWit.getTokenDetail(tokid);
+					tokendetails = zWit.getTokenDetail(tokid);
+					
+				}else {
+					//It's Minima
+					tokendetails = null;
 				}
 				
 				//Create a new Coin..
@@ -466,9 +473,9 @@ public class TxPoWChecker {
 				//Create the MMRData and see if we store the state.. 
 				MMRData mmrdata = null;
 				if(output.storeState()) {
-					mmrdata = new MMRData(MiniByte.FALSE, mmrcoin, tBlockNumber, trans.getCompleteState());
+					mmrdata = new MMRData(MiniByte.FALSE, mmrcoin, tokendetails, tBlockNumber, trans.getCompleteState());
 				}else {
-					mmrdata = new MMRData(MiniByte.FALSE, mmrcoin, tBlockNumber, new ArrayList<StateVariable>());
+					mmrdata = new MMRData(MiniByte.FALSE, mmrcoin, tokendetails, tBlockNumber, new ArrayList<StateVariable>());
 				}
 				
 				//And Add it..
@@ -484,12 +491,7 @@ public class TxPoWChecker {
 				}	
 			}
 			
-			
-			if(newtokdets != null) {
-				zDB.getUserDB().addTokenDetails(newtokdets);
-			}
-			
-			//Add all the tokens..
+			//Add all the tokens in the witness..
 			ArrayList<TokenProof> tokens =  zWit.getAllTokenDetails();
 			for(TokenProof tp : tokens) {
 				zDB.getUserDB().addTokenDetails(tp);

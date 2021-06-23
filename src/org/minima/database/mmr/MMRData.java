@@ -11,6 +11,7 @@ import org.minima.objects.StateVariable;
 import org.minima.objects.base.MiniByte;
 import org.minima.objects.base.MiniData;
 import org.minima.objects.base.MiniNumber;
+import org.minima.objects.proofs.TokenProof;
 import org.minima.utils.Crypto;
 import org.minima.utils.Streamable;
 import org.minima.utils.json.JSONArray;
@@ -27,6 +28,11 @@ public class MMRData implements Streamable{
 	 * The Coin
 	 */
 	Coin mCoin;
+	
+	/**
+	 * The Token
+	 */
+	TokenProof mToken;
 	
 	/**
 	 * The Block number that this output was created in - OP_CSV 
@@ -78,9 +84,11 @@ public class MMRData implements Streamable{
 	 * Create an Unspent MMRDATA coin from a coin
 	 * @param zOutput
 	 */
-	public MMRData(MiniByte zSpent, Coin zCoin, MiniNumber zInBlock, ArrayList<StateVariable> zState) {
+	public MMRData(MiniByte zSpent, Coin zCoin, TokenProof zToken,  MiniNumber zInBlock, ArrayList<StateVariable> zState) {
 		mSpent 		 = zSpent;
 		mCoin 		 = zCoin;
+		mToken		 = zToken;
+		
 		mBlockCreated = zInBlock;
 		
 		//Copy the state - only keep the keepers..
@@ -152,6 +160,10 @@ public class MMRData implements Streamable{
 	
 	public Coin getCoin() {
 		return mCoin;
+	}
+	
+	public TokenProof getToken() {
+		return mToken;
 	}
 	
 	public ArrayList<StateVariable> getPrevState() {
