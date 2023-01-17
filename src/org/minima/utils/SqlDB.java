@@ -60,9 +60,11 @@ public abstract class SqlDB {
 				
 		//The H2 JDBC URL
 		String h2db = "jdbc:h2:"+path+";MODE=MySQL;DB_CLOSE_ON_EXIT=FALSE";
-		
+//		String mysqldb = "jdbc:mysql://localhost/minima?autoReconnect=true";
+		String psqldb = "jdbc:postgresql://localhost/minima";
+
 		//Create the connection
-		mSQLConnection = DriverManager.getConnection(h2db, "SA", "");
+		mSQLConnection = DriverManager.getConnection(psqldb, "postgres", "password");
 		
 		//Auto commit changes
 		mSQLConnection.setAutoCommit(true);

@@ -110,7 +110,7 @@ public class Wallet extends SqlDB {
 						+ ")";
 		
 		//Run it..
-		stmt.execute(createkeys);
+		stmt.execute(createkeys.replaceAll("`", "").replaceAll("bigint auto_increment", "bigserial"));
 		
 		//Create scripts table
 		String scriptsdb = "CREATE TABLE IF NOT EXISTS `scripts` ("
@@ -124,7 +124,7 @@ public class Wallet extends SqlDB {
 						 + ")";
 		
 		//Run it..
-		stmt.execute(scriptsdb);
+		stmt.execute(scriptsdb.replaceAll("`", "").replaceAll("bigint auto_increment", "bigserial"));
 		
 		//Create the base seed table..
 		String seeddb = "CREATE TABLE IF NOT EXISTS `seed` ("
@@ -134,13 +134,13 @@ public class Wallet extends SqlDB {
 						 + ")";
 
 		//Run it..
-		stmt.execute(seeddb);
+		stmt.execute(seeddb.replaceAll("`", ""));
 		
 		//All done..
 		stmt.close();
 		
 		//KEY functions
-		SQL_CREATE_PUBLIC_KEY 			= mSQLConnection.prepareStatement("INSERT IGNORE INTO keys ( size, depth, uses, maxuses, modifier, privatekey, publickey ) VALUES ( ?, ?, ?, ? ,? ,? ,? )");
+		SQL_CREATE_PUBLIC_KEY 			= mSQLConnection.prepareStatement("INSERT INTO keys ( size, depth, uses, maxuses, modifier, privatekey, publickey ) VALUES ( ?, ?, ?, ? ,? ,? ,? ) ON CONFLICT DO NOTHING");
 		SQL_GET_ALL_KEYS				= mSQLConnection.prepareStatement("SELECT * FROM keys");
 		SQL_GET_KEY						= mSQLConnection.prepareStatement("SELECT * FROM keys WHERE publickey=?");
 		SQL_UPDATE_KEY_USES				= mSQLConnection.prepareStatement("UPDATE keys SET uses=? WHERE publickey=?");
@@ -151,7 +151,7 @@ public class Wallet extends SqlDB {
 		SQL_UPDATE_PRIVATE_KEYS			= mSQLConnection.prepareStatement("UPDATE keys SET privatekey=? WHERE publickey=?");
 		
 		//ScriptsDB
-		SQL_ADD_SCRIPT				= mSQLConnection.prepareStatement("INSERT IGNORE INTO scripts ( script, address, simple, defaultaddress, publickey, track ) VALUES ( ? , ? , ? , ? , ? , ? )");
+		SQL_ADD_SCRIPT				= mSQLConnection.prepareStatement("INSERT INTO scripts ( script, address, simple, defaultaddress, publickey, track ) VALUES ( ? , ? , ? , ? , ? , ? ) ON CONFLICT DO NOTHING");
 		SQL_REMOVE_SCRIPT			= mSQLConnection.prepareStatement("DELETE FROM scripts WHERE address=?");
 		SQL_LIST_ALL_SCRIPTS		= mSQLConnection.prepareStatement("SELECT * FROM scripts");
 		SQL_LIST_SIMPLE_SCRIPTS		= mSQLConnection.prepareStatement("SELECT * FROM scripts WHERE simple<>0");
@@ -524,23 +524,23 @@ public class Wallet extends SqlDB {
 		
 		return null;
 	}
-	
+
 	/**
 	 * Remove a script
 	 */
 	public synchronized void removeScript(String zAddress) {
 		//Now put all this in the DB
 		try {
-		
+
 			//Get the Query ready
 			SQL_REMOVE_SCRIPT.clearParameters();
-		
+
 			//Set main params
 			SQL_REMOVE_SCRIPT.setString(1, zAddress);
-			
+
 			//Do it.
 			SQL_REMOVE_SCRIPT.execute();
-			
+
 		} catch (SQLException e) {
 			MinimaLogger.log(e);
 		}

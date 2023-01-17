@@ -37,13 +37,13 @@ public class MDSDB extends SqlDB {
 						+ ")";
 		
 		//Run it..
-		stmt.execute(create);
+		stmt.execute(create.replaceAll("`", "").replaceAll("bigint auto_increment", "bigserial").replaceAll("blob", "bytea"));
 		
 		//All done..
 		stmt.close();
 		
 		//Create some prepared statements..
-		String insert 			= "INSERT IGNORE INTO minidapps ( uid, confdata ) VALUES ( ?, ? )";
+		String insert 			= "INSERT INTO minidapps ( uid, confdata ) VALUES ( ?, ? ) ON CONFLICT DO NOTHING";
 		SQL_INSERT_MINIDAPP 	= mSQLConnection.prepareStatement(insert);
 		
 		SQL_DELETE_MINIDAPP		= mSQLConnection.prepareStatement("DELETE FROM minidapps WHERE uid = ?");

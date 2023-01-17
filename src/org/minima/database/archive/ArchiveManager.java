@@ -69,7 +69,7 @@ public class ArchiveManager extends SqlDB {
 						+ ")";
 		
 		//Run it..
-		stmt.execute(create);
+		stmt.execute(create.replaceAll("`", "").replaceAll("bigint auto_increment", "bigserial").replaceAll("blob", "bytea"));
 		
 		//Create the cascade table
 		String cascade = "CREATE TABLE IF NOT EXISTS `cascadedata` ("
@@ -79,7 +79,7 @@ public class ArchiveManager extends SqlDB {
 						+ ")";
 		
 		//Run it..
-		stmt.execute(cascade);
+		stmt.execute(cascade.replaceAll("`", "").replaceAll("int auto_increment", "serial").replaceAll("blob", "bytea"));
 		
 		//Create some fast indexes..
 		String index = "CREATE INDEX IF NOT EXISTS fastsearch ON syncblock ( txpowid, block )";
@@ -91,7 +91,7 @@ public class ArchiveManager extends SqlDB {
 		stmt.close();
 		
 		//Create some prepared statements..
-		String insert 			= "INSERT IGNORE INTO syncblock ( txpowid, block, timemilli, syncdata ) VALUES ( ?, ? ,? ,? )";
+		String insert 			= "INSERT INTO syncblock ( txpowid, block, timemilli, syncdata ) VALUES ( ?, ? ,? ,? ) ON CONFLICT DO NOTHING";
 		SQL_INSERT_SYNCBLOCK 	= mSQLConnection.prepareStatement(insert);
 		
 		//Select 

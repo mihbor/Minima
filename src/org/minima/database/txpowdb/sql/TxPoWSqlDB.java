@@ -60,7 +60,7 @@ public class TxPoWSqlDB extends SqlDB {
 							+ ")";
 			
 			//Run it..
-			stmt.execute(create);
+			stmt.execute(create.replaceAll("`", "").replaceAll("bigint auto_increment", "bigserial").replaceAll("blob", "bytea").replaceAll("tinyint", "smallint"));
 			
 			//Create some fast indexes..
 			String index = "CREATE INDEX IF NOT EXISTS fastsearch ON txpow ( txpowid, parentid )";
@@ -72,7 +72,7 @@ public class TxPoWSqlDB extends SqlDB {
 			stmt.close();
 			
 			//Create some prepared statements..
-			String insert 		= "INSERT IGNORE INTO txpow ( txpowid, isblock, istransaction, parentid, timemilli, txpowdata, isrelevant ) VALUES ( ?, ? ,? ,? ,? ,? ,? )";
+			String insert 		= "INSERT INTO txpow ( txpowid, isblock, istransaction, parentid, timemilli, txpowdata, isrelevant ) VALUES ( ?, ? ,? ,? ,? ,? ,? ) ON CONFLICT DO NOTHING";
 			SQL_INSERT_TXPOW 	= mSQLConnection.prepareStatement(insert);
 			
 			//Select 

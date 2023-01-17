@@ -61,7 +61,7 @@ public class MaximaDB extends SqlDB {
 						+ ")";
 		
 		//Run it..
-		stmt.execute(hosts);
+		stmt.execute(hosts.replaceAll("`", "").replaceAll("bigint auto_increment", "bigserial").replaceAll("blob", "bytea"));
 
 		//Create contacts table
 		String contacts = "CREATE TABLE IF NOT EXISTS `contacts` ("
@@ -74,21 +74,21 @@ public class MaximaDB extends SqlDB {
 						+ ")";
 		
 		//Run it..
-		stmt.execute(contacts);
+		stmt.execute(contacts.replaceAll("`", "").replaceAll("bigint auto_increment", "bigserial").replaceAll("blob", "bytea"));
 		
 		//All done..
 		stmt.close();
 		
 		//Create some prepared statements..
 		SQL_SELECT_ALL_HOSTS	= mSQLConnection.prepareStatement("SELECT * FROM hosts");
-		SQL_INSERT_MAXIMA_HOST	= mSQLConnection.prepareStatement("INSERT IGNORE INTO hosts ( host, publickey, privatekey, connected, lastseen ) VALUES ( ?, ? , ? ,? ,? )");
+		SQL_INSERT_MAXIMA_HOST	= mSQLConnection.prepareStatement("INSERT INTO hosts ( host, publickey, privatekey, connected, lastseen ) VALUES ( ?, ? , ? ,? ,? ) ON CONFLICT DO NOTHING");
 		SQL_UPDATE_MAXIMA_HOST	= mSQLConnection.prepareStatement("UPDATE hosts SET publickey=?, privatekey=?, connected=?, lastseen=? WHERE host=?");
 		SQL_DELETE_HOST			= mSQLConnection.prepareStatement("DELETE FROM hosts WHERE host=?");
 		SQL_DELETE_OLD_HOSTS	= mSQLConnection.prepareStatement("DELETE FROM hosts WHERE connected=0 AND lastseen < ?");
 		SQL_UPDATE_ALL_NOTCONECTED = mSQLConnection.prepareStatement("UPDATE hosts SET connected=0");
 		
-		SQL_INSERT_MAXIMA_CONTACT 	= mSQLConnection.prepareStatement("INSERT IGNORE INTO contacts "
-				+ "( extradata, publickey, currentaddress, myaddress, lastseen ) VALUES ( ?, ?, ?, ?, ? )");
+		SQL_INSERT_MAXIMA_CONTACT 	= mSQLConnection.prepareStatement("INSERT INTO contacts "
+				+ "( extradata, publickey, currentaddress, myaddress, lastseen ) VALUES ( ?, ?, ?, ?, ? ) ON CONFLICT DO NOTHING");
 		
 		SQL_SELECT_ALL_CONTACTS		 = mSQLConnection.prepareStatement("SELECT * FROM contacts");
 		SQL_SELECT_CONTACT_PUBLICKEY = mSQLConnection.prepareStatement("SELECT * FROM contacts WHERE publickey=?");

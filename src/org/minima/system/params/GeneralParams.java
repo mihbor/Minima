@@ -136,7 +136,7 @@ public class GeneralParams {
 	/**
 	 * How many days do you keep the TxPoW in the SQL DB
 	 */
-	public static long NUMBER_DAYS_SQLTXPOWDB = 3;
+	public static long NUMBER_DAYS_SQLTXPOWDB = 365;
 	
 	/**
 	 * How Many Hours do you keep the TxPOW in the RAM mempool
@@ -146,7 +146,7 @@ public class GeneralParams {
 	/**
 	 * How many days do you archive the TxBlocks to resync Users
 	 */
-	public static long NUMBER_DAYS_ARCHIVE = 60;
+	public static long NUMBER_DAYS_ARCHIVE = 600;
 	
 	/**
 	 * Number of seconds before sending a pulse message - every 10 minutes
