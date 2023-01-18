@@ -277,7 +277,7 @@ public class MDSManager extends MessageProcessor {
 		}
 		
 		//Now run the SQL
-		JSONObject res = db.executeSQL(zSQL);
+		JSONObject res = db.executeSQL(zSQL.replaceAll("`", "").replaceAll("int auto_increment", "serial").replaceAll("clob\\(256K\\)", "text"));
 		
 		return res;
 	}

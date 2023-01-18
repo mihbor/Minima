@@ -37,7 +37,7 @@ public class MDSDB extends SqlDB {
 						+ ")";
 		
 		//Run it..
-		stmt.execute(create.replaceAll("`", "").replaceAll("bigint auto_increment", "bigserial").replaceAll("blob", "bytea"));
+		stmt.execute(create.replaceAll("`", "").replaceAll("blob", "bytea"));
 		
 		//All done..
 		stmt.close();

@@ -105,7 +105,7 @@ public class TxPoWSqlDB extends SqlDB {
 						+ ")";
 		
 		//Run it..
-		stmt.execute(create);
+		stmt.execute(create.replaceAll("`", "").replaceAll("bigint auto_increment", "bigserial"));
 		
 		//That's it..
 		stmt.close();

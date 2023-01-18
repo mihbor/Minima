@@ -157,6 +157,12 @@ public class Minima {
 		} catch (ClassNotFoundException e1) {
 			e1.printStackTrace();
 		}
+		//Load the required PostgreSQL classes
+		try {
+			Class.forName("org.postgresql.Driver");
+		} catch (ClassNotFoundException e1) {
+			e1.printStackTrace();
+		}
 		
 		//Main handler..
 		Main main = new Main();
