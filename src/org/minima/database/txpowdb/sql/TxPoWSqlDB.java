@@ -56,12 +56,13 @@ public class TxPoWSqlDB extends SqlDB {
 							+ "  `parentid` varchar(80) NOT NULL,"
 							+ "  `timemilli` bigint NOT NULL,"
 							+ "  `txpowdata` blob NOT NULL,"
+							+ "  `txpowjson` json NOT NULL,"
 							+ "  `isrelevant` tinyint NOT NULL"
 							+ ")";
-			
+
 			//Run it..
 			stmt.execute(create.replaceAll("`", "").replaceAll("bigint auto_increment", "bigserial").replaceAll("blob", "bytea").replaceAll("tinyint", "smallint"));
-			
+
 			//Create some fast indexes..
 			String index = "CREATE INDEX IF NOT EXISTS fastsearch ON txpow ( txpowid, parentid )";
 					
@@ -72,7 +73,7 @@ public class TxPoWSqlDB extends SqlDB {
 			stmt.close();
 			
 			//Create some prepared statements..
-			String insert 		= "INSERT INTO txpow ( txpowid, isblock, istransaction, parentid, timemilli, txpowdata, isrelevant ) VALUES ( ?, ? ,? ,? ,? ,? ,? ) ON CONFLICT DO NOTHING";
+			String insert 		= "INSERT INTO txpow ( txpowid, isblock, istransaction, parentid, timemilli, txpowdata, isrelevant, txpowjson ) VALUES ( ?, ? ,? ,? ,? ,? ,?, cast(? as jsonb) ) ON CONFLICT DO NOTHING";
 			SQL_INSERT_TXPOW 	= mSQLConnection.prepareStatement(insert);
 			
 			//Select 
@@ -101,12 +102,13 @@ public class TxPoWSqlDB extends SqlDB {
 						+ "  `parentid` varchar(80) NOT NULL,"
 						+ "  `timemilli` bigint NOT NULL,"
 						+ "  `txpowdata` blob NOT NULL,"
+						+ "  `txpowjson` json NOT NULL,"
 						+ "  `isrelevant` tinyint NOT NULL"
 						+ ")";
 		
 		//Run it..
 		stmt.execute(create.replaceAll("`", "").replaceAll("bigint auto_increment", "bigserial"));
-		
+
 		//That's it..
 		stmt.close();
 	}
@@ -128,7 +130,8 @@ public class TxPoWSqlDB extends SqlDB {
 			
 			//The actual bytes
 			SQL_INSERT_TXPOW.setBytes(6, txdata.getBytes());
-			
+			SQL_INSERT_TXPOW.setString(8, zTxPoW.toString());
+
 			//Is it relevant
 			if(zIsRelevant) {
 				SQL_INSERT_TXPOW.setInt(7, 1);
