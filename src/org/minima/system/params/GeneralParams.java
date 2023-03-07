@@ -31,7 +31,9 @@ public class GeneralParams {
 	 * The SQL DB Aes Password. If it is 'minima' no Encryption used
 	 */
 	public static boolean IS_MAIN_DBPASSWORD_SET = false;
-	public static String MAIN_DBPASSWORD 		 = "minima"; 
+	public static String MAIN_DBPASSWORD 		 = "minima";
+
+	public static String JDBC_URL = "jdbc:postgresql://localhost/minima";
 	
 	/**
 	 * Where are the database files stored. This is set at startup.

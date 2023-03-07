@@ -74,8 +74,8 @@ public class Wallet extends SqlDB {
 	 */
 	boolean mShuttingdown = false;
 	
-	public Wallet() {
-		super();
+	public Wallet(String jdbcUrl) {
+		super(jdbcUrl);
 		
 		//Are we testing..
 		if(GeneralParams.TEST_PARAMS) {

@@ -24,11 +24,12 @@ public class MinimaDB {
 	 * Static access to MAIN MinimaDB
 	 */
 	private static MinimaDB mMinimaDB = null;
-	public static void createDB() {
-		mMinimaDB = new MinimaDB();
+	public static void createDB(String jdbcUrl) {
+		mMinimaDB = new MinimaDB(jdbcUrl);
 	}
 	public static MinimaDB getDB() {return mMinimaDB;}
-	
+
+	String jdbcUrl;
 	/**
 	 * The individual DBs
 	 */
@@ -55,15 +56,16 @@ public class MinimaDB {
 	/**
 	 * Main Constructor
 	 */
-	public MinimaDB() {
-		mArchive	= new ArchiveManager();
-		mTxPoWDB	= new TxPoWDB();
+	public MinimaDB(String jdbcUrl) {
+		this.jdbcUrl = jdbcUrl;
+		mArchive	= new ArchiveManager(jdbcUrl);
+		mTxPoWDB	= new TxPoWDB(jdbcUrl);
 		mTxPoWTree 	= new TxPowTree();
 		mCascade	= new Cascade();
 		mUserDB		= new UserDB();
-		mWallet		= new Wallet();
-		mMaximaDB	= new MaximaDB();
-		mMDSDB   	= new MDSDB();
+		mWallet		= new Wallet(jdbcUrl);
+		mMaximaDB	= new MaximaDB(jdbcUrl);
+		mMDSDB   	= new MDSDB(jdbcUrl);
 		
 		mP2PDB		= new P2PDB();
 		
@@ -218,7 +220,7 @@ public class MinimaDB {
 				MiniFile.deleteFileOrFolder(archsqlfolder.getAbsolutePath(), archsqlfolder);
 				
 				//And reload..
-				mArchive = new ArchiveManager();
+				mArchive = new ArchiveManager(jdbcUrl);
 				mArchive.loadDB(new File(archsqlfolder,"archive"));
 			}
 			
@@ -244,7 +246,7 @@ public class MinimaDB {
 				MiniFile.deleteFileOrFolder(txpowsqlfolder.getAbsolutePath(), txpowsqlfolder);
 				
 				//And reload..
-				mTxPoWDB	= new TxPoWDB();
+				mTxPoWDB	= new TxPoWDB(jdbcUrl);
 				mTxPoWDB.loadSQLDB(new File(txpowsqlfolder,"txpow"));
 			}
 			
@@ -310,7 +312,7 @@ public class MinimaDB {
 			
 			//Wallet
 			if(zResetWallet) {
-				mWallet					= new Wallet();
+				mWallet					= new Wallet(jdbcUrl);
 				File walletsqlfolder 	= new File(basedb,"walletsql");
 				if(!GeneralParams.IS_MAIN_DBPASSWORD_SET) {
 					mWallet.loadDB(new File(walletsqlfolder,"wallet"));
@@ -320,12 +322,12 @@ public class MinimaDB {
 			}
 			
 			//Set the Archive folder
-			mArchive			= new ArchiveManager();
+			mArchive			= new ArchiveManager(jdbcUrl);
 			File archsqlfolder 	= new File(basedb,"archivesql");
 			mArchive.loadDB(new File(archsqlfolder,"archive"));
 			
 			//Load the SQL DB
-			mTxPoWDB			= new TxPoWDB();
+			mTxPoWDB			= new TxPoWDB(jdbcUrl);
 			File txpowsqlfolder = new File(basedb,"txpowsql");
 			mTxPoWDB.loadSQLDB(new File(txpowsqlfolder,"txpow"));
 			

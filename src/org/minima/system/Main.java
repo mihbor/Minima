@@ -190,7 +190,7 @@ public class Main extends MessageProcessor {
 		}
 		
 		//Create the MinmaDB
-		MinimaDB.createDB();
+		MinimaDB.createDB(GeneralParams.JDBC_URL);
 		
 		//Load the Databases
 		MinimaDB.getDB().loadAllDB();

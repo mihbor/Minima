@@ -18,6 +18,7 @@ public abstract class SqlDB {
 	 * Main Connection to DB
 	 */
 	protected Connection mSQLConnection = null;
+	protected String jdbcUrl;
 	
 	/**
 	 * The actual File used..
@@ -31,7 +32,9 @@ public abstract class SqlDB {
 	private boolean mEncrypted 			= false;
 	private String mEncryptedPassword 	= "";
 	
-	public SqlDB() {}
+	public SqlDB(String jdbcUrl) {
+		this.jdbcUrl = jdbcUrl;
+	}
 	
 	/**
 	 * The actual database file on disk
@@ -61,10 +64,9 @@ public abstract class SqlDB {
 		//The H2 JDBC URL
 		String h2db = "jdbc:h2:"+path+";MODE=MySQL;DB_CLOSE_ON_EXIT=FALSE";
 //		String mysqldb = "jdbc:mysql://localhost/minima?autoReconnect=true";
-		String psqldb = "jdbc:postgresql://172.17.0.2/minima";
 
 		//Create the connection
-		mSQLConnection = DriverManager.getConnection(psqldb, "postgres", "password");
+		mSQLConnection = DriverManager.getConnection(jdbcUrl, "postgres", "password");
 		
 		//Auto commit changes
 		mSQLConnection.setAutoCommit(true);

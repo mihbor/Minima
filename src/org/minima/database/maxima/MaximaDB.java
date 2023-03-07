@@ -40,8 +40,8 @@ public class MaximaDB extends SqlDB {
 	boolean mHostCacheValid 				= false;
 	ArrayList<MaximaHost> mCachedHosts 		 = null;
 	
-	public MaximaDB() {
-		super();
+	public MaximaDB(String jdbcUrl) {
+		super(jdbcUrl);
 	}
 	
 	@Override

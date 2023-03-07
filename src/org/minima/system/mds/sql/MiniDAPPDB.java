@@ -11,8 +11,8 @@ import org.minima.utils.json.JSONObject;
 
 public class MiniDAPPDB extends SqlDB {
 
-	public MiniDAPPDB() {
-		super();
+	public MiniDAPPDB(String jdbcUrl) {
+		super(jdbcUrl);
 	}
 	
 	@Override

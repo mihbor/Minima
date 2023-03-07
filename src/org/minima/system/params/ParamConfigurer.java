@@ -165,6 +165,9 @@ public class ParamConfigurer {
     		//Set this globally
     		GeneralParams.DATA_FOLDER 	= minimafolder.getAbsolutePath();
         }),
+        jdbcurl("jdbcurl", "JDBC connection url", (arg, configurer) -> {
+            GeneralParams.JDBC_URL = arg;
+        }),
     	dbpassword("dbpassword", "Main Wallet / SQL AES password - MUST be specified on first launch. CANNOT be changed later.", (args, configurer) -> {
     		GeneralParams.IS_MAIN_DBPASSWORD_SET = true;
     		GeneralParams.MAIN_DBPASSWORD 		 = args;

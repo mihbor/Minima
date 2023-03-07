@@ -31,9 +31,9 @@ public class TxPoWDB {
 	RamDB mRamDB;
 	TxPoWSqlDB mSqlDB;
 	
-	public TxPoWDB() {
+	public TxPoWDB(String jdbcUrl) {
 		mRamDB = new RamDB();
-		mSqlDB = new TxPoWSqlDB();
+		mSqlDB = new TxPoWSqlDB(jdbcUrl);
 	}
 	
 	public void loadSQLDB(File zFile) throws SQLException {

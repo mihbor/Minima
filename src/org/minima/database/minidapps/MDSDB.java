@@ -20,8 +20,8 @@ public class MDSDB extends SqlDB {
 	PreparedStatement SQL_LIST_MINIDAPPS 		= null;
 	PreparedStatement SQL_GET_MINIDAPP 			= null;
 	
-	public MDSDB() {
-		super();
+	public MDSDB(String jdbcUrl) {
+		super(jdbcUrl);
 	}
 	
 	@Override

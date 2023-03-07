@@ -34,8 +34,8 @@ public class TxPoWSqlDB extends SqlDB {
 	
 	PreparedStatement SQL_SELECT_RELEVANT 	= null;
 	
-	public TxPoWSqlDB() {
-		super();
+	public TxPoWSqlDB(String jdbcUrl) {
+		super(jdbcUrl);
 	}
 		
 	/**
@@ -313,7 +313,7 @@ public class TxPoWSqlDB extends SqlDB {
 		
 		File testdb = new File(System.getProperty("user.home"),"testsql");
 		
-		TxPoWSqlDB db = new TxPoWSqlDB();
+		TxPoWSqlDB db = new TxPoWSqlDB(GeneralParams.JDBC_URL);
 		
 		db.loadDB(testdb);
 

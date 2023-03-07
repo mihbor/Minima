@@ -49,8 +49,8 @@ public class ArchiveManager extends SqlDB {
 	PreparedStatement SAVE_CASCADE				= null;
 	PreparedStatement LOAD_CASCADE				= null;
 	
-	public ArchiveManager() {
-		super();
+	public ArchiveManager(String jdbcUrl) {
+		super(jdbcUrl);
 	}
 	
 	@Override
@@ -654,7 +654,7 @@ public class ArchiveManager extends SqlDB {
 		//Wipe the old..
 		MiniFile.deleteFileOrFolder(testdbfolder.getAbsolutePath(), testdbfolder);
 		
-		ArchiveManager arch = new ArchiveManager();
+		ArchiveManager arch = new ArchiveManager(GeneralParams.JDBC_URL);
 		arch.loadDB(testdb);
 		
 		//test insert..
