@@ -188,11 +188,11 @@ public abstract class SqlDB {
 			Statement stmt = mSQLConnection.createStatement();
 		
 			//Shut down.. this saves and closes all the data
-			if(zCompact) {
-				stmt.execute("SHUTDOWN COMPACT");
-			}else {
-				stmt.execute("SHUTDOWN");
-			}
+//			if(zCompact) {
+//				stmt.execute("SHUTDOWN COMPACT");
+//			}else {
+//				stmt.execute("SHUTDOWN");
+//			}
 
 			//Close the connection
 			mSQLConnection.close();

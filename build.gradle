@@ -126,7 +126,7 @@ publishing {
 }
 
 docker {
-    name 'minimaglobal/minima:1.0.15-psql2'
+    name 'minimaglobal/minima:1.0.21-psql'
     dockerfile project.file('docker/Dockerfile')
     
     buildx true
